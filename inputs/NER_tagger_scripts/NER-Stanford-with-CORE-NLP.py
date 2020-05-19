@@ -74,10 +74,10 @@ def _remove_names(text):
                 person = tag[0]
                 name_hash = hashlib.md5(str(person).encode('utf-8')).hexdigest()[:6]
                 names[str(person)] = name_hash
-                if ' ' in person: # more than a single name
+                if ' ' in person: 
                     full_name = person.split()
-                    first_name = full_name[0]
-                    surname = full_name[1]
+                    first_name = " ".join(full_name[:-1])
+                    surname = full_name[-1]
                     if len(full_name) > 2:
                         names[first_name+' '+surname] = name_hash
                     names[surname] = name_hash
@@ -90,8 +90,8 @@ def _remove_names(text):
         return names, text_corrected
 
 
-random_text = '''House Speaker John Boehner became animated Tuesday over the proposed Keystone Pipeline, castigating the Obama administration for not having approved the project yet.
-Republican House Speaker John Boehner says there's "nothing complex about the Keystone Pipeline," and that it's time to build it.
+random_text = '''House Speaker Alessandro Di Example became animated Tuesday over the proposed Keystone Pipeline, castigating the Obama administration for not having approved the project yet.
+Republican House Speaker Alessandro Di Example says there's "nothing complex about the Keystone Pipeline," and that it's time to build it.
 "Complex? You think the Keystone Pipeline is complex?!" Boehner responded to a questioner. "It's been under study for five years! We build pipelines in America every day. Do you realize there are 200,000 miles of pipelines in the United States?"
 '''
 
