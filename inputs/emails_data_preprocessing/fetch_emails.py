@@ -94,12 +94,13 @@ def process_email(item, mail=None):
         email_message = item
     body = email_message.get_payload(decode=True)
     if body:
-        text = html_to_raw(body)
-        names, corrected_text = remove_names(text)
-        _, subject = remove_names(email_message['Subject'])
-        _, sender = remove_names('from ' + email_message['From'])
-        _, receiver = remove_names('to ' + email_message['To'])
-
+        text = html_to_raw(body)      
+        # get names hash  
+        names_body, corrected_text = remove_names(text)
+        names_subject, subject = remove_names(email_message['Subject'])
+        names_sender, sender = remove_names('from ' + email_message['From'])
+        names_receiver, receiver = remove_names('to ' + email_message['To'])
+        names = {**names_body, **names_subject, **names_sender, **names_receiver}
         # some hard-coded filter
         # if 'atlas-adc-ddm-support' not in receiver: raise
 
