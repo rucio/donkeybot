@@ -72,13 +72,13 @@ def remove_names(text):
             if tag[1] == 'PERSON':
                 person = tag[0]
                 name_hash = hashlib.md5(str(person).encode('utf-8')).hexdigest()[:6]
-                names[str(person)] = name_hash
+                # names[str(person)] = name_hash
                 if ' ' in person: # more than a single name
                     full_name = person.split()
                     first_name = full_name[0]
                     surname = full_name[1]
-                    if len(full_name) > 2:
-                        names[first_name+' '+surname] = name_hash
+                    # if len(full_name) > 2:
+                    #     names[first_name+' '+surname] = name_hash
                     names[surname] = name_hash
                     names[surname.lower()] = name_hash
 
