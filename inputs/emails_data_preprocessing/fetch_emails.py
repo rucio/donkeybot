@@ -46,12 +46,12 @@ def _remove_names(text):
 
     for person in person_list:
         name_hash = hashlib.md5(str(person).encode('utf-8')).hexdigest()[:6]
-        names[str(person)] = name_hash
+        # names[str(person)] = name_hash
         full_name = person.split(' ')
         first_name = full_name[0]
         surname = full_name[-1]
-        if len(full_name) > 2:
-            names[first_name+' '+surname] = name_hash
+        # if len(full_name) > 2:
+        #     names[first_name+' '+surname] = name_hash
         names[surname] = name_hash
         names[surname.lower()] = name_hash
 
