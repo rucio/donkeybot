@@ -106,7 +106,7 @@ def process_email(item, mail=None):
 
         print('\n')
         print('############### NEW EMAIL #################')
-        print('SBJECT: {}'.format(subject))
+        print('SUBJECT: {}'.format(subject))
         print('FROM: {}'.format(sender))
         print('TO {}'.format(receiver))
         print('THREAD INDEX {}'.format(email_message['Thread-Index']))
