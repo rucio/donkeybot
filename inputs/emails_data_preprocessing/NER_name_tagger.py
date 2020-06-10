@@ -45,6 +45,7 @@ def get_continuous_chunks(tagged_sent):
     return continuous_chunk
 
 
+
 def remove_names(text):
     '''
     This function is more along the lines of what you already used
@@ -66,7 +67,6 @@ def remove_names(text):
     for sent in nltk.sent_tokenize(text):
         tagged_sent = ner_tagger.tag(sent.split())
         named_entities = get_continuous_chunks(tagged_sent)
-        
         named_entities_str_tag = [(" ".join([token for token, tag in ne]), ne[0][1]) for ne in named_entities]
         for tag in named_entities_str_tag:
             if tag[1] == 'PERSON':
@@ -82,11 +82,12 @@ def remove_names(text):
                     names[surname] = name_hash
                     names[surname.lower()] = name_hash
 
-        text_corrected = deepcopy(text)
-        for name, name_hash in names.items():
-            text_corrected = text_corrected.replace(name, name_hash)
+    text_corrected = deepcopy(text)
+    for name, name_hash in names.items():
+        text_corrected = text_corrected.replace(name, name_hash)
         
-        return names, text_corrected
+    return names, text_corrected
+
 
 
 random_text = '''House Speaker John Boehner became animated Tuesday over the proposed Keystone Pipeline, castigating the Obama administration for not having approved the project yet.
