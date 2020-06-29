@@ -1,5 +1,7 @@
+# bot modules
+import bot.config as config
+# general python
 import re
-import config
 import pickle
 
 

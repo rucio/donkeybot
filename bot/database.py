@@ -1,8 +1,11 @@
+# bot modules
+import bot.config as config
+# general python
 import sqlite3
 from sqlite3 import Error
 import os.path
 import pandas as pd
-import config
+
 
 class Database:
     """Database wrapper for sqlite3"""

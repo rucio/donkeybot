@@ -1,11 +1,10 @@
 # bot modules
-from database import Database
-import config 
-import hashlib
-import helpers 
+from bot.database import Database
+import bot.config as config
+import bot.helpers as helpers
 # general python
+import hashlib
 import re
-
 from datetime import datetime 
 import pytz
 
