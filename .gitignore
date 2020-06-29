@@ -1,3 +1,6 @@
 /some-folder
+/.vscode
+
 data 
 __pycache__
+
