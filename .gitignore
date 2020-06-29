@@ -1,3 +1,10 @@
+# folders
 /some-folder
-data 
+/.vscode
+/data
+/virt
+/dist
+/bot.egg-info
+
+# files 
 __pycache__
