@@ -1,4 +1,4 @@
-# bot-nlp
+# DonkeyBot
 Rucio Bot NLP (GSOC Project)
 
 
