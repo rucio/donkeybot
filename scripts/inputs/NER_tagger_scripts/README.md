@@ -35,10 +35,3 @@ jarfile = stanford_dir + '\stanford-ner.jar'
 modelfile = stanford_dir + '\classifiers\english.all.3class.distsim.crf.ser.gz'
 ```  
   
-  
-  
-**NER-Stanford-testing .ipynb**   
-Holds code for testing the above on emails.db ( emails.db is the dataset that *as of running the code* has 2000 emails from Rucio support with names removed based on nltk's default pos tagger). Note that the code in the testing uses the deprecated method and is only for reference to see how it performs in relation to the methods currently used.
-
-
-
