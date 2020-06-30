@@ -16,7 +16,6 @@ import requests
 from nltk.parse import CoreNLPParser
 # NER Tagger
 ner_tagger = CoreNLPParser(url='http://localhost:9000', tagtype='ner')
-# print(list(ner_tagger.tag(('Rami Eid is studying at Stony Brook University in NY'.split()))))
 
 
 def get_continuous_chunks(tagged_sent):
@@ -38,10 +37,6 @@ def get_continuous_chunks(tagged_sent):
             if tag!= "O":
                 current_chunk.append((token, tag))
                 prev_tag = tag
-        
-    # # Flush the final current_chunk into the continuous_chunk, if any.
-    # if current_chunk:
-    #     continuous_chunk.append(current_chunk)
     return continuous_chunk
 
 
@@ -94,8 +89,6 @@ random_text = '''House Speaker John Boehner became animated Tuesday over the pro
 Republican House Speaker John Boehner says there's "nothing complex about the Keystone Pipeline," and that it's time to build it.
 "Complex? You think the Keystone Pipeline is complex?!" Boehner responded to a questioner. "It's been under study for five years! We build pipelines in America every day. Do you realize there are 200,000 miles of pipelines in the United States?"
 '''
-random_text = "from Mario Lassnig <Mario.Lassnig@cern.ch>"
-
 
 names, text_corrected = remove_names(random_text)
 
