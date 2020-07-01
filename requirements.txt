@@ -1,0 +1,11 @@
+# All dependencies needed to run rucio should be defined here
+click==7.1.2
+joblib==0.15.1
+nltk==3.5
+numpy==1.19.0
+pandas==1.0.5
+python-dateutil==2.8.1
+pytz==2020.1
+regex==2020.6.8
+six==1.15.0
+tqdm==4.47.0

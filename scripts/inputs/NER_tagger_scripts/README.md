@@ -1,12 +1,9 @@
 
 
-Turns out that Stanford NER and POS from nltk.tag are deprecated after v3.3 of nltk so we should follow what 
-[Stanford-CoreNLP-API-in-NLTK docs](https://github.com/nltk/nltk/wiki/Stanford-CoreNLP-API-in-NLTK) say.
+The Stanford NER and POS taggers from nltk.tag are deprecated as of nltk v3.3 which was our original approach so we should follow what 
+[Stanford-CoreNLP-API-in-NLTK docs](https://github.com/nltk/nltk/wiki/Stanford-CoreNLP-API-in-NLTK) says.
 
-
-In this folder you will find the NER tagger implemented with  the depracated methods and the recommended CoreNLP API server. 
-**I suggest we use the Core nlp API server.**
-
+In this folder you will find the NER tagger implemented with  the depracated methods and the recommended CoreNLP API server which is what we are using. 
 
 To run **NER-Stanford-with-CORE-NLP .py** on your machine you need to:
 1) pip install requests
