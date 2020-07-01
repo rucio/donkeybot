@@ -1,7 +1,7 @@
 # Question Detection
 
 One of the most important steps in automatically answering Rucio users support email questions is to be able to actually detect the questions being asked. To help us achieve this `QuestionDetector` was created and the code resides in `analyzer.py`.
-`QuestionDetector` uses regex patterns to try and match user questions. Additional question identification approaches where tested such as using the question identifier based on chapter 6 section 2.2 of the [Natural Language Toolkig Book](http://www.nltk.org/book/ch06.html) but where not as consistent. Since the main goal is to create a prototype which is as correct with its responses as possible we didn't want to add more noise and label text as a question when it is in fact not. Thus, regex patterns based on question marks and W5H (who, what, where..) words is the way to go. 
+`QuestionDetector` uses regex patterns to try and match user questions. Additional question identification approaches where tested such as using the question identifier based on chapter 6 section 2.2 of the [Natural Language Toolkig Book](http://www.nltk.org/book/ch06.html) but where not as consistent. Since the main goal is to create a prototype which is as correct with its responses as possible we didn't want to add more noise and label text as a question when it is in fact not. Thus, regex patterns based on question marks and 5WH1 (who, what, where..) words is the way to go. 
 
 
 Two different regex patterns where used and more/less can be appended easily. These both try and identify questions, one without having applied any processing to the text and the second having lowered the text. It is important to note that the [Punkt Sentence Tokenizer](https://www.nltk.org/_modules/nltk/tokenize/punkt.html) from [NLTK](https://www.nltk.org/) was used to split the text into sentences more easily readable by `QuestionDetector`. 
@@ -9,7 +9,7 @@ Two different regex patterns where used and more/less can be appended easily. Th
 The `pipeline` to question detection is as follows:   
 1) `QuestionDetector's` method named `detect(self, text)` is used on the text where a question might reside in. This then applies the regex patterns in a step by step manner.  
    - The first regex pattern `'[A-Z][a-z][^A-Z]*[?]$'` tries to find the substring inside a sentece that starts with some uppercase letter, is followed by lowercase letters, doesn't contain more uppercase letters and then ends with a question mark `?`. This is done because of the abstract nature of many emails that have missing punctuation, many code snippets, urls etc. that troubles the `Punkt Sentence Tokenizer` and results in sentences that are noisy. This regex pattern gives us very good precision on the selected text and performs well on our emails set, which is our goal.
-   - The second regex pattern `'(how |wh|can |could |do |does |should |would |may |is |are |have |has |will |am ).*[?]$'` while longer, is quite simple. The idea is to first lower the text and then try and match the substring inside text that starts with  `how, wh, can ...` W5H and other common question words and ends with a question mark `?`.
+   - The second regex pattern `'(how |wh|can |could |do |does |should |would |may |is |are |have |has |will |am ).*[?]$'` while longer, is quite simple. The idea is to first lower the text and then try and match the substring inside text that starts with  `how, wh, can ...` 5WH1 and other common question words and ends with a question mark `?`.
 
     Since it is very important to not match the same questions more than once, when a question is identified at any point, the substring of the question inside the text is replaced with spaces `' '`. We basically use padding in the text to keep the same length and ensure correctness of the `Question object's` starting and ending indexes. This successfully 'hides' previously identified questions from regex patterns that have yet to be used. A supervised approach has been followed after question identification to analyze the results of the regex patterns and evaluate them.
 
@@ -26,9 +26,9 @@ The `pipeline` to question detection is as follows:
     | end           | end index of the question (in clean_body)                                 |
     | context       | text where answer of a given of the question probably exists.             |
 
-We should note that since the `detect(text)` method of `QuestionDetector` doesn't take an `Email object` as input but rather a simple string, the attributes `(email_id, question_id, clean_body, context)` of a `Question object` are added outside of the `QuestionDetector` and setters from the `Question` class are used. We wanted detect to take a string so that it's more generalized and can be used in a number of cases.
+We should note that since the `detect(self, text)` method of `QuestionDetector` doesn't take an `Email object` as input but rather a simple string, the attributes `(email_id, question_id, clean_body, context)` of a `Question object` are added outside of the `QuestionDetector` and setters from the `Question` class are used. We wanted detect to take a string so that it's more generalized and can be used in a number of cases.
 
-4) Finally, `detect(text)` method returns a list of `Question objects` or empty, for any questions found inside text.
+4) Finally, `detect(self, text)` method returns a list of `Question objects` or empty, for any questions found inside text.
 
 ---
 ##### Additional information about the `context` attribute of an email and the `Question` class.
