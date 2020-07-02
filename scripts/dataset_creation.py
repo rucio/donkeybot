@@ -188,7 +188,7 @@ def main():
     helpers.save_dict('conversation_dict', conversation_dict)
     
     # Step 2 is to create the new dataset.db which hold the parsed emails from EmailParser
-    # parse_emails(raw_df)
+    parse_emails(raw_df)
     
     # Step 3 is to create the questions table on dataset.db
     get_questions()
