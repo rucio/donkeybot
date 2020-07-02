@@ -23,10 +23,10 @@ except:
 REGEX_METACHARACTERS = '^$.|?*+(){}[]'
 
 # reply emails quoting past emails
-ON_HDR_REGEX = re.compile(r'On (.*?)wrote: ')
+ON_HDR_REGEX = re.compile(r'On (.*?)wrote: ', re.IGNORECASE)
 QUOTED_REGEX = re.compile(r'(>>+|> >+)')
-HEADER_REGEX = re.compile(r'(([_-]{7,})(.*)From:(.*)Sent:(.*)To:(.*)Subject:)')
-ORIGINAL_MSG_REGEX = re.compile(r'-----Original Message-----')
+HEADER_REGEX = re.compile(r'(([_-]{7,})?(\s)From:(.*)(Sent:)?(.*)To:(.*)Subject:)', re.IGNORECASE)
+ORIGINAL_MSG_REGEX = re.compile(r'-----Original Message-----', re.IGNORECASE)
 
 # url
 URL_REGEX = re.compile(r'(https|http|www)[^ ]*')
