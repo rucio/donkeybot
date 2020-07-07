@@ -42,9 +42,9 @@ import re
 import hashlib
 import pandas as pd
 from tqdm import tqdm
+import argparse
 
-
-def create_conversation_dict(emails_df):
+def create_conversation_dict(raw_df):
     '''
     Step 0 : Distinguish reply emails
     Step 1 : lower subject
@@ -58,12 +58,12 @@ def create_conversation_dict(emails_df):
 
     :return conversation_dict : dict of keys = email_subject, values = conversation_id
     '''    
-    emails_temp = emails_df.copy(deep=True)
+    emails_df = raw_df.copy(deep=True)
     # find out which emails are replies
-    emails_temp['reply_email'] = emails_temp.subject.apply(lambda x: x.lower()).str.contains("^re:", na=False)
+    emails_df['reply_email'] = emails_df.subject.apply(lambda x: x.lower()).str.contains("^re:", na=False)
     conversation_dict = {}
-    emails_temp['subject'] = emails_temp['subject'].apply(lambda x: helpers.remove_chars(x.lower(), config.REGEX_METACHARACTERS))
-    reply_emails = emails_temp[emails_temp['reply_email'] == True]
+    emails_df['subject'] = emails_df['subject'].apply(lambda x: helpers.remove_chars(x.lower(), config.REGEX_METACHARACTERS))
+    reply_emails = emails_df[emails_df['reply_email'] == True]
     for i, re_subject in enumerate(reply_emails.subject):
         subject = re.sub('^(re:)', '', re_subject).lstrip()
         conversation_id = 'cid_'+hashlib.md5(str(subject).encode('utf-8')).hexdigest()[:6]
@@ -72,7 +72,7 @@ def create_conversation_dict(emails_df):
 
 
 
-def parse_emails(emails_df):
+def parse_emails(raw_df, output_file):
     """
     Parses raw emails and then saves the Email objects
     on dataset.db 
@@ -82,7 +82,8 @@ def parse_emails(emails_df):
     Step 2 : For each raw email go through the EmailParser and insert
              it to dataset.db
     """
-    new_db = Database('dataset.db', 'emails')
+    emails_df = raw_df.copy(deep=True)
+    new_db = Database(f'{output_file}.db', 'emails')
     new_db.drop_table('emails')
     new_db.create_table('emails', {
                                  'email_id'         :'INT PRIMARY KEY',
@@ -175,22 +176,39 @@ def main():
     """
     Run the pipeline for phase 1 that creates all the data we'll need for the bot
     """    
-    # Step 0 get the data from initial raw database
-    raw_db = Database('emails_noNER_22062020.db', 'emails')
+    # Step 0 parse cli arguments
+    parser = argparse.ArgumentParser(description='''This is the script responsible for parsing a raw email database''')
+    required = parser.add_argument_group('required arguments')
+    optional = parser.add_argument_group('optional arguments')
+    required.add_argument(
+        '-input_file',
+        help='Input .db file name of the raw emails',
+        required=True)
+    required.add_argument(
+        '-output_file',
+        help='Output .db file name of the parsed emails',
+        required=True)
+    
+    args = parser.parse_args()
+    input_file = args.input_file
+    output_file = args.output_file
+
+    # Step 1 get the data from initial raw database
+    raw_db = Database(f'{input_file}.db', 'emails')
     raw_df = raw_db.get_dataframe()
     raw_db.close_connection()
     
-    # Step 1 create and save the CONVERSATION_DICT
+    # Step 2 create and save the CONVERSATION_DICT
     # which holds the conversation_ids for every conversation in initial raw data
     # I make sure the same preprocessing is done inside EmailParser when trying to 
     # match conversations based on the subject
     conversation_dict = create_conversation_dict(raw_df)
     helpers.save_dict('conversation_dict', conversation_dict)
     
-    # Step 2 is to create the new dataset.db which hold the parsed emails from EmailParser
-    parse_emails(raw_df)
+    # Step 3 is to create the new dataset.db which hold the parsed emails from EmailParser
+    parse_emails(raw_df, output_file)
     
-    # Step 3 is to create the questions table on dataset.db
+    # Step 4 is to create the questions table on dataset.db
     get_questions()
     return
 
