@@ -154,3 +154,4 @@ if __name__ == "__main__":
     print(qse.search(question, 2)['question_id'].values)
 
     data_storage.close_connection()
+    
