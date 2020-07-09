@@ -2,6 +2,19 @@ import os.path
 from pathlib import Path
 import pickle
 import re
+import nltk
+from nltk.corpus import stopwords
+
+
+# stopwords
+ENGLISH_STOPWORDS = list(set(stopwords.words("english")))
+# we could get better results if we remove and append custom stopwords
+# for example the word 'down' is considered a stopwords but what if a user asks
+# why is this site down? Then we'll only have 'site', not ['site','down']
+# so I should work on that
+# CUSTOM_STOPWORDS = ...
+
+
 
 # for absolute paths 
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
