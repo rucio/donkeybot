@@ -14,7 +14,8 @@ setup(
     install_requires=[
           'pandas',
           'numpy',
-          'nltk'
+          'nltk',
+          'rank_bm25'
       ],
     classifiers=[
         'Development Status :: 3 - Alpha',
