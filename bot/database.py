@@ -18,10 +18,9 @@ class Database:
         self.default_table = default_table
         self.cursor = self.db.cursor()
     
-
-    def get_dataframe(self):
+    def get_dataframe(self, table):
         """Return a pandas DataFrame object of the Database contents"""
-        return pd.read_sql_query(f"SELECT * FROM {self.default_table}", self.db)
+        return pd.read_sql_query(f"SELECT * FROM {table}", self.db)
 
     def close_connection(self):
         """Close Database connection"""
@@ -85,4 +84,3 @@ class Database:
         """Run queries on the database"""
         self.cursor.execute(query_string)
         return self.cursor.fetchall()
-        

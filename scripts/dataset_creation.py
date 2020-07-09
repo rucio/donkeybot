@@ -126,7 +126,7 @@ def get_questions():
     """
     # We are only searching for Questions inside conversation emails
     db = Database('dataset.db', 'emails')
-    emails_df = db.get_dataframe()
+    emails_df = db.get_dataframe('emails')
     
     # create the new table that will hold the questions
     db.drop_table('questions')
@@ -195,7 +195,7 @@ def main():
 
     # Step 1 get the data from initial raw database
     raw_db = Database(f'{input_file}.db', 'emails')
-    raw_df = raw_db.get_dataframe()
+    raw_df = raw_db.get_dataframe('emails')
     raw_db.close_connection()
     
     # Step 2 create and save the CONVERSATION_DICT
