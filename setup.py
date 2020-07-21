@@ -15,7 +15,8 @@ setup(
           'pandas',
           'numpy',
           'nltk',
-          'rank_bm25'
+          'rank_bm25',
+          'requests'
       ],
     classifiers=[
         'Development Status :: 3 - Alpha',
