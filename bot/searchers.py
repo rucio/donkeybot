@@ -46,12 +46,13 @@ class QuestionSearchEngine(ISearchEngine):
         You have to create/load the index before using the 
         SearchEngine
         """
+        self.type = 'Question Search Engine'
         pass
         
 
     def search(self, question, top_n):
         """
-        Return `top_n` questions that are the most similar to
+        Return at most the `top_n` questions most similar to
         the input `question` based on BM25.
 
         <!> Note : If some of the results don't pass all of our checks
@@ -82,16 +83,16 @@ class QuestionSearchEngine(ISearchEngine):
 
             return results.reset_index()
         else:
-            raise SearchEngineAttributesNotSet(f"\nError: The SearchEngine attributes have not been set. Please call the create_index or load_index methods before using the SearchEngine.")
+            raise SearchEngineAttributesNotSetError(f"\nError: The SearchEngine attributes have not been set. Please call the create_index or load_index methods before using the SearchEngine.")
 
 
-    def create_index(self, corpus = pd.DataFrame, db = Database, index_table_name = 'questions_index'):
+    def create_index(self, corpus = pd.DataFrame, db = Database, index_table_name = 'questions_query_index'):
         """
         Takes a pandas DataFrame as input and create the SearchEngine's index.
 
         : param corpus           : pandas DataFrame object 
         : param db               : <bot.database Database object> where the index will be stored
-        : param index_table_name : Optional and defaults to questions_index for this SearchEngine
+        : param index_table_name : Optional and defaults to questions_query_index for this SearchEngine
         """
         self.corpus = corpus
         self.columns = self.corpus.columns
@@ -110,7 +111,7 @@ class QuestionSearchEngine(ISearchEngine):
         self.index.to_sql(index_table_name, con=db.db, if_exists='replace', index=True)
 
 
-    def load_index(self, db = Database):
+    def load_index(self, db = Database, index_table_name = 'questions_query_index'):
         """
         Takes a <bot.database Database object> as input and loads
         the SearchEngine's index and corpus.
@@ -124,7 +125,7 @@ class QuestionSearchEngine(ISearchEngine):
                 self.corpus.question.fillna("")
             )
             # make sure the index is for the correct document ( here question_id )
-            self.index = db.get_dataframe('questions_index').set_index('question_id',drop=True)
+            self.index = db.get_dataframe(f'{index_table_name}').set_index('question_id',drop=True)
             # turn comma seperated values back into lists in the dataframe
             self.index.terms = self.index.terms.apply(lambda x: x.split(", "))
             self.bm25 = BM25Okapi(self.index.terms.tolist())
@@ -132,7 +133,7 @@ class QuestionSearchEngine(ISearchEngine):
             print(_e)
 
 
-class SearchEngineAttributesNotSet(Exception):
+class SearchEngineAttributesNotSetError(Exception):
     """Raised when the attributes of the SearchEngine have not been set"""
     pass
 
