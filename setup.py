@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='bot',
+    name='DonkeyBot',
     version='0.0.1',
     description="Rucio Support Bot",
     long_description=long_description,
