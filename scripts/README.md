@@ -26,8 +26,4 @@ other optional arguments:
 - --database       : Output .db file where the data is stored (default is dataset)
 - --max_pages      : Maximum number of pages we will request through GitHubs api (default is 201)
 - --issues_table   : Name of the table where we will store the issues (default is issues)
-<<<<<<< HEAD
 - --comments_table : Name of the table where we will store the comments (default is issue_comments)
-=======
-- --comments_table : Name of the table where we will store the comments (default is issue_comments)
->>>>>>> 95ba5deca63ce3eb9fe2db4761edb6c10eb74bf4
