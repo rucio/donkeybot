@@ -2,6 +2,8 @@
 import bot.config as config
 # general python
 import re
+import requests
+import json
 import pickle
 import string
 import nltk
@@ -46,11 +48,21 @@ def span_urls(text):
             yield (quote_match.start(), quote_match.end())
 
 
+def request(url, headers):
+    """
+    Return the response from the url with the information saved in 
+    a python dictionary.
+    
+    :param url : the url upon which the request is made
+    :out r_dict: json response in python dict format
+    """
+    r = requests.get(url, headers=headers)
+    r_dict = json.loads(r.text)
+    return r_dict
 
 
 
-
-
+# used in searchers/change later upon further analysis
 def preprocess(text):
     """
     Remove puntuation, lower and tokenize text
