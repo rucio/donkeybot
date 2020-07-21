@@ -15,15 +15,11 @@ ENGLISH_STOPWORDS = list(set(stopwords.words("english")))
 # CUSTOM_STOPWORDS = ...
 
 
-
 # for absolute paths 
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
-# print(BOT_DIR)
-# print(type(BOT_DIR))
 DATA_DIR = BOT_DIR + '\..\data\\'
-# print(DATA_DIR)
-# DATA_DIR = Path(BOT_DIR).parents[-1]
-# print(DATA_DIR)
+INPUT_DATA_DIR = BOT_DIR + '\..\data\inputs\\'
+OUTPUT_DATA_DIR = BOT_DIR + '\..\data\outputs\\'
 
 # for EmailParser
 try:  
