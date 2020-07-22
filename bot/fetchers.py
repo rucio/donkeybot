@@ -2,8 +2,6 @@
 # Whether that is github issues, Rucio documentation etc.
 # The output is the raw form of the data that is used as input for the bot
 
-# //TODO add some sort of authentication checking for the provided api token so that we dont insert bad data
-
 # bot modules
 import bot.helpers as helpers
 import bot.config as config
@@ -64,11 +62,27 @@ class IssueFetcher(IFetcher):
     def _check_repo(self):
         """Check that the GitHub repository is correct"""
         try:
-            # if the request is correct then we have a TypeError (for ['message']) thus the try except block
+            # if the request is correct then no message is returned and we have a TypeError
             if helpers.request(self.issues_url, self.headers)['message'] == 'Not Found':
-                raise InvalidRepoError(f"\nError: The repository is not in the correct format. Please use the format 'user/repo' et. 'rucio/rucio'.")
-        except: 
+                raise InvalidRepoError(f"\nError: The repository is not in the correct format. Please use the format 'user/repo' eg. 'rucio/rucio'.")
+        except InvalidRepoError as _e: 
+            sys.exit(_e)
+        except:
+            # we don't care about the TypeError
             pass
+
+
+    def _check_token(self):
+        """Check if the GitHub token is correct"""
+        try:
+            # if the request is correct then no message is returned and we have a TypeError
+            if helpers.request(self.issues_url, self.headers)['message'] == 'Bad credentials':
+                raise InvalidTokenError(f"\nError: Bad credentials. The OAUTH token {self.api_token} is not in the correct.")
+        except InvalidTokenError as _e: 
+            sys.exit(_e)
+        except: 
+            # we don't care about the TypeError
+            pass       
 
 
     def fetch(self, repo, api_token, max_pages=201):
@@ -92,10 +106,6 @@ class IssueFetcher(IFetcher):
             created_at   : date comment was created at
             body         : body of the comment 
 
-        <!> Note : We haven't implemented api_token validation in my code
-                   We expect the api_token to be correct, should get GitHub's errors if not
-                   TODO Implement the above..
-
         :param max_pages    : max_pages requested through the api, default = 201
         :param repo         : GitHub repo (for us rucio/rucio) format `User/Repo` 
         :param api_token    : GitHub api token used for fetching the data
@@ -109,6 +119,7 @@ class IssueFetcher(IFetcher):
         # issues url for both open and closed issues 
         self.issues_url = f"https://api.github.com/repos/{self.repo}/issues?state=all"
         self._check_repo()
+        self._check_token()
         
         # initialize the dataframes
         issues_df = pd.DataFrame(columns=['issue_id','title','state'
@@ -237,9 +248,6 @@ class IssueFetcher(IFetcher):
             raise MissingDataFramesError(f"\nError: We are missing the data. Please use the .fetch() method before saving.")
         
 
-class InvalidRepoError(Exception):
-    """Raised when the repository for the IssueFetcher is not correct."""
-    pass
 
 class MissingDataError(Exception):
     """Raised when the data we are trying to load isn't found."""
@@ -249,6 +257,13 @@ class MissingDataFramesError(Exception):
     """Raised when the dataframe(s) we are trying to save are missing."""
     pass
 
+class InvalidRepoError(Exception):
+    """Raised when the repository for the IssueFetcher is not correct."""
+    pass
+
+class InvalidTokenError(Exception):
+    """Raised when the OAUTH token for the GitHub api is not correct."""
+    pass
 
 ################################################################################################################################################
 if __name__ == "__main__":
