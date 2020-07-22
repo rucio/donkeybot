@@ -45,7 +45,7 @@ class FetcherFactory():
                 return IssueFetcher()
             if data_type == 'Rucio Documentation':
                 return RucioDocsFetcher()
-            # Once email ftching is done, implementation will exist here
+            # Once email fetching is done, implementation will exist here
             if data_type == 'Email':
                 return EmailFetcher()
             raise AssertionError("Fetcher not found")
@@ -519,3 +519,5 @@ if __name__ == "__main__":
     # fetcher = FetcherFactory.get_fetcher('Rucio Documentation')
     # docs_df = fetcher.load(db=data_storage, docs_table_name='docs')
     # print(docs_df.info())
+
+    pass
