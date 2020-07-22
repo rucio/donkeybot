@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 from rank_bm25 import BM25Okapi
 import string
+import sys
 
 
 class ISearchEngine(metaclass=ABCMeta):
@@ -68,22 +69,25 @@ class QuestionSearchEngine(ISearchEngine):
         :return results : pd.DataFrame object with results 
                           and any metadata we want
         """
-        if hasattr(self, 'index'):
-            search_terms = helpers.preprocess(question)
-            doc_scores = self.bm25.get_scores(search_terms)  
-            # sort results
-            ind = np.argsort(doc_scores)[::-1][:top_n]  
-            # results df
-            results = self.corpus.iloc[ind][self.columns]  
-            results["bm25_score"] = doc_scores[ind] 
-            # here we can add any additional metadata we please
-            results = results[results.bm25_score > 0]
-            # if there is no context don't return it
-            results = results[results.context != ""]
+        try:
+            if hasattr(self, 'index'):
+                search_terms = helpers.preprocess(question)
+                doc_scores = self.bm25.get_scores(search_terms)  
+                # sort results
+                ind = np.argsort(doc_scores)[::-1][:top_n]  
+                # results df
+                results = self.corpus.iloc[ind][self.columns]  
+                results["bm25_score"] = doc_scores[ind] 
+                # here we can add any additional metadata we please
+                results = results[results.bm25_score > 0]
+                # if there is no context don't return it
+                results = results[results.context != ""]
 
-            return results.reset_index()
-        else:
-            raise SearchEngineAttributesNotSetError(f"\nError: The SearchEngine attributes have not been set. Please call the create_index or load_index methods before using the SearchEngine.")
+                return results.reset_index()
+            else:
+                raise SearchEngineAttributesNotSetError(f"\nError: The SearchEngine attributes have not been set. Please call the create_index or load_index methods before using the SearchEngine.")
+        except SearchEngineAttributesNotSetError as _e:
+            sys.exit(_e)
 
 
     def create_index(self, corpus = pd.DataFrame, db = Database, index_table_name = 'questions_query_index'):
