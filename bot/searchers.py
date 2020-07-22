@@ -48,7 +48,7 @@ class QuestionSearchEngine(ISearchEngine):
         SearchEngine
         """
         self.type = 'Question Search Engine'
-        pass
+        return
         
 
     def search(self, question, top_n):
