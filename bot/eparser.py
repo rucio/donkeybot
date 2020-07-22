@@ -7,7 +7,7 @@ import hashlib
 import re
 from datetime import datetime 
 import pytz
-
+import sys
 
 class EmailParser:
     """
@@ -181,11 +181,13 @@ class EmailParser:
 
     def _check_senders(self):
         """Keeps the single email sender or raises an error if multiple exist"""
-        
-        if len(self.sender) > 1:
-            raise MultipleSendersError(f"There are more than one senders in {id(self)}")
-        else:
-            self.sender = self.sender[0]
+        try:
+            if len(self.sender) > 1:
+                raise MultipleSendersError(f"There are more than one senders in {id(self)}")
+            else:
+                self.sender = self.sender[0]
+        except MultipleSendersError as _e:
+            sys.exit(_e)
 
 
 

@@ -2,7 +2,12 @@
 import bot.config as config
 # general python
 import re
+import requests
+import json
 import pickle
+import string
+import nltk
+
 
 
 def save_dict(dict_name, dict_data):
@@ -41,3 +46,52 @@ def span_urls(text):
     if config.URL_REGEX.search(text)is not None:
         for quote_match in config.URL_REGEX.finditer(text):
             yield (quote_match.start(), quote_match.end())
+
+
+def request(url, headers):
+    """
+    Return the response from the url with the information saved in 
+    a python dictionary.
+    
+    :param url : the url upon which the request is made
+    :out r_dict: json response in python dict format
+    """
+    r = requests.get(url, headers=headers)
+    r_dict = json.loads(r.text)
+    return r_dict
+
+
+
+# used in searchers/change later upon further analysis
+def preprocess(text):
+    """
+    Remove puntuation, lower and tokenize text
+    """
+    return tokenize_this(remove_punctuation(text.lower()))
+    
+def remove_punctuation(text):
+    """
+    Remove all special character from text string
+    """
+    return text.translate(str.maketrans("", "", string.punctuation))
+
+def tokenize_this(text):
+    """
+    Tokenize with NLTK
+    Rules:
+        - drop all words of 1 and 2 characters
+        - drop all stopwords
+        - drop all numbers
+    """
+    words = nltk.word_tokenize(text)
+    return list(
+            set(
+                [
+                word
+                for word in words
+                if len(word) > 1
+                    and not word in config.ENGLISH_STOPWORDS
+                    and not word.isnumeric()
+                ]
+            )
+        )

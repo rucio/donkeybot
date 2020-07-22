@@ -1,4 +1,5 @@
 # All dependencies needed to run rucio should be defined here
+
 click==7.1.2
 joblib==0.15.1
 nltk==3.5
@@ -10,3 +11,7 @@ rank-bm25==0.2.1
 regex==2020.6.8
 six==1.15.0
 tqdm==4.47.0
+requests==2.24.0
+idna==2.10
+urllib3==1.25.9certifi==2020.6.20
+chardet==3.0.4
