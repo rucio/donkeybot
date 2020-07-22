@@ -93,7 +93,7 @@ class IssueFetcher(IFetcher):
         Utilizes GitHub's Issues api.
 
         for issues   :
-            issue_id       : issue's number
+            issue_id     : issue's number
             title        : issue's title
             state        : issue's state
             creator      : issue's creator
@@ -101,7 +101,7 @@ class IssueFetcher(IFetcher):
             body         : issue's body
 
         for comments :
-            issue_id : issue's number that holds the comment
+            issue_id     : issue's number that holds the comment
             comment_id   : comment's id
             creator      : comment's creator
             created_at   : date comment was created at
@@ -123,7 +123,6 @@ class IssueFetcher(IFetcher):
         self._check_repo()
         self._check_token()
 
-        
         # initialize the dataframes
         issues_df   = pd.DataFrame(columns=['issue_id','title','state'
                                         , 'creator','comments','body'])
@@ -144,7 +143,7 @@ class IssueFetcher(IFetcher):
                     continue
 
                 # add comment data    
-                issue_number = issue['number']
+                issue_number   = issue['number']
                 issue_comments = issue['comments'] 
                 if issue_comments != 0:
                     for comment in helpers.request(issue['comments_url'], self.headers):
@@ -155,11 +154,11 @@ class IssueFetcher(IFetcher):
                             comment_body       = comment['body']
 
                             comments_df = comments_df.append({
-                                'issue_id': issue_number,
-                                'comment_id': comment_id,
-                                'creator': comment_creator,
-                                'created_at': comment_created_at,
-                                'body': comment_body,
+                                'issue_id'   : issue_number,
+                                'comment_id' : comment_id,
+                                'creator'    : comment_creator,
+                                'created_at' : comment_created_at,
+                                'body'       : comment_body,
                                 }, ignore_index=True)
                         else:
                             print(f"Error: Problem fetching issue {issue} on comment {comment}, moving on to the next...")
@@ -172,12 +171,12 @@ class IssueFetcher(IFetcher):
                 issue_creator = issue['user']['login']
 
                 issues_df = issues_df.append({
-                    'issue_id': issue_number,
-                    'title': issue_title,
-                    'state': issue_state,
-                    'creator': issue_creator,
-                    'comments': issue_comments,
-                    'body': issue_body,
+                    'issue_id'  : issue_number,
+                    'title'     : issue_title,
+                    'state'     : issue_state,
+                    'creator'   : issue_creator,
+                    'comments'  : issue_comments,
+                    'body'      : issue_body,
                     }, ignore_index=True)
 
         self.issues   = issues_df
@@ -187,7 +186,7 @@ class IssueFetcher(IFetcher):
 
     def save(self, db = Database, issues_table_name = 'issues', comments_table_name='issue_comments'):
         """
-        Save the data in a .db file utilizing the bot.database.py sqlite wrapper
+        Save the data in a .db file utilizing our sqlite wrapper
 
         : param db            : bot.database Database object 
         : issues_table_name   : name of the table where we'll store the issues
@@ -251,10 +250,6 @@ class IssueFetcher(IFetcher):
             raise LoadingError(f"\nError: Data not found.")            
 
 
-   
-
-
-
 class RucioDocsFetcher(IFetcher):
     """Only for Rucio's documentation."""
     
@@ -283,25 +278,24 @@ class RucioDocsFetcher(IFetcher):
 
     def _extract_daemon_body(self, body):
         """
-        Parses the body of the daemon documentation under doc/source/man/
-        to
-        1) find patterns like                 
+        Parses the body of the daemon documentation under doc/source/man/ and:
+        1) finds patterns like                 
                 .. argparse::
                 :filename: bin/rucio-bb8
                 :func: get_parser
                 :prog: rucio-bb8
 
-        2) tHen move to the appropriate path and match two regexes
+        2) Then moves on to the appropriate path and matches two regex patterns
             - One that matches the description content for each daemon
             - One the epilog content for each daemon
             (more info under config.py)
 
-        If the above pattern doesn't match we simply return the initial body.
+        If the first pattern doesn't match we simply return the initial body.
             
         : param body        : initial, raw daemon documentation body under doc/source/man/
         : return final_body : final daemon documentation body including the docstrings
         """        
-        # if the text points us to the raw daemon code
+        # try and match the first pattern
         if config.DAEMON_DOC_ARGS_REGEX.search(body) is not None:
             for match in config.DAEMON_DOC_ARGS_REGEX.finditer(body):
                 daemon_filename = match.group(1)
@@ -333,7 +327,7 @@ class RucioDocsFetcher(IFetcher):
 
     def fetch(self, api_token):
         """
-        Return a pandas DataFrames that hold information for 
+        Returns a pandas DataFrames that holds information for 
         Rucio's documentation. Utilizes GitHub's api.
 
         :param api_token : GitHub api token used for fetching the data
@@ -343,7 +337,7 @@ class RucioDocsFetcher(IFetcher):
         self.headers = {'Content-Type': 'application/json', 'Authorization': f'token {self.api_token}'} 
         self._check_token()
         
-        docs_df = pd.DataFrame(columns=['doc_id','name', 'file_type',
+        docs_df = pd.DataFrame(columns=['doc_id','name','file_type',
                                         'url','download_url','body', 'doc_type'])
 
         doc_id = 0
@@ -359,7 +353,6 @@ class RucioDocsFetcher(IFetcher):
                 doc_file_type    = doc['type']
                 doc_url          = doc['html_url']
                 doc_download_url = doc['download_url']
-                # not to be confused with 'request' function from helpers that returns json
                 doc_body         = requests.get(doc_download_url).content.decode("utf-8") 
                 docs_df = docs_df.append({
                     'doc_id' : doc_id,
@@ -377,7 +370,6 @@ class RucioDocsFetcher(IFetcher):
                 if doc['name'] == 'images':
                     # No need to fetch images in this version
                     pass
-
                 # daemon documentation exists under the man directory
                 elif doc['name'] == 'man':
                     print("\nFetching the daemon documentation...")
@@ -441,23 +433,23 @@ class RucioDocsFetcher(IFetcher):
                                         }, ignore_index=True)
                             doc_id += 1    
                         
-                # handling restapi documentation
+                
+                # Below are is a bit complicated for now, if we want to integrate we can
+                # download and compile with Sphinx the Makefile etc
+                # restapi documentation
                 elif doc['name'] == 'restapi':
-                    # this is a bit complicated for now, if we want to integrate there is a need to 
-                    # download and compile with Sphinx and the Makefile etc
                     pass
-                # handling api documentation
+                # api documentation
                 elif doc['name'] == 'api':
-                    # this is a bit complicated for now, if we want to integrate there is a need to 
-                    # download and compile with Sphinx and the Makefile etc
                     pass
+
         self.docs = docs_df    
         return docs_df
 
 
     def save(self, db = Database, docs_table_name = 'docs'):
         """
-        Save the data in a .db file utilizing the bot.database.py sqlite wrapper
+        Save the data in a .db file utilizing our sqlite wrapper
 
         : param db                 : bot.database Database object 
         : param  docs_table_name   : name of the table where we'll store the docs
