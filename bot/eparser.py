@@ -90,7 +90,8 @@ class EmailParser:
         
         self.clean_body = helpers.fix_urls(self.body)
         self.clean_body = self.clean_body.replace('\n', ' ')
-        ' '.join(self.clean_body.split())
+        # clean extra whitespaces
+        self.clean_body = ' '.join(self.clean_body.split())
 
         # match the 4 regex patterns
         try:
