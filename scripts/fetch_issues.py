@@ -66,7 +66,7 @@ def main():
     print(issues_df.head())
     print("Comments")
     print(comments_df.head())    
-
+    data_storage.close_connection()
 
 if __name__ == '__main__':
     main()

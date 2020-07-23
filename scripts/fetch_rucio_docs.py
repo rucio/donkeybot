@@ -42,6 +42,7 @@ def main():
     print(f"Data saved on {db_name}.db")
     print("Sample docs:")
     print(docs_df.head())
+    data_storage.close_connection()
 
 if __name__ == '__main__':
     main()
