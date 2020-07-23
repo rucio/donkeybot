@@ -1,6 +1,6 @@
 # Here is the code for fetching the data through our different sources
 # Whether that is github issues, Rucio documentation etc.
-# The output is the raw form of the data that is used as input for the bot parsers
+# The output is the raw form of the data that is used as input for the bot
 
 # bot modules
 import bot.helpers as helpers
@@ -19,7 +19,14 @@ import requests
 
 
 class IFetcher(metaclass=ABCMeta):
-    """The Fetcher Interface"""
+    """
+    The Fetcher Interface
+    
+    <!> Note: Once we use the Fetcher to .fetch() the data
+    the Fetcher after returning the corresponding DatFrame(s).
+    Keeps the DataFrame(s) in memory and knows how to .save() 
+    and .load() accordingly.
+    """
     @abstractmethod
     def fetch():
         """Fetches the data from their source"""
@@ -239,9 +246,9 @@ class IssueFetcher(IFetcher):
         """ 
         Load the DataFrame stored in pickle file format.
         
-        : param  repo                : name of the repository
-        : return issues              : DataFrame holding the issues data
-        : return comments            : DataFrame holding the comments data
+        : param  repo       : name of the repository
+        : return issues     : DataFrame holding the issues data
+        : return comments   : DataFrame holding the comments data
         """
         try:
             print('Loading...')
