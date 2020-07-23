@@ -349,6 +349,9 @@ class RucioDocsFetcher(IFetcher):
                 continue
             # handle files
             elif doc['type'] == 'file':
+                if doc['name'].split('.')[-1] not in ['rst','md']:
+                    # make sure the file is documentation only
+                    continue
                 doc_name         = doc['name']
                 doc_file_type    = doc['type']
                 doc_url          = doc['html_url']
@@ -386,6 +389,9 @@ class RucioDocsFetcher(IFetcher):
                         if type(man_doc) == str:
                             print(f"Error : There was a problem fetching the file : {man_doc}")
                             continue
+                        elif man_doc['name'].split('.')[-1] not in ['rst','md']:
+                            # make sure the file is documentation only
+                            continue                        
                         else:
                             # make sure that we are looking at daemon documentation, by utilize daemon names gathered above
                             if man_doc['name'].split('.')[0] in daemons:
@@ -416,6 +422,9 @@ class RucioDocsFetcher(IFetcher):
                         if type(release_note) == str:
                             print(f"Error: Problem fetching the release note {release_note}")
                             continue
+                        elif release_note['name'].split('.')[-1] not in ['rst','md']:
+                            # make sure the file is documentation only
+                            continue
                         else:
                             doc_name         = release_note['name']
                             doc_file_type    = release_note['type']
@@ -433,8 +442,7 @@ class RucioDocsFetcher(IFetcher):
                                         }, ignore_index=True)
                             doc_id += 1    
                         
-                
-                # Below are is a bit complicated for now, if we want to integrate we can
+                # Below are complicated for now, if we want to integrate we can
                 # download and compile with Sphinx the Makefile etc
                 # restapi documentation
                 elif doc['name'] == 'restapi':
