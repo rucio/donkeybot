@@ -1,6 +1,6 @@
 # Here is the code for fetching the data through our different sources
 # Whether that is github issues, Rucio documentation etc.
-# The output is the raw form of the data that is used as input for the bot
+# The output is the raw form of the data that is used as input for the bot parsers
 
 # bot modules
 import bot.helpers as helpers
