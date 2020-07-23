@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='DonkeyBot',
-    version='0.0.1',
+    version='1.0.0.dev1',
     description="Rucio Support Bot",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -19,7 +19,7 @@ setup(
           'requests'
       ],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 2 - Pre-Alpha',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 3',
         'Natural Language :: English',
