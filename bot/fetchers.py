@@ -97,6 +97,7 @@ class IssueFetcher(IFetcher):
             title        : issue's title
             state        : issue's state
             creator      : issue's creator
+            created_at   : date comment was created at
             comments     : number of comments in the issue
             body         : issue's body
 
@@ -125,7 +126,7 @@ class IssueFetcher(IFetcher):
 
         # initialize the dataframes
         issues_df   = pd.DataFrame(columns=['issue_id','title','state'
-                                        , 'creator','comments','body'])
+                                        , 'creator', 'created_at','comments','body'])
         comments_df = pd.DataFrame(columns=['issue_id', 'comment_id'
                                         , 'creator','created_at','body'])
 
@@ -165,18 +166,20 @@ class IssueFetcher(IFetcher):
                             continue
 
                 # add issue data
-                issue_body    = issue['body'].strip('/n/r') # strip for when its empty
-                issue_title   = issue['title']
-                issue_state   = issue['state']
-                issue_creator = issue['user']['login']
+                issue_body       = issue['body'].strip('/n/r') # strip for when its empty
+                issue_title      = issue['title']
+                issue_state      = issue['state']
+                issue_creator    = issue['user']['login']
+                issue_created_at = issue['created_at']
 
                 issues_df = issues_df.append({
-                    'issue_id'  : issue_number,
-                    'title'     : issue_title,
-                    'state'     : issue_state,
-                    'creator'   : issue_creator,
-                    'comments'  : issue_comments,
-                    'body'      : issue_body,
+                    'issue_id'   : issue_number,
+                    'title'      : issue_title,
+                    'state'      : issue_state,
+                    'creator'    : issue_creator,
+                    'created_at' : issue_created_at,
+                    'comments'   : issue_comments,
+                    'body'       : issue_body,
                     }, ignore_index=True)
 
         self.issues   = issues_df
