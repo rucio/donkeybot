@@ -12,6 +12,7 @@ import pytz
 import sys
 from tqdm import tqdm
 
+
 class IParser(metaclass=ABCMeta):
     """The Parser Interface"""
     
@@ -23,16 +24,6 @@ class IParser(metaclass=ABCMeta):
     @abstractmethod
     def parse_dataframe():
         """Parses the full dataframe of the data."""
-        pass
-
-    @abstractmethod
-    def save():
-        """Saves the single data point instance."""
-        pass
-
-    @abstractmethod
-    def save_dataframe():
-        """Saves the full dataframe of the data."""
         pass
 
 
@@ -62,7 +53,7 @@ class Email:
         self.receiver        = receiver
         self.subject         = subject
         self.body            = body
-        self.email_date      = email_date
+        self.date      = email_date
         self.first_email     = first_email
         self.reply_email     = reply_email
         self.fwd_email       = fwd_email
@@ -94,28 +85,28 @@ class EmailParser:
     def __init__(self):
         self.type = 'Email Parser'
 
-    def parse(self, sender, receiver, subject, body, date, existing_db = Database):
+    def parse(self, sender, receiver, subject, body, date, db = Database, emails_table_name='emails'):
         """
         Parses a single email that was fetched with the IMAP client
         and run through our Name tagger for hashing of secure information.
-        The input parameters are the raw strings of the information we keep
-        on each email.
+        The input parameters are the information we fetched for each email.
 
-        <!> Note  : The parse() method is only expected to be used after an existing db
-        has been created to store all the previous emails. On this database is where 
-        this new parsed email is inserted.
+        <!> Note  : The parse() method is only expected to be used after an an emails table
+        already exists in the given db. To create said table use the Database object's 
+        .create_emails_table() method
 
         <!> Note2 : While parsing a single email we expect the conversation dictionary
         to already have been created so that we can try and find the conversation this
-        email should be a part of.
+        email should be a part of. To create this dictionary run the initial raw emails dataframe
+        through the parser with the .parse_dataframe() method.
 
         :param [sender,...,date]  : all the raw email attributes
-        :param existing_db        : bot.database.py object which holds the connection to our 
-                                    existing email dataset 
-        :returns email            : an Email object create by the EmailParser
+        :param db                 : bot.database.py object to where we store the parsed emails
+        :param emails_table_name  : in case we need use a different table name (default 'emails')
+        :returns email            : an Email object created by the EmailParser
         """
-        # new id is num of emails in our database incremented by one.
-        email_id                = int(existing_db.query(f'''SELECT max(email_id) FROM emails''')[0][0]) + 1
+        # new id is num of emails in our database incremented by one. (works for the first inserted email as well)
+        email_id                = int(db.query(f'''SELECT COUNT(email_id) FROM emails''')[0][0]) + 1
         email_sender            = list(re.findall('<(.*?)>', sender))
         email_receiver          = ', '.join(list(re.findall('<(.*?)>', receiver)))
         email_subject           = subject
@@ -140,26 +131,14 @@ class EmailParser:
                       clean_body      = email_clean_body,
                       conversation_id = email_conversation_id)
         
-        # if we want to save the email
-        # db.insert_email(email, table_name = 'emails')
+        # insert the email to the db
+        db.insert_email(email, table_name=emails_table_name)
         return email
     
 
-    def save(self, db=Database):
-        """Insert a single email to the database holding the parsed emails."""
-        # not needed, provided in case the user wants to use it (for logic continuity)
-        db.insert_email()
-        return
-
-
-    def save_dataframe(self, ):
-        """Used to create the databased holding the parsed emails."""
-        pass
-
-    
-    def parse_dataframe(self, emails_df=pd.DataFrame, db=Database, save_it=False):
+    def parse_dataframe(self, emails_df=pd.DataFrame, db=Database, emails_table_name='emails', return_emails=False):
         """
-        Parses the entire emails dataframe.
+        Parses the entire raw emails dataframe, creates Email objects and saves them to db.
         
         Expects an pandas DataFrame object as input that will hold the raw emails.
         For more information about the structure and content of this dataframe look
@@ -169,43 +148,30 @@ class EmailParser:
         conversation which will be held in a conversation dictionary stored as a pickle
         file.
 
-        :param   data   : pandas DataFrame containing all emails
-        :returns emails : a list of Email objects created by the EmailParser
+        :param   data        : pandas DataFrame containing all emails
+        :param   db          : a bot Database object (defaults to None)
+        :param return_emails : True/False on if we return a list of email objects (default False)
+        :returns emails      : a list of Email objects created by the EmailParser 
+                               If return_emails = False then return empty list.
         """
 
-        # step 0 is creating the conversation dictionary based on all the emails
+        # step 1 is creating the conversation dictionary based on all the emails
         self.create_conversations(emails_df)
         print("Parsing emails...")
         emails = []
+        # step 2 is parsing the entire dataframe 
         for i in tqdm(range(len(emails_df.index))):
-            # new id is num of emails in our database incremented by one.
-            email_id                = i + 1
-            email_sender            = list(re.findall('<(.*?)>', emails_df.sender.values[i]))
-            email_receiver          = ', '.join(list(re.findall('<(.*?)>', emails_df.receiver.values[i])))
-            email_subject           = emails_df.subject.values[i]
-            email_body              = emails_df.body.values[i]
-            email_date              = self.convert_to_utc(emails_df.date.values[i]) 
-            (email_reply_ind, email_fwd_ind, email_first_ind) = self.find_category(email_subject)
-            email_clean_body        = self.clean_body(email_body)
-            email_clean_subject     = self.clean_subject(email_subject)
-            # we need to match the conversation of this email to the existing ones 
-            email_conversation_id   = self.find_conversation(email_subject)
-
-            # create and return a single email instance
-            email = Email(email_id        = email_id,
-                        sender            = email_sender,
-                        receiver          = email_receiver,
-                        subject           = email_subject,
-                        body              = email_body,
-                        email_date        = email_date,
-                        first_email       = email_first_ind,
-                        reply_email       = email_reply_ind,
-                        fwd_email         = email_fwd_ind,
-                        clean_body        = email_clean_body,
-                        conversation_id   = email_conversation_id)
-            emails.append(email)
-        # if we want to save the email
-        # db.insert_email(email, table_name = 'emails')
+            email = self.parse(sender = emails_df.sender.values[i],
+                               receiver = emails_df.receiver.values[i],
+                               subject = emails_df.subject.values[i],
+                               body = emails_df.body.values[i],
+                               date = emails_df.date.values[i], 
+                               db = db,
+                               emails_table_name=emails_table_name)
+            if return_emails:
+                emails.append(email)
+            else:
+                continue
         return emails
 
     
@@ -258,6 +224,7 @@ class EmailParser:
         else:
             conversation_id = None
         return conversation_id
+
 
     @staticmethod
     def clean_body(body):
@@ -389,6 +356,7 @@ class EmailParser:
         return date
 
 
+    ##TODO improve code quality of create_conversations() method
     @staticmethod
     def create_conversations(emails_df):
         '''
@@ -408,7 +376,7 @@ class EmailParser:
         :return conversation_dict : dict of keys = email_subject, values = conversation_id
         '''    
 
-        print("\nCreating conversation dictionary...")
+        print("Creating conversation dictionary...")
         # find out which emails are replies
         emails_df['reply_email'] = emails_df.subject.apply(lambda x: x.lower()).str.contains("^re:", na=False)
         conversation_dict = {}
@@ -429,20 +397,16 @@ class MultipleSendersError(Exception):
     pass
 
 
-    
-
-######################################## 
+################################################################################ 
 
 if __name__ == '__main__': 
-    existing_email_storage = Database('whatever.db')
-    print("Let's create an EmailParser")
-    parser = ParserFactory.get_parser('Email')
-    # parser.parse(sender='me', receiver='you', subject='something', body='body of something', date='2019', existing_db = existing_email_storage)
-    
-    raw_emails_df = Database('emails_noNER_22062020.db').get_dataframe('emails')
-    emails = parser.parse_dataframe(raw_emails_df)
-    print(emails)
-    # save the emails
-    print('Saving...')
-    for email in emails:
-        existing_email_storage.insert_email(email)
+    # whole script to parse the raw emails dataframe
+    # print("Let's create an EmailParser")
+    # parser = ParserFactory.get_parser('Email')
+    # raw_emails_df = Database('raw_input_emails.db').get_dataframe('emails')
+    # data_storage = Database('data_storage.db', 'emails')
+    # # create the new table that will hold the parsed emails
+    # data_storage.create_emails_table()
+    # parser.parse_dataframe(raw_emails_df, db=data_storage)
+    # data_storage.close_connection()
+    pass
