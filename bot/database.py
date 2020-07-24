@@ -9,6 +9,7 @@ import pandas as pd
 
 class Database:
     """Database wrapper for sqlite3"""
+
     def __init__(self, db_name, default_table='emails'):
         self.db_name = db_name
         try:
@@ -18,13 +19,38 @@ class Database:
         self.default_table = default_table
         self.cursor = self.db.cursor()
     
+
     def get_dataframe(self, table):
         """Return a pandas DataFrame object of the Database contents"""
         return pd.read_sql_query(f"SELECT * FROM {table}", self.db)
 
+
     def close_connection(self):
         """Close Database connection"""
         self.db.close()
+
+
+    def create_emails_table(self, table_name='emails'):
+        """
+        Creates a table to store Email objects from EmailParser.
+        Knows about their attributes and creates the corresponding columns.
+
+        :param table_name : name given to the table holding Email objects
+        """
+        self.drop_table(f'{table_name}')
+        self.create_table(f'{table_name}', {
+            'email_id'         :'INT PRIMARY KEY',
+            'sender'           :'TEXT',
+            'receiver'         :'TEXT',
+            'subject'          :'TEXT',
+            'body'             :'TEXT',
+            'email_date'       :'TEXT',
+            'first_email'      :'INT',
+            'reply_email'      :'INT',
+            'fwd_email'        :'INT',
+            'clean_body'       :'TEXT',
+            'conversation_id'  :'TEXT'
+            } )
 
 
     def insert_email(self, email_obj, table_name):
