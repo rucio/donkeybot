@@ -53,8 +53,19 @@ class Database:
             } )
 
 
+    def insert_issue(self, issue_obj, table_name):
+        """Insert issue object into the database"""        
+        data = (issue_obj.issue_id, issue_obj.title, issue_obj.state, issue_obj.creator, 
+                issue_obj.created_at, issue_obj.comments, issue_obj.clean_body)
+
+        self.db.execute(f'INSERT INTO {table_name} \
+                                        (issue_id, title, state, subject, creator, created_at \
+                                        , comments, clean_body) \
+                                    values(?, ?, ?, ?, ?, ?, ?, ?)', data)
+        self.db.commit()
+
     def insert_email(self, email_obj, table_name):
-        """Insert email into the database"""        
+        """Insert email object into the database"""        
         data = (email_obj.id, email_obj.sender, email_obj.receiver, email_obj.subject, 
                 email_obj.body, email_obj.clean_body, email_obj.date, email_obj.first_email, 
                 email_obj.reply_email, email_obj.fwd_email, email_obj.conversation_id)
