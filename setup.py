@@ -9,7 +9,6 @@ setup(
     description="Rucio Support Bot",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author='Vasilis Mageirakos',
     packages=find_packages(),
     install_requires=[
           'pandas',
