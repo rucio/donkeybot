@@ -61,17 +61,14 @@ class Database:
         """
         self.drop_table(f'{table_name}')
         self.create_table(f'{table_name}', {
-            'issue_id'         :'INT PRIMARY KEY',
-            'title'           :'TEXT',
+            'issue_id'      :'INT PRIMARY KEY',
+            'title'         :'TEXT',
             'state'         :'TEXT',
-            'creator'          :'TEXT',
-            'created_at'             :'TEXT',
-            'comments'       :'TEXT',
-            'clean_body'      :'INT',
-            'reply_email'      :'INT',
-            'fwd_email'        :'INT',
-            'clean_body'       :'TEXT',
-            'conversation_id'  :'TEXT'
+            'creator'       :'TEXT',
+            'created_at'    :'TEXT',
+            'comments'      :'TEXT',
+            'body'          :'TEXT',
+            'clean_body'    :'TEXT'
             } )
 
     def insert_issue(self, issue_obj, table_name):
