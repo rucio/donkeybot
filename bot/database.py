@@ -114,11 +114,9 @@ class Database:
         self.drop_table(f'{table_name}')
         self.create_table(f'{table_name}', {
             'issue_id'      :'INT PRIMARY KEY',
-            'title'         :'TEXT',
-            'state'         :'TEXT',
+            'comment_id'    :'INT',
             'creator'       :'TEXT',
             'created_at'    :'TEXT',
-            'comments'      :'INT',
             'body'          :'TEXT',
             'clean_body'    :'TEXT'
             } )
