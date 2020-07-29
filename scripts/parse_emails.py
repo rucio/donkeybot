@@ -26,7 +26,7 @@ def main():
     optional.add_argument(
         '--emails_table',
         default='emails',
-        help='Name of the table where we will store the parsed emails (default is emails)')
+        help='Name of the table where we will store the parsed emails and of the table where the raw emails are stored (default is emails)')
     
     args = parser.parse_args()
     input_db = args.input_db
@@ -34,7 +34,7 @@ def main():
     emails_table = args.emails_table
 
     # input
-    raw_emails_data = Database(f'{input_db}.db').get_dataframe('emails')
+    raw_emails_data = Database(f'{input_db}.db').get_dataframe(emails_table)
     # output
     data_storage = Database(f'{output_db}.db')
     data_storage.create_emails_table(table_name=emails_table)
