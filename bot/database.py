@@ -59,9 +59,9 @@ class Database:
                 issue_obj.created_at, issue_obj.comments, issue_obj.clean_body)
 
         self.db.execute(f'INSERT INTO {table_name} \
-                                        (issue_id, title, state, subject, creator, created_at \
+                                        (issue_id, title, state, creator, created_at \
                                         , comments, clean_body) \
-                                    values(?, ?, ?, ?, ?, ?, ?, ?)', data)
+                                    values(?, ?, ?, ?, ?, ?, ?)', data)
         self.db.commit()
 
     def insert_email(self, email_obj, table_name):
