@@ -5,7 +5,6 @@ import bot.helpers as helpers
 # general python
 import re
 import nltk
-nltk.download("punkt")
 from nltk.tokenize import PunktSentenceTokenizer
 
 class QuestionDetector:
