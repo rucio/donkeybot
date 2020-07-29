@@ -113,8 +113,8 @@ class Database:
         """
         self.drop_table(f'{table_name}')
         self.create_table(f'{table_name}', {
-            'issue_id'      :'INT',
             'comment_id'    :'INT PRIMARY KEY',
+            'issue_id'      :'INT',
             'creator'       :'TEXT',
             'created_at'    :'TEXT',
             'body'          :'TEXT',
@@ -124,10 +124,10 @@ class Database:
 
     def insert_issue_comment(self, issue_comment_obj, table_name):
         """Insert <IssueComment objects> into the database"""        
-        data = (issue_comment_obj.issue_id, issue_comment_obj.comment_id, issue_comment_obj.creator, 
+        data = (issue_comment_obj.comment_id, issue_comment_obj.issue_id, issue_comment_obj.creator, 
                 issue_comment_obj.created_at, issue_comment_obj.body, issue_comment_obj.clean_body)
         self.db.execute(f'INSERT INTO {table_name} \
-                                        (issue_id, comment_id, creator, created_at \
+                                        (comment_id, issue_id, creator, created_at \
                                          , body, clean_body) \
                                     values(?, ?, ?, ?, ?, ?)', data)
         self.db.commit()
