@@ -12,9 +12,9 @@ import pytz
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer 
-nltk.download("stopwords")
-nltk.download("wordnet")
-nltk.download("punkt")
+nltk.download("stopwords", quiet=True)
+nltk.download("wordnet", quiet=True)
+nltk.download("punkt", quiet=True)
 
 
 # DataFrame/Series related helper functions
