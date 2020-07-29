@@ -52,16 +52,37 @@ class Database:
             'conversation_id'  :'TEXT'
             } )
 
+    def create_issues_table(self, table_name='issues'):
+        """
+        Creates a table to store Email objects from EmailParser.
+        Knows about their attributes and creates the corresponding columns.
+
+        :param table_name : name given to the table holding Email objects
+        """
+        self.drop_table(f'{table_name}')
+        self.create_table(f'{table_name}', {
+            'issue_id'         :'INT PRIMARY KEY',
+            'title'           :'TEXT',
+            'state'         :'TEXT',
+            'creator'          :'TEXT',
+            'created_at'             :'TEXT',
+            'comments'       :'TEXT',
+            'clean_body'      :'INT',
+            'reply_email'      :'INT',
+            'fwd_email'        :'INT',
+            'clean_body'       :'TEXT',
+            'conversation_id'  :'TEXT'
+            } )
 
     def insert_issue(self, issue_obj, table_name):
         """Insert issue object into the database"""        
         data = (issue_obj.issue_id, issue_obj.title, issue_obj.state, issue_obj.creator, 
-                issue_obj.created_at, issue_obj.comments, issue_obj.clean_body)
+                issue_obj.created_at, issue_obj.comments, issue_obj.body, issue_obj.clean_body)
 
         self.db.execute(f'INSERT INTO {table_name} \
                                         (issue_id, title, state, creator, created_at \
-                                        , comments, clean_body) \
-                                    values(?, ?, ?, ?, ?, ?, ?)', data)
+                                        , comments, body, clean_body) \
+                                    values(?, ?, ?, ?, ?, ?, ?, ?)', data)
         self.db.commit()
 
     def insert_email(self, email_obj, table_name):
