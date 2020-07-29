@@ -17,7 +17,7 @@ def main():
         '--input_db',
         help='Input .db file name of the raw emails',
         required=True)
-    required.add_argument(
+    optional.add_argument(
         '-o',
         '--output_db',
         default='data_storage',
