@@ -236,12 +236,13 @@ class EmailParser:
     def clean_body(body):
         """
         Applies the following to the email's body:
-        1) Remove \\n from inside urls
-        2) Replace \\n with space 
-        3) Make sure no extra spaces exist
-        4) Try to find matches based on the regex patterns.
+        1) Remove newline characters from inside urls
+        2) Replace newline characters with ' ' space 
+        3) Remove extra whitespaces
+        4) Decontract words
+        5) Try to find matches based on the regex patterns.
            If said matches exist, only keep the text up to the
-           ealiest match. These patterns are inside emails right 
+           earliest match. These patterns are inside emails right 
            before text from previous emails is pasted/quoted.
            eg.
            Example of a reply email:
@@ -260,12 +261,13 @@ class EmailParser:
         :param  body        : body of an email 
         :returns clean_email_body : cleaned body of an email
         """
-        
-        clean_email_body = helpers.fix_urls(body)
-        clean_email_body = clean_email_body.replace('\n', ' ')
-        # remove extra whitespaces
-        clean_email_body = ' '.join(clean_email_body.split())
 
+        # steps 1-4 done with helpers.pre_process_text function
+        clean_email_body = helpers.pre_process_text(body, 
+                                                    fix_url = True,
+                                                    remove_newline = True,
+                                                    decontract_words = True
+                                                    )
         # match the 4 regex patterns
         try:
             start_1 = start_2 = start_3 = start_4 = None
@@ -337,15 +339,15 @@ class EmailParser:
         fwd_match = re.search('^fwd:', subject.lower())
         if reply_match:
             reply_email = 1
-            fwd_email = 0
+            fwd_email   = 0
             first_email = 0
         elif fwd_match:
             reply_email = 0
-            fwd_email = 1
+            fwd_email   = 1
             first_email = 0
         else:
             reply_email = 0
-            fwd_email = 0
+            fwd_email   = 0
             first_email = 1
         return reply_email, fwd_email, first_email
 
@@ -538,18 +540,14 @@ if __name__ == '__main__':
     # data_storage.close_connection()
 
 
-    # whole script to parse the raw fetched issues dataframe 
-    print("Let's create an IssueParser")
-    parser = ParserFactory.get_parser('Issue')
-    raw_issues_df = Database('issues_input_data.db').get_dataframe('issues')
-    data_storage = Database('data_storage.db', 'issues')
-    # create the new table that will hold the parsed emails
-    data_storage.create_issues_table()
-    parser.parse_dataframe(raw_issues_df, db=data_storage)
-    data_storage.close_connection()
-
-
-       
-
+    # # whole script to parse the raw fetched issues dataframe 
+    # print("Let's create an IssueParser")
+    # parser = ParserFactory.get_parser('Issue')
+    # raw_issues_df = Database('issues_input_data.db').get_dataframe('issues')
+    # data_storage = Database('data_storage.db', 'issues')
+    # # create the new table that will hold the parsed emails
+    # data_storage.create_issues_table()
+    # parser.parse_dataframe(raw_issues_df, db=data_storage)
+    # data_storage.close_connection()
 
     pass
