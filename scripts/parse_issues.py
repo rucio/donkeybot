@@ -26,7 +26,7 @@ def main():
     optional.add_argument(
         '--issues_table',
         default='issues',
-        help='Name of the table where we will store the parsed issues (default is issues)')
+        help='Name of the table where we will store the parsed issues and of the table where the raw issues are stored (default is issues)')
     
     args = parser.parse_args()
     input_db = args.input_db
@@ -34,7 +34,7 @@ def main():
     issues_table = args.issues_table
 
     # input
-    raw_issues_data = Database(f'{input_db}.db').get_dataframe('issues')
+    raw_issues_data = Database(f'{input_db}.db').get_dataframe(issues_table)
     # output
     data_storage = Database(f'{output_db}.db')
     data_storage.create_issues_table(table_name=issues_table)
