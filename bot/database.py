@@ -66,7 +66,7 @@ class Database:
             'state'         :'TEXT',
             'creator'       :'TEXT',
             'created_at'    :'TEXT',
-            'comments'      :'TEXT',
+            'comments'      :'INT',
             'body'          :'TEXT',
             'clean_body'    :'TEXT'
             } )
@@ -75,7 +75,6 @@ class Database:
         """Insert issue object into the database"""        
         data = (issue_obj.issue_id, issue_obj.title, issue_obj.state, issue_obj.creator, 
                 issue_obj.created_at, issue_obj.comments, issue_obj.body, issue_obj.clean_body)
-
         self.db.execute(f'INSERT INTO {table_name} \
                                         (issue_id, title, state, creator, created_at \
                                         , comments, body, clean_body) \
