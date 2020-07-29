@@ -112,6 +112,7 @@ def pre_process_text(
     fix_url=False,
     remove_url=False,
     decontract_words=False,
+    remove_newline=False,
     remove_numbers=False,
     numbers_replacement=None,
     remove_punctuation=False,
@@ -127,6 +128,7 @@ def pre_process_text(
     And depending on what was set to True :
           (2) fix urls -> 
           (3) remove urls ->
+          (4) remove_newline ->
           (4) decontract phrases ->
           (5) remove punctuation -> 
           (6) remove numbers -> 
@@ -137,7 +139,7 @@ def pre_process_text(
           (11) tokenize words 
     
 
-    <!> Note  : (1) and (10) are done by default
+    <!> Note  : (1) and (11) are done by default
     <!> Note2 : Returns  list of the pre_processed words if tokenize = True
                 or return the pre_processed text if tokenize = False
     
@@ -163,36 +165,39 @@ def pre_process_text(
     if remove_url:
         text = remove_URL(text)
     # 4
+    if remove_newline:
+        text = text.replace('\n', ' ')
+    # 5
     if decontract_words:
         text = decontract(text)
-    # 5
+    # 6
     if remove_punctuation:
         text = remove_chars(text, string.punctuation, replace_with=punctuation_replacement)
-    # 6       
+    # 7       
     if remove_numbers:
         text = remove_chars(text, string.digits, replace_with=numbers_replacement)
-    # 7 
+    # 8 
     if remove_stop_words:
         # warnings.simplefilter('ignore')
         stop_words_english = set(stopwords.words('english'))
         # warnings.simplefilter('always')
         text = ' '.join(token for token in nltk.word_tokenize(text)
                         if not token in stop_words_english)
-    # 8 
+    # 9 
     if stem:
         stemmer = nltk.stem.porter.PorterStemmer()
         text = ' '.join(stemmer.stem(token) for token in
                         nltk.word_tokenize(text))
-    # 9 
+    # 10 
     if lemmatize:
         # warnings.simplefilter('ignore')
         lemmatizer = WordNetLemmatizer()
         text = ' '.join(lemmatizer.lemmatize(token) for token in
                         nltk.word_tokenize(text))
         # warnings.simplefilter('always')
-    # 10
-    text = re.sub(' +', ' ', text).strip(' ')
     # 11
+    text = re.sub(' +', ' ', text).strip(' ')
+    # 12
     if tokenize_text:
         words = nltk.word_tokenize(text)
         return words
