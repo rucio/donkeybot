@@ -348,7 +348,7 @@ class RucioDocsFetcher(IFetcher):
         self._check_token()
         
         docs_df = pd.DataFrame(columns=['doc_id','name','file_type',
-                                        'url','download_url','body', 'doc_type'])
+                                        'url','body', 'doc_type'])
 
         doc_id = 0
         print("Fetching...")
@@ -372,7 +372,6 @@ class RucioDocsFetcher(IFetcher):
                     'name': doc_name,
                     'file_type': doc_file_type,
                     'url': doc_url,
-                    'download_url' : doc_download_url,
                     'body': doc_body,
                     'doc_type': 'general'
                     }, ignore_index=True)
@@ -418,7 +417,6 @@ class RucioDocsFetcher(IFetcher):
                                             'name': doc_name,
                                             'file_type': doc_file_type,
                                             'url': doc_url,
-                                            'download_url' : doc_download_url,
                                             'body': final_doc_body,
                                             'doc_type': 'daemon'
                                             }, ignore_index=True)
@@ -446,7 +444,6 @@ class RucioDocsFetcher(IFetcher):
                                         'name': doc_name,
                                         'file_type': doc_file_type,
                                         'url': doc_url,
-                                        'download_url' : doc_download_url,
                                         'body': doc_body,
                                         'doc_type': 'release_notes'
                                         }, ignore_index=True)
