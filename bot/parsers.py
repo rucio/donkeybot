@@ -668,45 +668,4 @@ class IssueCommentParser(IParser):
 ################################################################################ 
 
 if __name__ == '__main__': 
-    # # whole script to parse the raw emails dataframe
-    # print("Let's create an EmailParser")
-    # parser = ParserFactory.get_parser('Email')
-    # raw_emails_df = Database('raw_input_emails.db').get_dataframe('emails')
-    # data_storage = Database('data_storage.db', 'emails')
-    # # create the new table that will hold the parsed emails
-    # data_storage.create_emails_table()
-    # parser.parse_dataframe(raw_emails_df, db=data_storage)
-    # data_storage.close_connection()
-
-    # # whole script to parse the raw fetched issues dataframe 
-    # print("Let's create an IssueParser")
-    # parser = ParserFactory.get_parser('Issue')
-    # raw_issues_df = Database('issues_input_data.db').get_dataframe('issues')
-    # data_storage = Database('data_storage.db', 'issues')
-    # # create the new table that will hold the parsed emails
-    # data_storage.create_issues_table()
-    # parser.parse_dataframe(raw_issues_df, db=data_storage)
-    # data_storage.close_connection()
-
-    # # whole script to parse the raw fetched issues comments dataframe 
-    # print("Let's create an IssueCommentsParser")
-    # parser = ParserFactory.get_parser('Issue Comment')
-    # raw_issue_comments_df = Database('issues_input_data.db').get_dataframe('issue_comments')
-    # data_storage = Database('data_storage.db', 'issue_comments')
-    # # create the new table that will hold the parsed emails
-    # data_storage.create_issue_comments_table()
-    # parser.parse_dataframe(raw_issue_comments_df, db=data_storage)
-    # data_storage.close_connection()
-
-    
-    # whole script to parse the raw fetched issues comments dataframe 
-    print("Let's create an RucioDocsParser")
-    parser = ParserFactory.get_parser('Rucio Documentation')
-    raw_docs_df = Database('docs_input_data.db').get_dataframe('docs')
-    data_storage = Database('data_storage.db', 'docs')
-    # create the new table that will hold the docs
-    data_storage.create_docs_table()
-    parser.parse_dataframe(raw_docs_df, db=data_storage)
-    data_storage.close_connection()
-
     pass
