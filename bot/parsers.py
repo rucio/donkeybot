@@ -89,7 +89,7 @@ class Email:
 
 
 
-class EmailParser:
+class EmailParser(IParser):
 
     def __init__(self):
         self.type = 'Email Parser'
@@ -393,8 +393,6 @@ class MultipleSendersError(Exception):
     pass
 
 
-## Test below
-
 class Issue():
     """A GitHub Issue"""
     def __init__(self, issue_id, title, state, creator, created_at, comments, body, clean_body):
@@ -418,7 +416,7 @@ class IssueComment():
         self.body       = body
         self.clean_body = clean_body
 
-class IssueCommentParser():
+class IssueCommentParser(IParser):
     def __init__(self):
         self.type = 'Issue Comment Parser'
 
@@ -486,7 +484,7 @@ class IssueCommentParser():
         return issue_comments
 
 
-class IssueParser():
+class IssueParser(IParser):
 
     def __init__(self):
         self.type = 'Issue Parser'
