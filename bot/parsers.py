@@ -364,8 +364,8 @@ class EmailParser(IParser):
 
         Step 0 : Distinguish reply emails
         Step 1 : lower subject
-        Step 2 : remove regex_metacharactrs
-        Step 3 : On the reply emails exist get the subject (withouth Re:)
+        Step 2 : remove regex_metacharacters
+        Step 3 : On the reply emails exist get the subject (without Re:)
                 hash it and create conversation_id
         Step 4 : return conversation_dict
         
