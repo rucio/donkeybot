@@ -422,11 +422,68 @@ class IssueCommentParser():
     def __init__(self):
         self.type = 'Issue Comment Parser'
 
-    def parse(self):
-        pass
+    def parse(self, issue_id, comment_id, creator, created_at, body, db=Database, issue_comments_table='issue_comments'):
+        """
+        Parses a single issue comment
+        
+        <!> Note  : The parse() method is only expected to be used after an an issue comments table
+        has been created in the db. To create said table use the Database object's 
+        .create_issue_comments_table() method before attempting to parse.
+        
+        :param [issue_id,...,body]  : all the raw issue comment's attributes
+        :param db                 : <bot Database object> to where we store the parsed issue comments
+        :param issues_table_name  : in case we need use a different table name (default 'issue_comments')
+        :returns issue            : an <IssueComment object> created by the IssueCommentParser
+        """
 
-    def parse_dataframe(self):
-        pass
+        # The date format returned from the GitHub API is in the ISO 8601 format: "%Y-%m-%dT%H:%M:%SZ" 
+        issue_comment_created_at  = helpers.convert_to_utc(created_at, '%Y-%m-%dT%H:%M:%SZ') 
+        # lower/decontract/fix_urls/remove_newline
+        # if additional textprocessing is needed we can always change it here
+        issue_comment_clean_body = helpers.pre_process_text(body,
+                                                            fix_url=True,
+                                                            remove_newline=True,
+                                                            decontract_words=True)
+        issue_comment = IssueComment(issue_id   = issue_id, 
+                                     comment_id = comment_id, 
+                                     creator    = creator, 
+                                     created_at = issue_comment_created_at,
+                                     body       = body,
+                                     clean_body = issue_comment_clean_body)
+
+        # insert the issue comment to the db
+        db.insert_issue_comment(issue_comment, table_name=issue_comments_table)
+        return issue_comment
+
+    def parse_dataframe(self, comments_df=pd.DataFrame, db=Database, issue_comments_table='issue_comments', return_comments=False):
+        """
+        Parses the entire fetched issues dataframe, creates <Issue objects> and saves them to db.
+        
+        Expects a <pandas DataFrame object> as input that will hold the raw fetched issues.
+        For more information about the structure and content of issues_df look at the IssueFetcher.
+
+        :param issues_df     : <pandas DataFrame object> containing all issues
+        :param db            : <bot Database object> to save the <Issue objects>
+        :param return_issues : True/False on if we return a list of <Issue objects> (default False)
+        :returns issues      : a list of <Issue objects> created by the IssueParser 
+                               If return_emails = False then return empty list.
+        """
+
+        issue_comments = []
+        print("Parsing issue comments...")
+        for i in tqdm(range(len(comments_df.index))):
+            issue_comment = self.parse(issue_id             = comments_df.issue_id.values[i],
+                                       comment_id           = comments_df.comment_id.values[i],
+                                       creator              = comments_df.creator.values[i],
+                                       created_at           = comments_df.created_at.values[i],
+                                       body                 = comments_df.body.values[i],
+                                       db                   = db,
+                                       issue_comments_table = issue_comments_table)
+            if return_comments:
+                issue_comments.append(issue_comment)
+            else:
+                continue
+        return issue_comments
 
 
 class IssueParser():
@@ -448,7 +505,7 @@ class IssueParser():
         :param [issue_id,...,body]  : all the raw issue attributes
         :param db                 : <bot Database object> to where we store the parsed issues
         :param issues_table_name  : in case we need use a different table name (default 'issues')
-        :returns issue            : an <Issue object> created by the EmailParser
+        :returns issue            : an <Issue object> created by the IssueParser
         """
         # The date format returned from the GitHub API is in the ISO 8601 format: "%Y-%m-%dT%H:%M:%SZ" 
         issue_created_at  = helpers.convert_to_utc(created_at, '%Y-%m-%dT%H:%M:%SZ') 
@@ -457,14 +514,14 @@ class IssueParser():
         issue_clean_body = helpers.pre_process_text(self.clean_issue_body(body),
                                                     fix_url=True,
                                                     decontract_words=True)
-        issue = Issue(issue_id = issue_id, 
-                      title = title, 
-                      state = state, 
-                      creator = creator,
-                      created_at = issue_created_at,
-                      comments = comments,
-                      body = body, 
-                      clean_body = issue_clean_body)
+        issue = Issue(issue_id    = issue_id, 
+                      title       = title, 
+                      state       = state, 
+                      creator     = creator,
+                      created_at  = issue_created_at,
+                      comments    = comments,
+                      body        = body, 
+                      clean_body  = issue_clean_body)
 
         # insert the issue to the db
         if issue.comments > 0: # if no comments in issue then there won't be any comments. No need to save it
@@ -488,15 +545,15 @@ class IssueParser():
         issues = []
         print("Parsing issues...")
         for i in tqdm(range(len(issues_df.index))):
-            issue = self.parse(issue_id = issues_df.issue_id.values[i],
-                               title = issues_df.title.values[i],
-                               state = issues_df.state.values[i],
-                               creator = issues_df.creator.values[i],
-                               created_at = issues_df.created_at.values[i], 
-                               comments = issues_df.comments.values[i], 
-                               body = issues_df.body.values[i], 
-                               db = db,
-                               issues_table_name=issues_table_name)
+            issue = self.parse(issue_id          = issues_df.issue_id.values[i],
+                               title             = issues_df.title.values[i],
+                               state             = issues_df.state.values[i],
+                               creator           = issues_df.creator.values[i],
+                               created_at        = issues_df.created_at.values[i], 
+                               comments          = issues_df.comments.values[i], 
+                               body              = issues_df.body.values[i], 
+                               db                = db,
+                               issues_table_name = issues_table_name)
             if return_issues:
                 issues.append(issue)
             else:
@@ -539,7 +596,6 @@ if __name__ == '__main__':
     # parser.parse_dataframe(raw_emails_df, db=data_storage)
     # data_storage.close_connection()
 
-
     # # whole script to parse the raw fetched issues dataframe 
     # print("Let's create an IssueParser")
     # parser = ParserFactory.get_parser('Issue')
@@ -548,6 +604,16 @@ if __name__ == '__main__':
     # # create the new table that will hold the parsed emails
     # data_storage.create_issues_table()
     # parser.parse_dataframe(raw_issues_df, db=data_storage)
+    # data_storage.close_connection()
+
+    # # whole script to parse the raw fetched issues comments dataframe 
+    # print("Let's create an IssueCommentsParser")
+    # parser = ParserFactory.get_parser('Issue Comment')
+    # raw_issue_comments_df = Database('issues_input_data.db').get_dataframe('issue_comments')
+    # data_storage = Database('data_storage.db', 'issue_comments')
+    # # create the new table that will hold the parsed emails
+    # data_storage.create_issue_comments_table()
+    # parser.parse_dataframe(raw_issue_comments_df, db=data_storage)
     # data_storage.close_connection()
 
     pass
