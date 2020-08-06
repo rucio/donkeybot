@@ -1,5 +1,5 @@
 # bot modules
-from bot.parsers import ParserFactory
+from bot.parser.factory import ParserFactory
 from bot.database.sqlite import Database
 
 # general python
