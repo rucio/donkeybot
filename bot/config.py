@@ -19,13 +19,6 @@ ENGLISH_STOPWORDS = list(set(stopwords.words("english")))
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = BOT_DIR + '\..\data\\'
 
-# for EmailParser
-try:  
-    with open(DATA_DIR+'conversation_dict.pickle', 'rb') as f:
-        CONVERSATION_DICT = pickle.load(f)
-except:
-        CONVERSATION_DICT = {}
-
 # REGEX PATTERNS
 
 # removed for conversation creation when searching same subjects

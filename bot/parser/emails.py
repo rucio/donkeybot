@@ -47,6 +47,16 @@ class Email:
 class EmailParser(IParser):
     def __init__(self):
         self.type = 'Email Parser'
+        self._get_conversation_dict()
+        
+    def _get_conversation_dict(self):
+        """Try to load the conversation_dict"""
+        try:  
+            with open(DATA_DIR+'conversation_dict.pickle', 'rb') as f:
+                self.conversation_dict = pickle.load(f)
+        except:
+            self.conversation_dict = {}
+            print('Error : Could not load conversation_dict.')
 
     def parse(self, sender, receiver, subject, body, date, db = Database, emails_table_name='emails'):
         """
@@ -153,7 +163,7 @@ class EmailParser(IParser):
         """
         Finds the corresponding conversation_id based on the email's subject.
 
-        Search the CONVERSATION_DICT for existing conversation matching the
+        Search the self.conversation_dict for existing conversation matching the
         cleaned subject of the email. If needed create a new conversation.
                        
         <!> Note: If a reply email doesn't exist then the conversation is not created
@@ -167,13 +177,13 @@ class EmailParser(IParser):
         # we need to know if its a reply email
         (email_reply_ind, email_fwd_ind, email_first_ind) = self.find_category(subject)
         # if the conversation exists
-        if clean_email_subject in config.CONVERSATION_DICT:
-            conversation_id = config.CONVERSATION_DICT[clean_email_subject]
+        if clean_email_subject in self.conversation_dict:
+            conversation_id = self.conversation_dict[clean_email_subject]
         # if it's a reply email append the new conversation to the saved dictionary
         elif email_reply_ind:
             conversation_id = 'cid_'+hashlib.md5(str(clean_email_subject).encode('utf-8')).hexdigest()[:6]
-            config.CONVERSATION_DICT[clean_email_subject] = conversation_id
-            utils.save_dict('conversation_dict', config.CONVERSATION_DICT)   
+            self.conversation_dict[clean_email_subject] = conversation_id
+            utils.save_dict('conversation_dict', self.conversation_dict)   
         # conversation doesn't exist
         else:
             conversation_id = None
@@ -241,8 +251,8 @@ class EmailParser(IParser):
                 min_start = min(start for start in [start_1, start_2, start_3, start_4] if start is not None)
                 clean_email_body = clean_email_body[:min_start]
                 return clean_email_body
-        except _e:
-            print(_e)
+        except Exception as _e:
+            print(Exception)
 
     @staticmethod
     def clean_subject(subject):
@@ -293,8 +303,7 @@ class EmailParser(IParser):
         return reply_email, fwd_email, first_email
 
     ##TODO improve code quality of create_conversations() method
-    @staticmethod
-    def create_conversations(emails_df):
+    def create_conversations(self, emails_df):
         '''
         Creates and saves a conversation dictionary containing an id and
         the corresponding subject based on the input emails dataframe.
@@ -315,17 +324,17 @@ class EmailParser(IParser):
         print("Creating conversation dictionary...")
         # find out which emails are replies
         emails_df['reply_email'] = emails_df.subject.apply(lambda x: x.lower()).str.contains("^re:", na=False)
-        conversation_dict = {}
+        self.conversation_dict = {}
         emails_df['subject'] = emails_df['subject'].apply(lambda x: utils.remove_chars(x.lower(), config.REGEX_METACHARACTERS))
         reply_emails = emails_df[emails_df['reply_email'] == True]
         for i, re_subject in enumerate(reply_emails.subject):
             subject = re.sub('^(re:)', '', re_subject).lstrip()
             conversation_id = 'cid_'+hashlib.md5(str(subject).encode('utf-8')).hexdigest()[:6]
-            conversation_dict[subject] = conversation_id
+            self.conversation_dict[subject] = conversation_id
         
         # save the conversation_dict created
-        utils.save_dict('conversation_dict', conversation_dict)
-        return conversation_dict
+        utils.save_dict('conversation_dict', self.conversation_dict)
+        return self.conversation_dict
         
 
 class MultipleSendersError(Exception):
