@@ -5,6 +5,15 @@ from bot.fetcher.docs import RucioDocsFetcher
 class FetcherFactory():
     @staticmethod
     def get_fetcher(data_type):
+        """
+        Select between 
+        - Issue
+        - Rucio Documentation
+        - Email
+
+        :returns fetcher: a <Fetcher object> 
+
+        """
         try:
             if data_type == 'Issue':
                 return IssueFetcher()
