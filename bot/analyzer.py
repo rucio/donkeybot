@@ -65,11 +65,11 @@ class QuestionDetector:
         # get all exceptions present in the text
         exceptions = self._get_exceptions(text)
         sentences = self.tokenizer.tokenize(text)
-        sentence_indeces = list(self.tokenizer.span_tokenize(text))
+        sentence_indices = list(self.tokenizer.span_tokenize(text))
         for i, sentence in enumerate(sentences):
             matches = pattern.search(sentence)
-            sent_start = sentence_indeces[i][0]
-            # sent_end = sentence_indeces[i][1]
+            sent_start = sentence_indices[i][0]
+            # sent_end = sentence_indices[i][1]
             if matches is not None:
                 # before appending check if the match is part of any exceptions
                 if self._is_exception(exceptions, matches.group()): 
@@ -77,17 +77,17 @@ class QuestionDetector:
                 else:
                     q_start = sent_start + matches.start()
                     q_end = sent_start + matches.end()
-                    question = Question(question_text=matches.group(), start_idx=q_start, end_idx= q_end)
+                    question = Question(question_text=matches.group(), start_idx=q_start, end_idx=q_end)
                     questions.append(question)
         return questions
 
 
     def _get_exceptions(self, text):
         """
-        Returns list of strings inside text that are definetely not questions based on our
+        Returns list of strings inside text that are definitely not questions based on our
         EXCEPTION_REGEX patterns.
 
-        We can add multitude of exceptions eg. code bloacks, File, RSEs etc
+        We can add multitude of exceptions eg. code blocks, File, RSEs etc
 
         :return exceptions: list of string which we should not consider as questions
         """
@@ -127,7 +127,7 @@ class Question:
         :end                : end index of the question (index in clean_body)
         :email              : email_id of the Email the question exists in
         :id                 : a unique id for the question (int)
-        :clean_body         : text on which the quesiton exists in
+        :clean_body         : text on which the question exists in
         :conversation_id    : the conversation_id of the question's email
         :date               : the date of the question's email
         :context            : Context is the string which holds the bodies of all replies to 
