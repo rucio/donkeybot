@@ -5,11 +5,10 @@ with open("README.md", "r") as fh:
 
 setup(
     name='DonkeyBot',
-    version='1.0.0.dev1',
+    version='0.1.0.dev1',
     description="Rucio Support Bot",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author='Vasilis Mageirakos',
     packages=find_packages(),
     install_requires=[
           'pandas',

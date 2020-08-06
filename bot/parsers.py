@@ -7,12 +7,10 @@ from abc import ABCMeta, abstractmethod
 import pandas as pd
 import hashlib
 import re
-from datetime import datetime 
-import pytz
 import sys
 from tqdm import tqdm
 
-
+## Interface and Factory definitions
 class IParser(metaclass=ABCMeta):
     """The Parser Interface"""
     
@@ -31,9 +29,21 @@ class ParserFactory():
 
     @staticmethod
     def get_parser(data_type):
+        """
+        Select between 
+        - Issue
+        - Issue Comment
+        - Rucio Documentation
+        - Email
+
+        :returns parser: a <Parser object> 
+        """
+
         try:
             if data_type == 'Issue':
                 return IssueParser()
+            if data_type == 'Issue Comment':
+                return IssueCommentParser()
             if data_type == 'Rucio Documentation':
                 return RucioDocsParser()
             if data_type == 'Email':
@@ -43,6 +53,7 @@ class ParserFactory():
             print(_e)
 
 
+## Emails
 class Email:
 
     def __init__(self, email_id, sender, receiver, subject, body,\
@@ -53,7 +64,7 @@ class Email:
         self.receiver        = receiver
         self.subject         = subject
         self.body            = body
-        self.date      = email_date
+        self.date            = email_date
         self.first_email     = first_email
         self.reply_email     = reply_email
         self.fwd_email       = fwd_email
@@ -69,6 +80,7 @@ class Email:
 
     def _check_sender(self):
         """Keeps the single email sender or raises an error if multiple exist"""
+
         try:
             if len(self.sender) > 1:
                 raise MultipleSendersError(f"There are more than one senders in {id(self)}")
@@ -80,38 +92,38 @@ class Email:
 
 
 
-class EmailParser:
+class EmailParser(IParser):
 
     def __init__(self):
         self.type = 'Email Parser'
 
     def parse(self, sender, receiver, subject, body, date, db = Database, emails_table_name='emails'):
         """
-        Parses a single email that was fetched with the IMAP client
-        and run through our Name tagger for hashing of secure information.
-        The input parameters are the information we fetched for each email.
+        Parses a single email
 
-        <!> Note  : The parse() method is only expected to be used after an an emails table
-        already exists in the given db. To create said table use the Database object's 
+        <!> Note   : The parse() method is only expected to be used after an an emails table
+        has been created in the db. To create said table use the Database object's 
         .create_emails_table() method
 
-        <!> Note2 : While parsing a single email we expect the conversation dictionary
+        <!> Note 2 : While parsing a single email we expect the conversation dictionary
         to already have been created so that we can try and find the conversation this
-        email should be a part of. To create this dictionary run the initial raw emails dataframe
+        email should be a part of. To create this dictionary run the initial fetched emails dataframe
         through the parser with the .parse_dataframe() method.
 
         :param [sender,...,date]  : all the raw email attributes
-        :param db                 : bot.database.py object to where we store the parsed emails
+        :param db                 : <bot Database object> to where we store the parsed emails
         :param emails_table_name  : in case we need use a different table name (default 'emails')
-        :returns email            : an Email object created by the EmailParser
+        :returns email            : <Email object> 
         """
+
         # new id is num of emails in our database incremented by one. (works for the first inserted email as well)
         email_id                = int(db.query(f'''SELECT COUNT(email_id) FROM emails''')[0][0]) + 1
         email_sender            = list(re.findall('<(.*?)>', sender))
         email_receiver          = ', '.join(list(re.findall('<(.*?)>', receiver)))
         email_subject           = subject
         email_body              = body
-        email_date              = self.convert_to_utc(date) 
+        # '%a, %d %b %Y %H:%M:%S %z' is the date format we find in Rucio Emails
+        email_date              = helpers.convert_to_utc(date, '%a, %d %b %Y %H:%M:%S %z') 
         (email_reply_ind, email_fwd_ind, email_first_ind) = self.find_category(subject)
         email_clean_body        = self.clean_body(body)
         email_clean_subject     = self.clean_subject(subject)
@@ -138,21 +150,18 @@ class EmailParser:
 
     def parse_dataframe(self, emails_df=pd.DataFrame, db=Database, emails_table_name='emails', return_emails=False):
         """
-        Parses the entire raw emails dataframe, creates Email objects and saves them to db.
+        Parses the entire fetched emails dataframe, creates <Email objects> and saves them to db.
         
-        Expects an pandas DataFrame object as input that will hold the raw emails.
-        For more information about the structure and content of this dataframe look
-        the EmailFetcher. (to be created)
-
+        Expects a <pandas DataFrame object> as input that holds the raw fetched emails.
+        
         <!> Note  : While parsing the dataframe we are also going to create the email
         conversation which will be held in a conversation dictionary stored as a pickle
         file.
 
-        :param   data        : pandas DataFrame containing all emails
-        :param   db          : a bot Database object (defaults to None)
-        :param return_emails : True/False on if we return a list of email objects (default False)
-        :returns emails      : a list of Email objects created by the EmailParser 
-                               If return_emails = False then return empty list.
+        :param emails_df     : <pandas DataFrame object> containing all emails
+        :param db            : a <bot Database object> to save the <Email objcets>
+        :param return_emails : True/False on if we return a list of <Email objects> (default False)
+        :returns emails      : a list of <Email objects> created by the EmailParser 
         """
 
         # step 1 is creating the conversation dictionary based on all the emails
@@ -230,12 +239,13 @@ class EmailParser:
     def clean_body(body):
         """
         Applies the following to the email's body:
-        1) Remove \\n from inside urls
-        2) Replace \\n with space 
-        3) Make sure no extra spaces exist
-        4) Try to find matches based on the regex patterns.
+        1) Remove newline characters from inside urls
+        2) Replace newline characters with ' ' space 
+        3) Remove extra whitespaces
+        4) Decontract words
+        5) Try to find matches based on the regex patterns.
            If said matches exist, only keep the text up to the
-           ealiest match. These patterns are inside emails right 
+           earliest match. These patterns are inside emails right 
            before text from previous emails is pasted/quoted.
            eg.
            Example of a reply email:
@@ -254,12 +264,13 @@ class EmailParser:
         :param  body        : body of an email 
         :returns clean_email_body : cleaned body of an email
         """
-        
-        clean_email_body = helpers.fix_urls(body)
-        clean_email_body = clean_email_body.replace('\n', ' ')
-        # remove extra whitespaces
-        clean_email_body = ' '.join(clean_email_body.split())
 
+        # steps 1-4 done with helpers.pre_process_text function
+        clean_email_body = helpers.pre_process_text(body, 
+                                                    fix_url = True,
+                                                    remove_newline = True,
+                                                    decontract_words = True
+                                                    )
         # match the 4 regex patterns
         try:
             start_1 = start_2 = start_3 = start_4 = None
@@ -331,29 +342,17 @@ class EmailParser:
         fwd_match = re.search('^fwd:', subject.lower())
         if reply_match:
             reply_email = 1
-            fwd_email = 0
+            fwd_email   = 0
             first_email = 0
         elif fwd_match:
             reply_email = 0
-            fwd_email = 1
+            fwd_email   = 1
             first_email = 0
         else:
             reply_email = 0
-            fwd_email = 0
+            fwd_email   = 0
             first_email = 1
         return reply_email, fwd_email, first_email
-
-
-    @staticmethod
-    def convert_to_utc(date):
-        """
-        Converts date to UTC
-        
-        :type date : String in utc format
-        """
-        date = datetime.strptime(date, '%a, %d %b %Y %H:%M:%S %z')
-        date = date.replace(tzinfo=pytz.UTC)- date.utcoffset()
-        return date
 
 
     ##TODO improve code quality of create_conversations() method
@@ -365,8 +364,8 @@ class EmailParser:
 
         Step 0 : Distinguish reply emails
         Step 1 : lower subject
-        Step 2 : remove regex_metacharactrs
-        Step 3 : On the reply emails exist get the subject (withouth Re:)
+        Step 2 : remove regex_metacharacters
+        Step 3 : On the reply emails exist get the subject (without Re:)
                 hash it and create conversation_id
         Step 4 : return conversation_dict
         
@@ -397,16 +396,276 @@ class MultipleSendersError(Exception):
     pass
 
 
+## Rucio Docs
+class RucioDoc():
+    """Rucio Documentation object"""
+
+    def __init__(self, doc_id, name, url, body, doc_type):
+        self.doc_id   = int(doc_id)
+        self.name     = name 
+        self.url      = url
+        self.body     = body
+        self.doc_type = doc_type 
+
+
+class RucioDocsParser(IParser):
+
+    def __init__(self):
+        self.type = 'Rucio Documentation Parser'
+
+    def parse(self, doc_id, name, url, body, doc_type, db=Database, docs_table_name='docs'):
+        """
+        Parses a single Rucio documentation file.
+
+        <!> Note: For now we only check for the length of the file to decide if we are intrested in it.
+        Once evaluation on the performance of the bot is done, additional prcessing and information
+        extraction methods will be applied on the documentation as well as the rest of our input data
+
+        :param [doc_id,...,doc_type]  : all the raw documentation attributes
+        :param db                     : <bot Database object> to where we store the parsed docs
+        :param docs_table_name        : in case we need use a different table name (default 'docs')
+        :returns doc                  : an <RucioDoc object> created by the RucioDocsParser
+        """
+        
+        doc = RucioDoc(doc_id    = doc_id, 
+                       name      = name,
+                       url       = url,
+                       body      = body,
+                       doc_type  = doc_type)
+
+        # save documentation to db
+        if len(doc.body) < 50: 
+            return doc
+        else:
+            db.insert_doc(doc, table_name=docs_table_name)
+        return doc
+
+    def parse_dataframe(self, docs_df, db= Database, docs_table_name='docs', return_docs=False):
+        """
+        Parses the entire fetched documentation dataframe,
+        creates <RucioDoc objects> and saves them to db.
+        
+        Expects a <pandas DataFrame object> as input that holds the raw fetched docs.
+        For more information about the structure and content of docs_df look at the RucioDocsFetcher.
+
+        :param docs_df     : <pandas DataFrame object> containing all documentation data
+        :param db          : <bot Database object> to save the <RucioDoc objects>
+        :param return_docs : True/False on if we return a list of <RucioDoc objects> (default False)
+        :returns docs      : a list of <RucioDoc objects> created by the RucioDocsParser 
+        """
+
+        docs = []
+        print("Parsing Rucio Documentation...")
+        for i in tqdm(range(len(docs_df.index))):
+            doc = self.parse(doc_id            = docs_df.doc_id.values[i],
+                               name            = docs_df.name.values[i],
+                               url             = docs_df.url.values[i],
+                               body            = docs_df.body.values[i],
+                               doc_type        = docs_df.doc_type.values[i],
+                               db              = db,
+                               docs_table_name = docs_table_name)
+            if return_docs:
+                docs.append(doc)
+            else:
+                continue
+        return docs
+
+
+## Issues
+class Issue():
+    """A GitHub Issue"""
+
+    def __init__(self, issue_id, title, state, creator, created_at, comments, body, clean_body):
+        self.issue_id   = int(issue_id)
+        self.title      = title
+        self.state      = state
+        self.creator    = creator
+        self.created_at = created_at
+        self.comments   = int(comments)
+        self.body       = body
+        self.clean_body = clean_body
+
+
+class IssueParser(IParser):
+
+    def __init__(self):
+        self.type = 'Issue Parser'
+
+    def parse(self, issue_id, title, state, creator, created_at, comments, body, db = Database, issues_table_name='issues'):
+        """
+        Parses a single issue
+        
+        <!> Note  : The parse() method is only expected to be used after an an issues table
+        has been created in the db. To create said table use the Database object's 
+        .create_issues_table() method before attempting to parse.
+        
+        :param [issue_id,...,body]  : all the raw issue attributes
+        :param db                 : <bot Database object> to where we store the parsed issues
+        :param issues_table_name  : in case we need use a different table name (default 'issues')
+        :returns issue            : an <Issue object> created by the IssueParser
+        """
+
+        # The date format returned from the GitHub API is in the ISO 8601 format: "%Y-%m-%dT%H:%M:%SZ" 
+        issue_created_at  = helpers.convert_to_utc(created_at, '%Y-%m-%dT%H:%M:%SZ') 
+        # lower/decontract/fix_urls/clean ISSUE_TEMPLATE patterns
+        # if additional textprocessing is needed we can always change it here
+        issue_clean_body = helpers.pre_process_text(self.clean_issue_body(body),
+                                                    fix_url=True,
+                                                    decontract_words=True)
+        issue = Issue(issue_id    = issue_id, 
+                      title       = title, 
+                      state       = state, 
+                      creator     = creator,
+                      created_at  = issue_created_at,
+                      comments    = comments,
+                      body        = body, 
+                      clean_body  = issue_clean_body)
+
+        # insert the issue to the db
+        if issue.comments > 0: # if no comments in issue then there won't be any comments. No need to save it
+            db.insert_issue(issue, table_name=issues_table_name)
+        return issue
+
+
+    def parse_dataframe(self, issues_df=pd.DataFrame, db=Database, issues_table_name='issues', return_issues=False):
+        """
+        Parses the entire fetched issues dataframe, creates <Issue objects> and saves them to db.
+        
+        Expects a <pandas DataFrame object> as input that holds the raw fetched issues.
+        For more information about the structure and content of issues_df look at the IssueFetcher.
+
+        :param issues_df     : <pandas DataFrame object> containing all issues
+        :param db            : <bot Database object> to save the <Issue objects>
+        :param return_issues : True/False on if we return a list of <Issue objects> (default False)
+        :returns issues      : a list of <Issue objects> created by the IssueParser 
+        """
+
+        issues = []
+        print("Parsing issues...")
+        for i in tqdm(range(len(issues_df.index))):
+            issue = self.parse(issue_id          = issues_df.issue_id.values[i],
+                               title             = issues_df.title.values[i],
+                               state             = issues_df.state.values[i],
+                               creator           = issues_df.creator.values[i],
+                               created_at        = issues_df.created_at.values[i], 
+                               comments          = issues_df.comments.values[i], 
+                               body              = issues_df.body.values[i], 
+                               db                = db,
+                               issues_table_name = issues_table_name)
+            if return_issues:
+                issues.append(issue)
+            else:
+                continue
+        return issues
+
+
+    @staticmethod
+    def clean_issue_body(body):
+        """ 
+        Cleans up the body of an issue from 
+        ISSUE_TEMPLATE patterns in Rucio.
+
+        :returns clean_body : cleaned issue body
+        """
+
+        clean_body = body.strip('/n/r')\
+                    .replace('Motivation\r', '')\
+                    .replace('Modification\r', '')\
+                    .replace('Expected behavior\r', '')\
+                    .replace('\n', ' ')\
+                    .replace('\r', ' ')\
+                    .replace('-', ' ')\
+                    .strip()  
+        clean_body = re.sub(' +', ' ', clean_body).strip(' ')
+        return clean_body
+
+
+## Issue Comments
+class IssueComment():
+    """A GitHub Issue comment"""
+
+    def __init__(self, issue_id, comment_id, creator, created_at, body, clean_body):
+        self.issue_id   = int(issue_id)
+        self.comment_id = int(comment_id)
+        self.creator    = creator
+        self.created_at = created_at
+        self.body       = body
+        self.clean_body = clean_body
+
+class IssueCommentParser(IParser):
+
+    def __init__(self):
+        self.type = 'Issue Comment Parser'
+
+    def parse(self, issue_id, comment_id, creator, created_at, body, db=Database, issue_comments_table='issue_comments'):
+        """
+        Parses a single issue comment
+        
+        <!> Note  : The parse() method is only expected to be used after an an issue comments table
+        has been created in the db. To create said table use the Database object's 
+        .create_issue_comments_table() method before attempting to parse.
+        
+        :param [issue_id,...,body]   : all the raw issue comment's attributes
+        :param db                    : <bot Database object> to where we store the parsed issue comments
+        :param issue_comments_table  : in case we need use a different table name (default 'issue_comments')
+        :returns issue_comment       : an <IssueComment object> created by the IssueCommentParser
+        """
+
+        # The date format returned from the GitHub API is in the ISO 8601 format: "%Y-%m-%dT%H:%M:%SZ" 
+        issue_comment_created_at  = helpers.convert_to_utc(created_at, '%Y-%m-%dT%H:%M:%SZ') 
+        # lower/decontract/fix_urls/remove_newline
+        # if additional textprocessing is needed we can always change it here
+        issue_comment_clean_body = helpers.pre_process_text(body,
+                                                            fix_url=True,
+                                                            remove_newline=True,
+                                                            decontract_words=True)
+        issue_comment = IssueComment(issue_id   = issue_id, 
+                                     comment_id = comment_id, 
+                                     creator    = creator, 
+                                     created_at = issue_comment_created_at,
+                                     body       = body,
+                                     clean_body = issue_comment_clean_body)
+
+        # insert the issue comment to the db
+        db.insert_issue_comment(issue_comment, table_name=issue_comments_table)
+        return issue_comment
+
+
+    def parse_dataframe(self, comments_df=pd.DataFrame, db=Database, issue_comments_table='issue_comments', return_comments=False):
+        """
+        Parses the entire fetched issue comments dataframe, creates <IssueComment objects> and saves them to db.
+        
+        Expects a <pandas DataFrame object> as input that hold the raw fetched issues.
+        For more information about the structure and content of comments_df look at the IssueFetcher.
+
+        :param comments_df       : <pandas DataFrame object> containing all issue comments
+        :param db                : <bot Database object> to save the <IssueComment objects>
+        :param return_comments   : True/False on if we return a list of <IssueComment objects> (default False)
+        :returns issue_comments  : a list of <IssueComment objects> created by the IssueCommentParser 
+        """
+
+        issue_comments = []
+        print("Parsing issue comments...")
+        for i in tqdm(range(len(comments_df.index))):
+            issue_comment = self.parse(issue_id             = comments_df.issue_id.values[i],
+                                       comment_id           = comments_df.comment_id.values[i],
+                                       creator              = comments_df.creator.values[i],
+                                       created_at           = comments_df.created_at.values[i],
+                                       body                 = comments_df.body.values[i],
+                                       db                   = db,
+                                       issue_comments_table = issue_comments_table)
+            if return_comments:
+                issue_comments.append(issue_comment)
+            else:
+                continue
+        return issue_comments
+
+
+
+
+
+
 ################################################################################ 
 
 if __name__ == '__main__': 
-    # whole script to parse the raw emails dataframe
-    # print("Let's create an EmailParser")
-    # parser = ParserFactory.get_parser('Email')
-    # raw_emails_df = Database('raw_input_emails.db').get_dataframe('emails')
-    # data_storage = Database('data_storage.db', 'emails')
-    # # create the new table that will hold the parsed emails
-    # data_storage.create_emails_table()
-    # parser.parse_dataframe(raw_emails_df, db=data_storage)
-    # data_storage.close_connection()
     pass

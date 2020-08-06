@@ -347,8 +347,7 @@ class RucioDocsFetcher(IFetcher):
         self.headers = {'Content-Type': 'application/json', 'Authorization': f'token {self.api_token}'} 
         self._check_token()
         
-        docs_df = pd.DataFrame(columns=['doc_id','name','file_type',
-                                        'url','download_url','body', 'doc_type'])
+        docs_df = pd.DataFrame(columns=['doc_id','name','url','body', 'doc_type'])
 
         doc_id = 0
         print("Fetching...")
@@ -363,16 +362,13 @@ class RucioDocsFetcher(IFetcher):
                     # make sure the file is documentation only
                     continue
                 doc_name         = doc['name']
-                doc_file_type    = doc['type']
                 doc_url          = doc['html_url']
                 doc_download_url = doc['download_url']
                 doc_body         = requests.get(doc_download_url).content.decode("utf-8") 
                 docs_df = docs_df.append({
                     'doc_id' : doc_id,
                     'name': doc_name,
-                    'file_type': doc_file_type,
                     'url': doc_url,
-                    'download_url' : doc_download_url,
                     'body': doc_body,
                     'doc_type': 'general'
                     }, ignore_index=True)
@@ -406,7 +402,6 @@ class RucioDocsFetcher(IFetcher):
                             # make sure that we are looking at daemon documentation, by utilize daemon names gathered above
                             if man_doc['name'].split('.')[0] in daemons:
                                 doc_name         = man_doc['name']
-                                doc_file_type    = man_doc['type']
                                 doc_url          = man_doc['html_url']
                                 doc_download_url = man_doc['download_url']
                                 # In Rucio daemons the doc_body usually points to the docsting documentation 
@@ -416,9 +411,7 @@ class RucioDocsFetcher(IFetcher):
                                 docs_df = docs_df.append({
                                             'doc_id' : doc_id,
                                             'name': doc_name,
-                                            'file_type': doc_file_type,
                                             'url': doc_url,
-                                            'download_url' : doc_download_url,
                                             'body': final_doc_body,
                                             'doc_type': 'daemon'
                                             }, ignore_index=True)
@@ -437,16 +430,13 @@ class RucioDocsFetcher(IFetcher):
                             continue
                         else:
                             doc_name         = release_note['name']
-                            doc_file_type    = release_note['type']
                             doc_url          = release_note['html_url']
                             doc_download_url = release_note['download_url']
                             doc_body         = requests.get(doc_download_url).content.decode("utf-8") 
                             docs_df = docs_df.append({
                                         'doc_id' : doc_id,
                                         'name': doc_name,
-                                        'file_type': doc_file_type,
                                         'url': doc_url,
-                                        'download_url' : doc_download_url,
                                         'body': doc_body,
                                         'doc_type': 'release_notes'
                                         }, ignore_index=True)
