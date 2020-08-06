@@ -3,7 +3,7 @@
 # The output is the raw form of the data that is used as input for the bot
 
 # bot modules
-import bot.helpers as helpers
+import bot.utils as utils
 import bot.config as config
 from bot.database import Database
 # general python
@@ -71,7 +71,7 @@ class IssueFetcher(IFetcher):
         """Check that the GitHub repository is correct"""
         try:
             # if the request is correct then no message is returned and we have a TypeError
-            if helpers.request(self.issues_url, self.headers)['message'] == 'Not Found':
+            if utils.request(self.issues_url, self.headers)['message'] == 'Not Found':
                 raise InvalidRepoError(f"\nError: The repository is not in the correct format. Please use the format 'user/repo' eg. 'rucio/rucio'.")
         except InvalidRepoError as _e: 
             sys.exit(_e)
@@ -84,7 +84,7 @@ class IssueFetcher(IFetcher):
         """Check if the GitHub token is correct"""
         try:
             # if the request is correct then no message is returned and we have a TypeError
-            if helpers.request(self.issues_url, self.headers)['message'] == 'Bad credentials':
+            if utils.request(self.issues_url, self.headers)['message'] == 'Bad credentials':
                 raise InvalidTokenError(f"\nError: Bad credentials. The OAUTH token {self.api_token} is not correct.")
         except InvalidTokenError as _e: 
             sys.exit(_e)
@@ -141,7 +141,7 @@ class IssueFetcher(IFetcher):
         pages = range(1, self.max_pages) 
         print('Fetching...')
         for page in tqdm(pages):
-            for issue in helpers.request(self.issues_url + f'&page={page}', self.headers):
+            for issue in utils.request(self.issues_url + f'&page={page}', self.headers):
                 if type(issue) == str:
                     # if the api_token is not correct, we are going to get an error on every issue
                     print(f"Error: Problem fetching issue {issue} moving on to the next...")
@@ -154,7 +154,7 @@ class IssueFetcher(IFetcher):
                 issue_number   = issue['number']
                 issue_comments = issue['comments'] 
                 if issue_comments != 0:
-                    for comment in helpers.request(issue['comments_url'], self.headers):
+                    for comment in utils.request(issue['comments_url'], self.headers):
                         if type(comment) == dict:
                             comment_id         = comment['id']
                             comment_creator    = comment['user']['login']
@@ -277,7 +277,7 @@ class RucioDocsFetcher(IFetcher):
         """Check if the GitHub token is correct"""
         try:
             # if the request is correct then no message is returned and we have a TypeError
-            if helpers.request(self.docs_url, self.headers)['message'] == 'Bad credentials':
+            if utils.request(self.docs_url, self.headers)['message'] == 'Bad credentials':
                 raise InvalidTokenError(f"\nError: Bad credentials. The OAUTH token {self.api_token} is not correct.")
         except InvalidTokenError as _e: 
             sys.exit(_e)
@@ -351,7 +351,7 @@ class RucioDocsFetcher(IFetcher):
 
         doc_id = 0
         print("Fetching...")
-        for doc in tqdm(helpers.request(self.docs_url, self.headers)):
+        for doc in tqdm(utils.request(self.docs_url, self.headers)):
             if type(doc) == str:
                 # if the api_token is not correct, we are going to get an error on every issue
                 print(f"Error: Problem fetching the doc {doc} moving on to the next...")
@@ -391,7 +391,7 @@ class RucioDocsFetcher(IFetcher):
                         daemons = re.findall('rucio-.*$', daemon_body, re.MULTILINE)
                     except:
                         raise AssertionError('There is a problem with the daemons_url. Double check if it has changed')
-                    for man_doc in helpers.request(man_url, self.headers):
+                    for man_doc in utils.request(man_url, self.headers):
                         if type(man_doc) == str:
                             print(f"Error : There was a problem fetching the file : {man_doc}")
                             continue
@@ -421,7 +421,7 @@ class RucioDocsFetcher(IFetcher):
                 elif doc['name'] == 'releasenotes':
                     print("\nFetching the release notes...")
                     release_notes_url = doc['url']
-                    for release_note in helpers.request(release_notes_url, self.headers):
+                    for release_note in utils.request(release_notes_url, self.headers):
                         if type(release_note) == str:
                             print(f"Error: Problem fetching the release note {release_note}")
                             continue

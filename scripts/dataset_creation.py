@@ -32,7 +32,7 @@ The dataset creation. More specifically this script is responsible for
 '''
 # bot modules
 import bot.config as config
-import bot.helpers as helpers
+import bot.utils as utils
 import bot.analyzer as analyzer
 from bot.database import Database
 from bot.eparser import EmailParser
@@ -62,7 +62,7 @@ def create_conversation_dict(raw_df):
     # find out which emails are replies
     emails_df['reply_email'] = emails_df.subject.apply(lambda x: x.lower()).str.contains("^re:", na=False)
     conversation_dict = {}
-    emails_df['subject'] = emails_df['subject'].apply(lambda x: helpers.remove_chars(x.lower(), config.REGEX_METACHARACTERS))
+    emails_df['subject'] = emails_df['subject'].apply(lambda x: utils.remove_chars(x.lower(), config.REGEX_METACHARACTERS))
     reply_emails = emails_df[emails_df['reply_email'] == True]
     for i, re_subject in enumerate(reply_emails.subject):
         subject = re.sub('^(re:)', '', re_subject).lstrip()
@@ -203,7 +203,7 @@ def main():
     # I make sure the same preprocessing is done inside EmailParser when trying to 
     # match conversations based on the subject
     conversation_dict = create_conversation_dict(raw_df)
-    helpers.save_dict('conversation_dict', conversation_dict)
+    utils.save_dict('conversation_dict', conversation_dict)
     
     # Step 3 is to create the new dataset.db which hold the parsed emails from EmailParser
     parse_emails(raw_df, output_file)

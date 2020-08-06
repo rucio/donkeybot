@@ -1,7 +1,7 @@
 # bot modules
 from bot.database import Database
 import bot.config as config
-import bot.helpers as helpers
+import bot.utils as utils
 # general python
 from abc import ABCMeta, abstractmethod
 import pandas as pd
@@ -123,7 +123,7 @@ class EmailParser(IParser):
         email_subject           = subject
         email_body              = body
         # '%a, %d %b %Y %H:%M:%S %z' is the date format we find in Rucio Emails
-        email_date              = helpers.convert_to_utc(date, '%a, %d %b %Y %H:%M:%S %z') 
+        email_date              = utils.convert_to_utc(date, '%a, %d %b %Y %H:%M:%S %z') 
         (email_reply_ind, email_fwd_ind, email_first_ind) = self.find_category(subject)
         email_clean_body        = self.clean_body(body)
         email_clean_subject     = self.clean_subject(subject)
@@ -197,7 +197,7 @@ class EmailParser(IParser):
         :returns clean_email_subject : cleaned email subject
         """ 
         
-        clean_email_subject = helpers.remove_chars(subject.lower(), config.REGEX_METACHARACTERS).lstrip()
+        clean_email_subject = utils.remove_chars(subject.lower(), config.REGEX_METACHARACTERS).lstrip()
         clean_email_subject = re.sub('^(fwd:)', '', clean_email_subject).lstrip()
         clean_email_subject = re.sub('^(re:)', '', clean_email_subject).lstrip()
         return clean_email_subject
@@ -228,7 +228,7 @@ class EmailParser(IParser):
         elif email_reply_ind:
             conversation_id = 'cid_'+hashlib.md5(str(clean_email_subject).encode('utf-8')).hexdigest()[:6]
             config.CONVERSATION_DICT[clean_email_subject] = conversation_id
-            helpers.save_dict('conversation_dict', config.CONVERSATION_DICT)   
+            utils.save_dict('conversation_dict', config.CONVERSATION_DICT)   
         # conversation doesn't exist
         else:
             conversation_id = None
@@ -265,8 +265,8 @@ class EmailParser(IParser):
         :returns clean_email_body : cleaned body of an email
         """
 
-        # steps 1-4 done with helpers.pre_process_text function
-        clean_email_body = helpers.pre_process_text(body, 
+        # steps 1-4 done with utils.pre_process_text function
+        clean_email_body = utils.pre_process_text(body, 
                                                     fix_url = True,
                                                     remove_newline = True,
                                                     decontract_words = True
@@ -315,7 +315,7 @@ class EmailParser(IParser):
         :returns clean_email_subject : cleaned email subject
         """ 
         
-        clean_email_subject = helpers.remove_chars(subject.lower(), config.REGEX_METACHARACTERS).lstrip()
+        clean_email_subject = utils.remove_chars(subject.lower(), config.REGEX_METACHARACTERS).lstrip()
         clean_email_subject = re.sub('^(fwd:)', '', clean_email_subject).lstrip()
         clean_email_subject = re.sub('^(re:)', '', clean_email_subject).lstrip()
         return clean_email_subject
@@ -379,7 +379,7 @@ class EmailParser(IParser):
         # find out which emails are replies
         emails_df['reply_email'] = emails_df.subject.apply(lambda x: x.lower()).str.contains("^re:", na=False)
         conversation_dict = {}
-        emails_df['subject'] = emails_df['subject'].apply(lambda x: helpers.remove_chars(x.lower(), config.REGEX_METACHARACTERS))
+        emails_df['subject'] = emails_df['subject'].apply(lambda x: utils.remove_chars(x.lower(), config.REGEX_METACHARACTERS))
         reply_emails = emails_df[emails_df['reply_email'] == True]
         for i, re_subject in enumerate(reply_emails.subject):
             subject = re.sub('^(re:)', '', re_subject).lstrip()
@@ -387,7 +387,7 @@ class EmailParser(IParser):
             conversation_dict[subject] = conversation_id
         
         # save the conversation_dict created
-        helpers.save_dict('conversation_dict', conversation_dict)
+        utils.save_dict('conversation_dict', conversation_dict)
         return conversation_dict
 
 
@@ -506,10 +506,10 @@ class IssueParser(IParser):
         """
 
         # The date format returned from the GitHub API is in the ISO 8601 format: "%Y-%m-%dT%H:%M:%SZ" 
-        issue_created_at  = helpers.convert_to_utc(created_at, '%Y-%m-%dT%H:%M:%SZ') 
+        issue_created_at  = utils.convert_to_utc(created_at, '%Y-%m-%dT%H:%M:%SZ') 
         # lower/decontract/fix_urls/clean ISSUE_TEMPLATE patterns
         # if additional textprocessing is needed we can always change it here
-        issue_clean_body = helpers.pre_process_text(self.clean_issue_body(body),
+        issue_clean_body = utils.pre_process_text(self.clean_issue_body(body),
                                                     fix_url=True,
                                                     decontract_words=True)
         issue = Issue(issue_id    = issue_id, 
@@ -612,10 +612,10 @@ class IssueCommentParser(IParser):
         """
 
         # The date format returned from the GitHub API is in the ISO 8601 format: "%Y-%m-%dT%H:%M:%SZ" 
-        issue_comment_created_at  = helpers.convert_to_utc(created_at, '%Y-%m-%dT%H:%M:%SZ') 
+        issue_comment_created_at  = utils.convert_to_utc(created_at, '%Y-%m-%dT%H:%M:%SZ') 
         # lower/decontract/fix_urls/remove_newline
         # if additional textprocessing is needed we can always change it here
-        issue_comment_clean_body = helpers.pre_process_text(body,
+        issue_comment_clean_body = utils.pre_process_text(body,
                                                             fix_url=True,
                                                             remove_newline=True,
                                                             decontract_words=True)

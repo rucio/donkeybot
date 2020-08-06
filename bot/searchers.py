@@ -1,5 +1,5 @@
 # bot modules
-import bot.helpers as helpers
+import bot.utils as utils
 from bot.database import Database
 # general python
 from abc import ABCMeta, abstractmethod
@@ -71,7 +71,7 @@ class QuestionSearchEngine(ISearchEngine):
         """
         try:
             if hasattr(self, 'index'):
-                search_terms = helpers.preprocess(question)
+                search_terms = utils.preprocess(question)
                 doc_scores = self.bm25.get_scores(search_terms)  
                 # sort results
                 ind = np.argsort(doc_scores)[::-1][:top_n]  
@@ -103,7 +103,7 @@ class QuestionSearchEngine(ISearchEngine):
         documents = (
             self.corpus.question.fillna("")
         )
-        self.index = documents.apply(helpers.preprocess).to_frame()
+        self.index = documents.apply(utils.preprocess).to_frame()
         self.index.columns = ["terms"]
         # on the QuestionSearchEngine the question_id is the indexe's index
         self.index.index = self.corpus.question_id

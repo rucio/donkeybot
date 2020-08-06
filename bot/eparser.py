@@ -1,7 +1,7 @@
 # bot modules
 from bot.database import Database
 import bot.config as config
-import bot.helpers as helpers
+import bot.utils as utils
 # general python
 import hashlib
 import re
@@ -88,7 +88,7 @@ class EmailParser:
         :type clean_body : String
         """
         
-        self.clean_body = helpers.fix_urls(self.body)
+        self.clean_body = utils.fix_urls(self.body)
         self.clean_body = self.clean_body.replace('\n', ' ')
         # clean extra whitespaces
         self.clean_body = ' '.join(self.clean_body.split())
@@ -137,7 +137,7 @@ class EmailParser:
         :type clean_subject : String
         """ 
         
-        self.clean_subject = helpers.remove_chars(self.subject.lower(), config.REGEX_METACHARACTERS).lstrip()
+        self.clean_subject = utils.remove_chars(self.subject.lower(), config.REGEX_METACHARACTERS).lstrip()
         self.clean_subject = re.sub('^(fwd:)', '', self.clean_subject).lstrip()
         self.clean_subject = re.sub('^(re:)', '', self.clean_subject).lstrip()
 
@@ -162,7 +162,7 @@ class EmailParser:
             # if it's a reply email append the new conversation
             self.conversation_id = 'cid_'+hashlib.md5(str(self.clean_subject).encode('utf-8')).hexdigest()[:6]
             config.CONVERSATION_DICT[self.clean_subject] = self.conversation_id
-            helpers.save_dict('conversation_dict', config.CONVERSATION_DICT)   
+            utils.save_dict('conversation_dict', config.CONVERSATION_DICT)   
             # print(f"CONVERSATION CREATED {self.conversation_id} FOR {self.subject}")
         else:
             self.conversation_id = None
