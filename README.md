@@ -20,7 +20,13 @@ $ cd bot-nlp
 $ git remote add upstream https://github.com/rucio/bot-nlp.git
 ```
 
-
+# Requirements
+* [Python 3 ](https://www.python.org/downloads/windows/), 64bit required for correct installation of PyTorch on Windows.
+* To install PyTorch head over to https://pytorch.org/ and follow the quick start guide for your operating system.
+* Run the following command on the terminal:
+    ``` bash
+    $ pip install -r requirements.txt
+    ``` 
 # Bot in developer mode
 
 **Step 1:** Creating a virtual enviroment.

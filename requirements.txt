@@ -1,17 +1,30 @@
 # All dependencies needed to run rucio should be defined here
 
+certifi==2020.6.20
+chardet==3.0.4
 click==7.1.2
+filelock==3.0.12
+future==0.18.2
+idna==2.10
 joblib==0.15.1
 nltk==3.5
 numpy==1.19.0
+packaging==20.4
 pandas==1.0.5
+Pillow==7.2.0
+pyparsing==2.4.7
 python-dateutil==2.8.1
 pytz==2020.1
+PyYAML==5.3.1
 rank-bm25==0.2.1
 regex==2020.6.8
-six==1.15.0
-tqdm==4.47.0
 requests==2.24.0
-idna==2.10
-urllib3==1.25.9certifi==2020.6.20
-chardet==3.0.4
+sacremoses==0.0.43
+sentencepiece==0.1.91
+six==1.15.0
+tokenizers==0.8.1rc1
+torch==1.6.0
+torchvision==0.7.0
+tqdm==4.47.0
+transformers==3.0.2
+urllib3==1.25.9

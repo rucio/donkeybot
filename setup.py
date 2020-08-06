@@ -15,7 +15,9 @@ setup(
           'numpy',
           'nltk',
           'rank_bm25',
-          'requests'
+          'requests',
+          'transformers'
+        # for torch you need to download based on https://pytorch.org/ quickstart guide
       ],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
