@@ -8,7 +8,6 @@ from tqdm import tqdm
 ## Rucio Docs
 class RucioDoc():
     """Rucio Documentation object"""
-
     def __init__(self, doc_id, name, url, body, doc_type):
         self.doc_id   = int(doc_id)
         self.name     = name 
@@ -18,7 +17,6 @@ class RucioDoc():
 
 
 class RucioDocsParser(IParser):
-
     def __init__(self):
         self.type = 'Rucio Documentation Parser'
 
@@ -35,7 +33,6 @@ class RucioDocsParser(IParser):
         :param docs_table_name        : in case we need use a different table name (default 'docs')
         :returns doc                  : an <RucioDoc object> created by the RucioDocsParser
         """
-        
         doc = RucioDoc(doc_id    = doc_id, 
                        name      = name,
                        url       = url,
@@ -62,7 +59,6 @@ class RucioDocsParser(IParser):
         :param return_docs : True/False on if we return a list of <RucioDoc objects> (default False)
         :returns docs      : a list of <RucioDoc objects> created by the RucioDocsParser 
         """
-
         docs = []
         print("Parsing Rucio Documentation...")
         for i in tqdm(range(len(docs_df.index))):

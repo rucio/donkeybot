@@ -1,21 +1,14 @@
 # bot modules
 import bot.utils as utils
-import bot.config as config
 from bot.database.sqlite import Database
 from bot.parser.interface import IParser
-
 # general python
 import pandas as pd
-import hashlib
-import re
-import sys
 from tqdm import tqdm
-
 
 ## Issue Comments
 class IssueComment():
     """A GitHub Issue comment"""
-
     def __init__(self, issue_id, comment_id, creator, created_at, body, clean_body):
         self.issue_id   = int(issue_id)
         self.comment_id = int(comment_id)
@@ -25,7 +18,6 @@ class IssueComment():
         self.clean_body = clean_body
 
 class IssueCommentParser(IParser):
-
     def __init__(self):
         self.type = 'Issue Comment Parser'
 
@@ -42,7 +34,6 @@ class IssueCommentParser(IParser):
         :param issue_comments_table  : in case we need use a different table name (default 'issue_comments')
         :returns issue_comment       : an <IssueComment object> created by the IssueCommentParser
         """
-
         # The date format returned from the GitHub API is in the ISO 8601 format: "%Y-%m-%dT%H:%M:%SZ" 
         issue_comment_created_at  = utils.convert_to_utc(created_at, '%Y-%m-%dT%H:%M:%SZ') 
         # lower/decontract/fix_urls/remove_newline
@@ -62,7 +53,6 @@ class IssueCommentParser(IParser):
         db.insert_issue_comment(issue_comment, table_name=issue_comments_table)
         return issue_comment
 
-
     def parse_dataframe(self, comments_df=pd.DataFrame, db=Database, issue_comments_table='issue_comments', return_comments=False):
         """
         Parses the entire fetched issue comments dataframe, creates <IssueComment objects> and saves them to db.
@@ -75,7 +65,6 @@ class IssueCommentParser(IParser):
         :param return_comments   : True/False on if we return a list of <IssueComment objects> (default False)
         :returns issue_comments  : a list of <IssueComment objects> created by the IssueCommentParser 
         """
-
         issue_comments = []
         print("Parsing issue comments...")
         for i in tqdm(range(len(comments_df.index))):

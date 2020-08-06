@@ -59,7 +59,6 @@ class IssueParser(IParser):
             db.insert_issue(issue, table_name=issues_table_name)
         return issue
 
-
     def parse_dataframe(self, issues_df=pd.DataFrame, db=Database, issues_table_name='issues', return_issues=False):
         """
         Parses the entire fetched issues dataframe, creates <Issue objects> and saves them to db.
@@ -90,7 +89,6 @@ class IssueParser(IParser):
             else:
                 continue
         return issues
-
 
     @staticmethod
     def clean_issue_body(body):

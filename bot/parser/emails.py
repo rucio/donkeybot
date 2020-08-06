@@ -11,7 +11,6 @@ import sys
 from tqdm import tqdm
 
 class Email:
-
     def __init__(self, email_id, sender, receiver, subject, body,\
         email_date, first_email, reply_email, fwd_email, clean_body, conversation_id ):
         # email data
@@ -28,11 +27,9 @@ class Email:
         self.conversation_id = conversation_id
         # checks         
         self._check_sender()
-        
 
     def __str__(self): 
         return f'subject ="{self.subject}"; email_id ="{self.id}"; conversation ="{self.conversation_id}"'
-    
 
     def _check_sender(self):
         """Keeps the single email sender or raises an error if multiple exist"""
@@ -47,9 +44,7 @@ class Email:
             sys.exit(_e)
 
 
-
 class EmailParser(IParser):
-
     def __init__(self):
         self.type = 'Email Parser'
 
@@ -103,7 +98,6 @@ class EmailParser(IParser):
         db.insert_email(email, table_name=emails_table_name)
         return email
     
-
     def parse_dataframe(self, emails_df=pd.DataFrame, db=Database, emails_table_name='emails', return_emails=False):
         """
         Parses the entire fetched emails dataframe, creates <Email objects> and saves them to db.
@@ -119,7 +113,6 @@ class EmailParser(IParser):
         :param return_emails : True/False on if we return a list of <Email objects> (default False)
         :returns emails      : a list of <Email objects> created by the EmailParser 
         """
-
         # step 1 is creating the conversation dictionary based on all the emails
         self.create_conversations(emails_df)
         print("Parsing emails...")
@@ -137,9 +130,7 @@ class EmailParser(IParser):
                 emails.append(email)
             else:
                 continue
-        return emails
-
-    
+        return emails    
 
     @staticmethod
     def clean_subject(subject):
@@ -158,7 +149,6 @@ class EmailParser(IParser):
         clean_email_subject = re.sub('^(re:)', '', clean_email_subject).lstrip()
         return clean_email_subject
 
-
     def find_conversation(self, subject):
         """
         Finds the corresponding conversation_id based on the email's subject.
@@ -173,7 +163,6 @@ class EmailParser(IParser):
         :format conversation_id  : "cid_<md5hash>" or None
         :returns conversation_id : the conversation_id for the email's subject
         """      
-
         clean_email_subject = self.clean_subject(subject)
         # we need to know if its a reply email
         (email_reply_ind, email_fwd_ind, email_first_ind) = self.find_category(subject)
@@ -189,7 +178,6 @@ class EmailParser(IParser):
         else:
             conversation_id = None
         return conversation_id
-
 
     @staticmethod
     def clean_body(body):
@@ -220,7 +208,6 @@ class EmailParser(IParser):
         :param  body        : body of an email 
         :returns clean_email_body : cleaned body of an email
         """
-
         # steps 1-4 done with utils.pre_process_text function
         clean_email_body = utils.pre_process_text(body, 
                                                     fix_url = True,
@@ -257,8 +244,6 @@ class EmailParser(IParser):
         except _e:
             print(_e)
 
-
-
     @staticmethod
     def clean_subject(subject):
         """
@@ -276,8 +261,6 @@ class EmailParser(IParser):
         clean_email_subject = re.sub('^(re:)', '', clean_email_subject).lstrip()
         return clean_email_subject
 
-
-
     @staticmethod
     def find_category(subject):
         """
@@ -293,7 +276,6 @@ class EmailParser(IParser):
         : type fwd_email    : 0 / 1 INT
         : returns           : reply_email, fwd_email, first_email
         """
-        
         reply_match = re.search('^re:', subject.lower())
         fwd_match = re.search('^fwd:', subject.lower())
         if reply_match:
@@ -309,7 +291,6 @@ class EmailParser(IParser):
             fwd_email   = 0
             first_email = 1
         return reply_email, fwd_email, first_email
-
 
     ##TODO improve code quality of create_conversations() method
     @staticmethod
@@ -345,7 +326,7 @@ class EmailParser(IParser):
         # save the conversation_dict created
         utils.save_dict('conversation_dict', conversation_dict)
         return conversation_dict
-
+        
 
 class MultipleSendersError(Exception):
     """Raised when there are more than one senders in an email"""
