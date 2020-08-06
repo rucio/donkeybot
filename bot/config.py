@@ -5,25 +5,20 @@ import re
 import nltk
 from nltk.corpus import stopwords
 
-
 # stopwords
 ENGLISH_STOPWORDS = list(set(stopwords.words("english")))
 # we could get better results if we remove and append custom stopwords
 # for example the word 'down' is considered a stopwords but what if a user asks
 # why is this site down? Then we'll only have 'site', not ['site','down']
-# so I should work on that
 # CUSTOM_STOPWORDS = ...
-
 
 # for absolute paths 
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = BOT_DIR + '\..\data\\'
 
 # REGEX PATTERNS
-
 # removed for conversation creation when searching same subjects
 REGEX_METACHARACTERS = '^$.|?*+(){}[]'
-
 # reply emails quoting past emails (EmailParser)
 ON_HDR_REGEX = re.compile(r'On (.*?)wrote: ', re.IGNORECASE)
 QUOTED_REGEX = re.compile(r'(>>+|> >+)')
