@@ -5,7 +5,7 @@
 # bot modules
 import bot.utils as utils
 import bot.config as config
-from bot.database import Database
+from bot.database.sqlite import Database
 # general python
 from abc import ABCMeta, abstractmethod
 import string
@@ -198,7 +198,7 @@ class IssueFetcher(IFetcher):
         """
         Save the data in a .db file utilizing our sqlite wrapper
 
-        : param db            : bot.database Database object 
+        : param db            : bot.database.sqlite Database object 
         : issues_table_name   : name of the table where we'll store the issues
         : comments_table_name : name of the table where we'll store the comments
         """
@@ -214,7 +214,7 @@ class IssueFetcher(IFetcher):
         """
         Load the data from the .db file.
 
-        : param  db                  : bot.database Database object 
+        : param  db                  : bot.database.sqlite Database object 
         : param  issues_table_name   : name of the table where we'll store the issues
         : param  comments_table_name : name of the table where we'll store the comments
         : return issues              : DataFrame holding the issues data
@@ -459,7 +459,7 @@ class RucioDocsFetcher(IFetcher):
         """
         Save the data in a .db file utilizing our sqlite wrapper
 
-        : param db                 : bot.database Database object 
+        : param db                 : bot.database.sqlite Database object 
         : param  docs_table_name   : name of the table where we'll store the docs
         """
         if hasattr(self, 'docs'):
@@ -473,7 +473,7 @@ class RucioDocsFetcher(IFetcher):
         """
         Load the data from the .db file.
 
-        : param  db                  : bot.database Database object 
+        : param  db                  : bot.database.sqlite Database object 
         : param  docs_table_name     : name of the table where we'll store the docs
         : return docs                : DataFrame holding the documentation data
         """

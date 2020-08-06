@@ -34,7 +34,7 @@ The dataset creation. More specifically this script is responsible for
 import bot.config as config
 import bot.utils as utils
 import bot.analyzer as analyzer
-from bot.database import Database
+from bot.database.sqlite import Database
 from bot.eparser import EmailParser
 # general python
 import pickle

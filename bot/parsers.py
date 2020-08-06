@@ -1,5 +1,5 @@
 # bot modules
-from bot.database import Database
+from bot.database.sqlite import Database
 import bot.config as config
 import bot.utils as utils
 # general python

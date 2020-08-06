@@ -1,6 +1,6 @@
 # bot modules
 from bot.parsers import ParserFactory
-from bot.database import Database
+from bot.database.sqlite import Database
 
 # general python
 import pandas as pd
