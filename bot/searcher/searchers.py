@@ -1,6 +1,6 @@
 # bot modules
-import bot.helpers as helpers
-from bot.database import Database
+import bot.utils as utils
+from bot.database.sqlite import Database
 # general python
 from abc import ABCMeta, abstractmethod
 import pandas as pd 
@@ -71,7 +71,7 @@ class QuestionSearchEngine(ISearchEngine):
         """
         try:
             if hasattr(self, 'index'):
-                search_terms = helpers.preprocess(question)
+                search_terms = utils.preprocess(question)
                 doc_scores = self.bm25.get_scores(search_terms)  
                 # sort results
                 ind = np.argsort(doc_scores)[::-1][:top_n]  
@@ -95,7 +95,7 @@ class QuestionSearchEngine(ISearchEngine):
         Takes a pandas DataFrame as input and create the SearchEngine's index.
 
         : param corpus           : pandas DataFrame object 
-        : param db               : <bot.database Database object> where the index will be stored
+        : param db               : <bot.database.sqlite Database object> where the index will be stored
         : param index_table_name : Optional and defaults to questions_query_index for this SearchEngine
         """
         self.corpus = corpus
@@ -103,7 +103,7 @@ class QuestionSearchEngine(ISearchEngine):
         documents = (
             self.corpus.question.fillna("")
         )
-        self.index = documents.apply(helpers.preprocess).to_frame()
+        self.index = documents.apply(utils.preprocess).to_frame()
         self.index.columns = ["terms"]
         # on the QuestionSearchEngine the question_id is the indexe's index
         self.index.index = self.corpus.question_id
@@ -117,10 +117,10 @@ class QuestionSearchEngine(ISearchEngine):
 
     def load_index(self, db = Database, index_table_name = 'questions_query_index'):
         """
-        Takes a <bot.database Database object> as input and loads
+        Takes a <bot.database.sqlite Database object> as input and loads
         the SearchEngine's index and corpus.
 
-        : param db      : <bot.database Database object> where the index will be stored
+        : param db      : <bot.database.sqlite Database object> where the index will be stored
         """
         try:
             self.corpus = db.get_dataframe('questions')

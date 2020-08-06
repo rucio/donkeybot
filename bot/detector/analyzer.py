@@ -1,7 +1,7 @@
 # bot modules
-from bot.database import Database
+from bot.database.sqlite import Database
 import bot.config as config
-import bot.helpers as helpers
+import bot.utils as utils
 # general python
 import re
 import nltk
