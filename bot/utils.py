@@ -307,6 +307,10 @@ def tokenize_this(text):
         - drop all stopwords
         - drop all numbers
     """
+    
+    # warnings.simplefilter('ignore')
+    stop_words_english = set(stopwords.words('english'))
+    # warnings.simplefilter('always')
     words = nltk.word_tokenize(text)
     return list(
             set(
@@ -314,7 +318,7 @@ def tokenize_this(text):
                 word
                 for word in words
                 if len(word) > 1
-                    and not word in config.ENGLISH_STOPWORDS
+                    and not word in stop_words_english
                     and not word.isnumeric()
                 ]
             )
