@@ -24,7 +24,7 @@ $(virt) python -c 'import setuptools'
 # create distribution package
 $(virt) python setup.py sdist 
 # Optional, check whats inside 
-$(virt) tar --list -f .\dist\bot-<BOT_VERSION_HERE>.tar.gz
+$(virt) tar --list -f .\dist\DonkeyBot-<BOT_VERSION_HERE>.tar.gz
 ```
 
 **Step 4:** Developer mode 
