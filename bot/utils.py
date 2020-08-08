@@ -110,6 +110,7 @@ def request(url, headers):
 
 def pre_process_text(
     text,
+    lower_text=False,
     fix_url=False,
     remove_url=False,
     decontract_words=False,
@@ -125,24 +126,21 @@ def pre_process_text(
     ):
     """ 
     Perform the pre processing steps on the text in the order shown :
-    (1) lowercase 
     And depending on what was set to True :
+          (1) lowercase -> 
           (2) fix urls -> 
           (3) remove urls ->
           (4) remove_newline ->
-          (4) decontract phrases ->
-          (5) remove punctuation -> 
-          (6) remove numbers -> 
-          (7) remove stopwords -> 
-          (8) stem words-> 
-          (9) lemmatize words ->
-          (10) remove extra whitespaces ->
-          (11) tokenize words 
+          (5) decontract phrases ->
+          (6) remove punctuation -> 
+          (7) remove numbers -> 
+          (8) remove stopwords -> 
+          (9) stem words-> 
+          (10) lemmatize words ->
+          (11) remove extra whitespaces ->
+          (12) tokenize words 
     
-
-    <!> Note  : (1) and (11) are done by default
-    <!> Note2 : Returns  list of the pre_processed words if tokenize = True
-                or return the pre_processed text if tokenize = False
+    <!> Note  : (11) remove extra whitespaces is done by default.
     
     :param punctuation_replacement      : Used when remove_punctuation = True 
                                         and we want to replace punctuation 
@@ -158,7 +156,8 @@ def pre_process_text(
     :returns (if tokenize=False) text   : text processed depending on parameters
     """
     # 1
-    text = text.lower()
+    if lower_text:
+        text = text.lower()
     # 2
     if fix_url:
         text = fix_urls(text)
@@ -183,7 +182,7 @@ def pre_process_text(
         stop_words_english = set(stopwords.words('english'))
         # warnings.simplefilter('always')
         text = ' '.join(token for token in nltk.word_tokenize(text)
-                        if not token in stop_words_english)
+                        if token.lower() not in stop_words_english)
     # 9 
     if stem:
         stemmer = nltk.stem.porter.PorterStemmer()
