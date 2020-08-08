@@ -61,7 +61,6 @@ class Database:
         self.cursor.execute(query_string)
         return self.cursor.fetchall()
 
-    # app specific methods
     # emails
     def create_emails_table(self, table_name='emails'):
         """
@@ -144,7 +143,8 @@ class Database:
             'creator'       :'TEXT',
             'created_at'    :'TEXT',
             'body'          :'TEXT',
-            'clean_body'    :'TEXT'
+            'clean_body'    :'TEXT',
+            'FOREIGN KEY (issue_id)' : 'REFERENCES issues (issue_id)'
             } )
 
 
@@ -186,19 +186,40 @@ class Database:
                             values(?, ?, ?, ?, ?)', data)
         self.db.commit()
     
+   # questions
+    def create_question_table(self, table_name='questions'):
+        """
+        Creates a table to store <Question objects> objects from 
+        QuestionDetector.
 
+        :param table_name : name given to the table holding <Question obj>
+        """
+        self.drop_table(f'{table_name}')
+        self.create_table(f'{table_name}', {
+             'question_id' : 'TEXT PRIMARY KEY',
+             'question'    : 'TEXT',
+             'start'       : 'TEXT',
+             'end'         : 'TEXT',
+             'context'     : 'TEXT',
+             'email_id'    : 'INT',
+             'issue_id'    : 'INT',
+             'comment_id'  : 'INT',
+             'FOREIGN KEY (email_id)' : 'REFERENCES emails (email_id)',
+             'FOREIGN KEY (issue_id)' : 'REFERENCES issues (issue_id)',
+             'FOREIGN KEY (comment_id)' : 'REFERENCES issue_comments (comment_id)'
+             })
 
-    
-
-    ##TODO : need update as soon as I change QuestionDetector to work with IssueQuestions
-    def insert_question(self, question_obj, table_name):
+    def insert_question(self, question_obj, table_name='questions'):
         """Insert question into the database"""
-        data = (question_obj.id, question_obj.email, question_obj.clean_body,
-                question_obj.question, question_obj.start, question_obj.end,
-                question_obj.context)
+        data = (question_obj.id, question_obj.question,
+                question_obj.start, question_obj.end,
+                question_obj.context, question_obj.email_id,
+                question_obj.issue_id, question_obj.comment_id)
 
         self.db.execute(f'INSERT INTO {table_name} \
-                                    (question_id, email_id, clean_body, \
-                                     question, start, end, context) \
-                                     values(?, ?, ?, ?, ?, ?, ?)', data)
+                                    (question_id, question, start,\
+                                     end, context, email_id, issue_id, \
+                                     comment_id) \
+                                     values(?, ?, ?, ?, ?, ?, ?, ?)', data)
         self.db.commit()
+        
