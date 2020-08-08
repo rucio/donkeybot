@@ -16,7 +16,8 @@ setup(
           'nltk',
           'rank_bm25',
           'requests',
-          'transformers'
+          'transformers',
+          'uuid'
         # for torch you need to download based on https://pytorch.org/ quickstart guide
       ],
     classifiers=[
