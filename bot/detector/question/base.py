@@ -2,8 +2,30 @@
 from bot.database.sqlite import Database
 # general python
 from abc import abstractmethod, ABC
+# general python
+from uuid import uuid4
 
 class Question(ABC):
+    def __init__(self, question_text = None,
+                start_idx = None,
+                end_idx = None,
+                question_id = None,
+                origin = 'other'):
+        """
+        Question constructor.
+
+        :param origin : 'email','question','comment' or 'other'
+        """
+        # Set unique ID or given from user input
+        if question_id:
+            self.id    = str(question_id)
+        else:
+            self.id    = str(uuid4().hex)
+        self.question  = question_text
+        self.start     = start_idx
+        self.end       = end_idx
+        self.origin    = origin
+        self.context   = None
 
     @abstractmethod
     def set_origin_id(self, origin_id):

@@ -1,8 +1,6 @@
 # bot modules
 from bot.detector.question.base import Question, QuestionOriginNotSet
 from bot.database.sqlite import Database
-# general python
-from uuid import uuid4
 
 class CommentQuestion(Question):
     """Question originating from GitHub issue comments"""
@@ -11,16 +9,7 @@ class CommentQuestion(Question):
                 start_idx = None,
                 end_idx = None,
                 question_id = None):
-        # Set unique ID or given from user input
-        if question_id:
-            self.id    = str(question_id)
-        else:
-            self.id    = str(uuid4().hex)
-        self.question  = question_text
-        self.start     = start_idx
-        self.end       = end_idx
-        self.context   = None
-        self.origin    = 'comment'
+        super().__init__(question_text, start_idx, end_idx, question_id, 'comment')
         
     def set_origin_id(self, origin_id):
         """ 
@@ -38,7 +27,6 @@ class CommentQuestion(Question):
         self.email_id   = None
         self.issue_id   = None
         self.comment_id = origin_id
-
 
     def find_context_from_table(self, db=Database, table_name='issue_comments'):
         """
