@@ -6,10 +6,10 @@ class IFetcher(metaclass=ABCMeta):
     The Fetcher Interface
     
     <!> Note: Once we use the Fetcher to .fetch() the data
-    the Fetcher after returning the corresponding DatFrame(s).
-    Keeps the DataFrame(s) in memory and knows how to .save() 
-    and .load() accordingly.
+    the Fetcher returns corresponding DataFrame(s) and knows
+    how to .save() and .load() accordingly.
     """
+    
     @abstractmethod
     def fetch():
         """Fetches the data from their source"""
@@ -39,7 +39,4 @@ class InvalidRepoError(Exception):
 
 class InvalidTokenError(Exception):
     """Raised when the OAUTH token for the GitHub api is not correct."""
-    pass
-
-if __name__ == "__main__":
     pass

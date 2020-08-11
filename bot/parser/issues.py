@@ -7,9 +7,9 @@ import pandas as pd
 import re
 from tqdm import tqdm
 
-## Issues
 class Issue():
-    """A GitHub Issue"""
+    """GitHub Issue"""
+    
     def __init__(self, issue_id, title, state, creator, created_at, comments, body, clean_body):
         self.issue_id   = int(issue_id)
         self.title      = title
@@ -20,13 +20,16 @@ class Issue():
         self.body       = body
         self.clean_body = clean_body
 
+
 class IssueParser(IParser):
+    """GitHub Issue Parser"""
+
     def __init__(self):
         self.type = 'Issue Parser'
 
     def parse(self, issue_id, title, state, creator, created_at, comments, body, db = Database, issues_table_name='issues'):
         """
-        Parses a single issue
+        Parses a single issue.
         
         <!> Note  : The parse() method is only expected to be used after an an issues table
         has been created in the db. To create said table use the Database object's 
@@ -37,11 +40,8 @@ class IssueParser(IParser):
         :param issues_table_name  : in case we need use a different table name (default 'issues')
         :returns issue            : an <Issue object> created by the IssueParser
         """
-
         # The date format returned from the GitHub API is in the ISO 8601 format: "%Y-%m-%dT%H:%M:%SZ" 
         issue_created_at  = utils.convert_to_utc(created_at, '%Y-%m-%dT%H:%M:%SZ') 
-        # lower/decontract/fix_urls/clean ISSUE_TEMPLATE patterns
-        # if additional textprocessing is needed we can always change it here
         issue_clean_body = utils.pre_process_text(self.clean_issue_body(body),
                                                     fix_url=True,
                                                     decontract_words=True)
@@ -53,9 +53,9 @@ class IssueParser(IParser):
                       comments    = comments,
                       body        = body, 
                       clean_body  = issue_clean_body)
-
-        # insert the issue to the db
-        if issue.comments > 0: # if no comments in issue then there won't be any comments. No need to save it
+        
+        # no comments -> no context,  only insert relevant data to db
+        if issue.comments > 0: 
             db.insert_issue(issue, table_name=issues_table_name)
         return issue
 
@@ -71,7 +71,6 @@ class IssueParser(IParser):
         :param return_issues : True/False on if we return a list of <Issue objects> (default False)
         :returns issues      : a list of <Issue objects> created by the IssueParser 
         """
-
         issues = []
         print("Parsing issues...")
         for i in tqdm(range(len(issues_df.index))):
@@ -98,7 +97,6 @@ class IssueParser(IParser):
 
         :returns clean_body : cleaned issue body
         """
-
         clean_body = body.strip('/n/r')\
                     .replace('Motivation\r', '')\
                     .replace('Modification\r', '')\
@@ -109,4 +107,3 @@ class IssueParser(IParser):
                     .strip()  
         clean_body = re.sub(' +', ' ', clean_body).strip(' ')
         return clean_body
-

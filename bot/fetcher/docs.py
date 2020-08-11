@@ -2,8 +2,12 @@
 import bot.utils as utils
 import bot.config as config
 from bot.database.sqlite import Database
-from bot.fetcher.interface import IFetcher,LoadingError,\
-                                  SavingError,InvalidTokenError
+from bot.fetcher.interface import (
+                            IFetcher,
+                            LoadingError,
+                            SavingError,
+                            InvalidTokenError
+                            )
 # general python
 import string
 import re
@@ -13,9 +17,8 @@ from tqdm import tqdm
 import sys
 import requests
 
-
 class RucioDocsFetcher(IFetcher):
-    """Only for Rucio's documentation."""
+    """Fetcher for Rucio's documentation in GitHub."""
     
     def __init__(self):
         self.type = 'Rucio Documentation Fetcher'
@@ -27,8 +30,9 @@ class RucioDocsFetcher(IFetcher):
         return
 
     def _check_token(self):
-        """Check if the GitHub token is correct"""
+        """Check the GitHub token's validity."""
         try:
+            ##TODO improve hacky approach below
             # if the request is correct then no message is returned and we have a TypeError
             if utils.request(self.docs_url, self.headers)['message'] == 'Bad credentials':
                 raise InvalidTokenError(f"\nError: Bad credentials. The OAUTH token {self.api_token} is not correct.")
@@ -40,7 +44,8 @@ class RucioDocsFetcher(IFetcher):
 
     def _extract_daemon_body(self, body):
         """
-        Parses the body of the daemon documentation under doc/source/man/ and:
+        Parses the body of the daemon documentation under 'doc/source/man/'.
+
         1) finds patterns like                 
                 .. argparse::
                 :filename: bin/rucio-bb8
@@ -48,9 +53,9 @@ class RucioDocsFetcher(IFetcher):
                 :prog: rucio-bb8
 
         2) Then moves on to the appropriate path and matches two regex patterns
-            - One that matches the description content for each daemon
-            - One the epilog content for each daemon
-            (more info under config.py)
+            2.1) One that matches the description content for each daemon
+            2.2) One the epilog content for each daemon
+                (more info under bot.config.py)
 
         If the first pattern doesn't match we simply return the initial body.
             
@@ -68,6 +73,7 @@ class RucioDocsFetcher(IFetcher):
             # construct the download url for the raw body of each daemon
             daemon_code_url = self.root_download_url+f'/{daemon_filename}'
             daemon_code  = requests.get(daemon_code_url).content.decode("utf-8") 
+
             # try to match the 2 other regexes that extract the docstring
             full_matches = ''
             if config.DAEMON_DESC_REGEX.search(daemon_code) is not None:
@@ -79,17 +85,22 @@ class RucioDocsFetcher(IFetcher):
                 for match in config.DAEMON_EPILOG_REGEX.finditer(daemon_code):
                     epilog_match = match.group(1)
                     full_matches = full_matches  + epilog_match
-            # put the above in the correct place
             final_body = body[:start_idx] + full_matches + body[end_idx:]
             return final_body
-        # else keep initial body of the daemon
         else:            
             return body
 
     def fetch(self, api_token):
         """
         Returns a pandas DataFrames that holds information for 
-        Rucio's documentation. Utilizes GitHub's api.
+        Rucio's documentation, utilizing GitHub's api.
+        
+        attributes:
+            doc_id   : doc's id
+            name     : doc's name/title
+            url      : doc's url
+            body     : doc's creator
+            doc_type : 'general', 'daemon' or 'release_notes'
 
         :param api_token : GitHub api token used for fetching the data
         :return docs_df  : DataFrame containing all the information for Rucio's docs
@@ -98,19 +109,16 @@ class RucioDocsFetcher(IFetcher):
         self.headers = {'Content-Type': 'application/json', 'Authorization': f'token {self.api_token}'} 
         self._check_token()
         
-        docs_df = pd.DataFrame(columns=['doc_id','name','url','body', 'doc_type'])
+        docs_df = pd.DataFrame(columns=['doc_id','name','url','body','doc_type'])
 
         doc_id = 0
-        print("Fetching...")
+        print("Fetching Rucio documentation...")
         for doc in tqdm(utils.request(self.docs_url, self.headers)):
             if type(doc) == str:
-                # if the api_token is not correct, we are going to get an error on every issue
                 print(f"Error: Problem fetching the doc {doc} moving on to the next...")
                 continue
-            # handle files
             elif doc['type'] == 'file':
                 if doc['name'].split('.')[-1] not in ['rst','md']:
-                    # make sure the file is documentation only
                     continue
                 doc_name         = doc['name']
                 doc_url          = doc['html_url']
@@ -124,17 +132,13 @@ class RucioDocsFetcher(IFetcher):
                     'doc_type': 'general'
                     }, ignore_index=True)
                 doc_id += 1 
-
-            # handle directories 
             elif doc['type'] == 'dir':
                 if doc['name'] == 'images':
-                    # No need to fetch images in this version
                     pass
                 # daemon documentation exists under the man directory
                 elif doc['name'] == 'man':
                     print("\nFetching the daemon documentation...")
                     man_url = doc['url']
-                    # in order to avoid an extra loop we hardcoded the daemons doc link for rucio
                     try:
                         daemons_url = self.root_download_url+'/doc/source/man/daemons.rst'
                         daemon_body = requests.get(daemons_url).content.decode("utf-8")
@@ -147,10 +151,9 @@ class RucioDocsFetcher(IFetcher):
                             print(f"Error : There was a problem fetching the file : {man_doc}")
                             continue
                         elif man_doc['name'].split('.')[-1] not in ['rst','md']:
-                            # make sure the file is documentation only
                             continue                        
                         else:
-                            # make sure that we are looking at daemon documentation, by utilize daemon names gathered above
+                            # make sure that we are looking at daemon documentation
                             if man_doc['name'].split('.')[0] in daemons:
                                 doc_name         = man_doc['name']
                                 doc_url          = man_doc['html_url']
@@ -167,8 +170,6 @@ class RucioDocsFetcher(IFetcher):
                                             'doc_type': 'daemon'
                                             }, ignore_index=True)
                                 doc_id += 1       
-                    
-                # handle the release notes
                 elif doc['name'] == 'releasenotes':
                     print("\nFetching the release notes...")
                     release_notes_url = doc['url']
@@ -177,7 +178,6 @@ class RucioDocsFetcher(IFetcher):
                             print(f"Error: Problem fetching the release note {release_note}")
                             continue
                         elif release_note['name'].split('.')[-1] not in ['rst','md']:
-                            # make sure the file is documentation only
                             continue
                         else:
                             doc_name         = release_note['name']
@@ -192,7 +192,7 @@ class RucioDocsFetcher(IFetcher):
                                         'doc_type': 'release_notes'
                                         }, ignore_index=True)
                             doc_id += 1    
-                        
+                ##TODO handle restapi, api
                 # Below are complicated for now, if we want to integrate we can
                 # download and compile with Sphinx the Makefile etc
                 # restapi documentation
@@ -201,7 +201,6 @@ class RucioDocsFetcher(IFetcher):
                 # api documentation
                 elif doc['name'] == 'api':
                     pass
-
         self.docs = docs_df    
         return docs_df
 
@@ -232,6 +231,3 @@ class RucioDocsFetcher(IFetcher):
             return self.docs
         except:
             raise LoadingError(f"\nError: Data not found.")            
-
-if __name__ == '__main__':
-    pass
