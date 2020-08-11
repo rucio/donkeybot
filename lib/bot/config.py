@@ -4,7 +4,7 @@ import re
 
 # PATHS 
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = BOT_DIR + '\..\data\\'
+DATA_DIR = BOT_DIR + '\..\..\data\\'
 
 # REGEX
 REGEX_METACHARACTERS = '^$.|?*+(){}[]'

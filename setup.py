@@ -9,7 +9,9 @@ setup(
     description="Rucio Support Bot",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(),
+    # packages=find_packages('lib'),
+    packages=['bot'],
+    package_dir={'':'lib'},
     install_requires=[
           'pandas',
           'numpy',
@@ -17,7 +19,8 @@ setup(
           'rank_bm25',
           'requests',
           'transformers',
-          'uuid'
+          'uuid',
+          'pytest'
         # for torch you need to download based on https://pytorch.org/ quickstart guide
       ],
     classifiers=[
