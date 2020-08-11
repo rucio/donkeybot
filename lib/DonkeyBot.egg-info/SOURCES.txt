@@ -1,0 +1,10 @@
+README.md
+setup.py
+lib/DonkeyBot.egg-info/PKG-INFO
+lib/DonkeyBot.egg-info/SOURCES.txt
+lib/DonkeyBot.egg-info/dependency_links.txt
+lib/DonkeyBot.egg-info/requires.txt
+lib/DonkeyBot.egg-info/top_level.txt
+lib/bot/__init__.py
+lib/bot/config.py
+lib/bot/utils.py
