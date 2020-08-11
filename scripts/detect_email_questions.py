@@ -60,7 +60,10 @@ def main():
                 question.set_origin_id(email_id)
                 # make sure to find the context for each question 
                 question.find_context_from_table(data_storage, table_name=emails_table)
-                data_storage.insert_question(question, table_name=questions_table)  
+                if question.context == '':
+                    continue
+                else:
+                    data_storage.insert_question(question, table_name=questions_table)  
     
     print(f'Type of the question objects : {type(question)}')
     print(f'Total questions detected: {total_questions}')
