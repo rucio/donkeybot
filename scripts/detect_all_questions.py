@@ -38,16 +38,10 @@ def main():
     db_name         = args.db_name
     questions_table = args.questions_table
 
-    
-    # when running detect all I want to drop table if exists, done inside method below
-    Database(db_name).create_question_table(questions_table)    
-
     # run parsing scripts
     subprocess.run(f'python -m scripts.detect_email_questions -db {db_name} -emails_table {emails_table} -questions_table {questions_table}', shell=True)
     subprocess.run(f'python -m scripts.detect_issue_questions -db {db_name} -issues_table {issues_table} -questions_table {questions_table}', shell=True)
     subprocess.run(f'python -m scripts.detect_comment_questions -db {db_name} -comments_table {comments_table} -questions_table {questions_table}', shell=True)
-    
-
     
 
 if __name__ == '__main__':
