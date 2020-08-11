@@ -8,8 +8,7 @@ import pickle
 import string
 from datetime import datetime 
 import pytz
-import warnings
-# text processing
+# nltk text processing
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer 
@@ -61,6 +60,7 @@ def turn_Series_into_string(series_obj):
     print("<!>ERROR in turn_into_string()")
     return
 
+
 # General helper functions
 def save_dict(dict_name, dict_data):
     """
@@ -107,7 +107,6 @@ def request(url, headers):
 
 
 # Text Processing related helper functions
-
 def pre_process_text(
     text,
     lower_text=False,
@@ -178,9 +177,7 @@ def pre_process_text(
         text = remove_chars(text, string.digits, replace_with=numbers_replacement)
     # 8 
     if remove_stop_words:
-        # warnings.simplefilter('ignore')
         stop_words_english = set(stopwords.words('english'))
-        # warnings.simplefilter('always')
         text = ' '.join(token for token in nltk.word_tokenize(text)
                         if token.lower() not in stop_words_english)
     # 9 
@@ -190,11 +187,9 @@ def pre_process_text(
                         nltk.word_tokenize(text))
     # 10 
     if lemmatize:
-        # warnings.simplefilter('ignore')
         lemmatizer = WordNetLemmatizer()
         text = ' '.join(lemmatizer.lemmatize(token) for token in
                         nltk.word_tokenize(text))
-        # warnings.simplefilter('always')
     # 11
     text = re.sub(' +', ' ', text).strip(' ')
     # 12
@@ -268,10 +263,8 @@ def decontract(phrase):
     :type phrase    : string
     :returns phrase : decontracted phrase
     """
-    # specific
     phrase = re.sub(r"won't", "will not", phrase)
     phrase = re.sub(r"can\'t", "can not", phrase)
-    # general
     phrase = re.sub(r"n\'t", " not", phrase)
     phrase = re.sub(r"\'re", " are", phrase)
     phrase = re.sub(r"\'s", " is", phrase)
@@ -283,8 +276,8 @@ def decontract(phrase):
     return phrase
 
 
-
-############################################################## 
+#############################################################
+# To be removed
 # used in searchers/change later upon further analysis
 def preprocess(text):
     """
@@ -306,10 +299,7 @@ def tokenize_this(text):
         - drop all stopwords
         - drop all numbers
     """
-    
-    # warnings.simplefilter('ignore')
     stop_words_english = set(stopwords.words('english'))
-    # warnings.simplefilter('always')
     words = nltk.word_tokenize(text)
     return list(
             set(

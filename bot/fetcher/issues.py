@@ -3,9 +3,12 @@
 import bot.utils as utils
 import bot.config as config
 from bot.database.sqlite import Database
-from bot.fetcher.interface import IFetcher,LoadingError,\
-                                  SavingError,InvalidRepoError,\
-                                  InvalidTokenError
+from bot.fetcher.interface import (
+                            IFetcher,
+                            LoadingError,
+                            SavingError,
+                            InvalidTokenError
+                            )
 # general python
 import string
 import re
@@ -15,14 +18,16 @@ from tqdm import tqdm
 import sys
 
 class IssueFetcher(IFetcher):
+    """Fetcher for any repo's Issues in GitHub."""
     
     def __init__(self):
         self.type = 'Github Issues Fetcher'
         return
 
     def _check_repo(self):
-        """Check that the GitHub repository is correct"""
+        """Check GitHub repository's validity."""
         try:
+            ##TODO improve hacky approach below
             # if the request is correct then no message is returned and we have a TypeError
             if utils.request(self.issues_url, self.headers)['message'] == 'Not Found':
                 raise InvalidRepoError(f"\nError: The repository is not in the correct format. Please use the format 'user/repo' eg. 'rucio/rucio'.")
@@ -33,8 +38,9 @@ class IssueFetcher(IFetcher):
             pass
 
     def _check_token(self):
-        """Check if the GitHub token is correct"""
+        """Check the GitHub token's validity."""
         try:
+            ##TODO improve hacky approach below
             # if the request is correct then no message is returned and we have a TypeError
             if utils.request(self.issues_url, self.headers)['message'] == 'Bad credentials':
                 raise InvalidTokenError(f"\nError: Bad credentials. The OAUTH token {self.api_token} is not correct.")
@@ -47,8 +53,7 @@ class IssueFetcher(IFetcher):
     def fetch(self, repo, api_token, max_pages=201):
         """
         Return two pandas DataFrames that hold information for both
-        issues and comments under said issues.
-        Utilizes GitHub's Issues api.
+        issues and comments under said issues, utilizing GitHub's api.
 
         for issues   :
             issue_id     : issue's number
@@ -66,7 +71,7 @@ class IssueFetcher(IFetcher):
             created_at   : date comment was created at
             body         : body of the comment 
 
-        :param max_pages    : max_pages requested through the api, default = 201
+        :param max_pages    : max_pages requested through the api. ( default is 201 )
         :param repo         : GitHub repo (for us rucio/rucio) format `User/Repo` 
         :param api_token    : GitHub api token used for fetching the data
         :return issues_df   : DataFrame containing information for the issues
@@ -75,22 +80,18 @@ class IssueFetcher(IFetcher):
         self.max_pages = max_pages
         self.repo = repo
         self.api_token = api_token
-        # headers sent with the GET request 
         self.headers = {'Content-Type': 'application/json', 'Authorization': f'token {self.api_token}'} 
-        # issues url for both open and closed issues 
         self.issues_url = f"https://api.github.com/repos/{self.repo}/issues?state=all"
         self._check_repo()
         self._check_token()
 
-        # initialize the dataframes
         issues_df   = pd.DataFrame(columns=['issue_id','title','state'
                                         , 'creator', 'created_at','comments','body'])
         comments_df = pd.DataFrame(columns=['issue_id', 'comment_id'
                                         , 'creator','created_at','body'])
 
-        # starting from page 1 to avoid getting duplicate issues
         pages = range(1, self.max_pages) 
-        print('Fetching...')
+        print('Fetching GitHub issues...')
         for page in tqdm(pages):
             for issue in utils.request(self.issues_url + f'&page={page}', self.headers):
                 if type(issue) == str:
@@ -146,7 +147,7 @@ class IssueFetcher(IFetcher):
 
     def save(self, db = Database, issues_table_name = 'issues', comments_table_name='issue_comments'):
         """
-        Save the data in a .db file utilizing our sqlite wrapper
+        Save the data in a .db file utilizing our sqlite wrapper.
 
         : param db            : bot.database.sqlite Database object 
         : issues_table_name   : name of the table where we'll store the issues
@@ -177,7 +178,6 @@ class IssueFetcher(IFetcher):
         except:
             raise LoadingError(f"\nError: Data not found.")            
             
-    # useful for anyone using the IssuesFetcher outside the scope of this project
     def save_with_pickle(self):
         """Save the DataFrame in pickle file format."""
         if all(hasattr(self, attr) for attr in ['issues', 'comments']):
@@ -188,7 +188,6 @@ class IssueFetcher(IFetcher):
         else:
             raise SavingError(f"\nError: We are missing the data. Please use the .fetch() method before saving.")
         
-    # useful for anyone using the IssuesFetcher outside the scope of this project
     def load_with_pickle(self, repo):
         """ 
         Load the DataFrame stored in pickle file format.
@@ -205,6 +204,3 @@ class IssueFetcher(IFetcher):
             return self.issues, self.comments
         except:
             raise LoadingError(f"\nError: Data not found.")       
-
-if __name__ == '__main__':
-    pass

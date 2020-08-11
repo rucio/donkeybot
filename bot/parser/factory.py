@@ -4,11 +4,13 @@ from bot.parser.issues   import IssueParser
 from bot.parser.docs     import RucioDocsParser
 from bot.parser.emails   import EmailParser
 
-class ParserFactory():
+class ParserFactory():    
+    """Factory used to create the Parser we need."""
+
     @staticmethod
     def get_parser(data_type):
         """
-        Select between 
+        Parsers: 
         - Issue
         - Issue Comment
         - Rucio Documentation
@@ -25,9 +27,6 @@ class ParserFactory():
                 return RucioDocsParser()
             if data_type == 'Email':
                 return EmailParser()
-            raise AssertionError("Parser not found")
+            raise AssertionError("Error: Parser not found.")
         except AssertionError as _e:
             print(_e)
-
-if __name__ == "__main__":
-    pass

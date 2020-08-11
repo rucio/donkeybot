@@ -2,12 +2,11 @@ import os.path
 from pathlib import Path
 import re
 
-# for absolute paths 
+# PATHS 
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = BOT_DIR + '\..\data\\'
 
-# REGEX PATTERNS
-# removed for conversation creation when searching same subjects
+# REGEX
 REGEX_METACHARACTERS = '^$.|?*+(){}[]'
 # (EmailParser)
 ON_HDR_REGEX = re.compile(r'On (.*?)wrote: ', re.IGNORECASE)

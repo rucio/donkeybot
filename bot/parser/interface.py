@@ -6,13 +6,10 @@ class IParser(metaclass=ABCMeta):
     
     @abstractmethod
     def parse():
-        """Parses a single data point instance."""
+        """Parses a single datapoint."""
         pass
 
     @abstractmethod
     def parse_dataframe():
-        """Parses the full dataframe of the data."""
+        """Parses the full dataframe."""
         pass
-
-if __name__ == "__main__":
-    pass
