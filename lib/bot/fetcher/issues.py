@@ -7,6 +7,7 @@ from bot.fetcher.interface import (
                             IFetcher,
                             LoadingError,
                             SavingError,
+                            InvalidRepoError,
                             InvalidTokenError
                             )
 # general python
