@@ -30,19 +30,16 @@ def main():
         help='Output .db file where the data is stored (default is dataset)',
         )
     optional.add_argument(
-        '-max_pages',
         '--max_pages',
         default=201,
         type=int,
         help='Maximum number of pages we will request through GitHubs api (default is 201)',
         required=False)
     optional.add_argument(
-        '-issues_table',
         '--issues_table',
         default='issues',
         help='Name of the table where we will store the issues (default is issues)')
     optional.add_argument(
-        '-comments_table',
         '--comments_table',
         default='issue_comments',
         help='Name of the table where we will store the comments (default is issue_comments)')

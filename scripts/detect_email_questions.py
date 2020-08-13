@@ -18,11 +18,11 @@ def main():
         '--db_name',
         help='Database name of our storage')
     optional.add_argument(
-        '-emails_table',
+        '--emails_table',
         default='emails',
         help='Name given to the table holding the emails. (default is emails)')
     optional.add_argument(
-        '-questions_table',
+        '--questions_table',
         default='questions',
         help='Name given to the table holding the questions. (default is questions)')
     

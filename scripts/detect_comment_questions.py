@@ -18,11 +18,11 @@ def main():
         '--db_name',
         help='Database name of our storage')
     optional.add_argument(
-        '-comments_table',
+        '--comments_table',
         default='issue_comments',
         help='Name given to the table holding the issue comments. (default is issue_comments)')
     optional.add_argument(
-        '-questions_table',
+        '--questions_table',
         default='questions',
         help='Name given to the table holding the questions. (default is questions)')
     
