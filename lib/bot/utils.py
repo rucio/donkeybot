@@ -249,7 +249,6 @@ def span_urls(text):
             yield (quote_match.start(), quote_match.end())
 
 
-
 def decontract(phrase):
     """
     Substitutes occurrences in the text like
@@ -274,43 +273,4 @@ def decontract(phrase):
     phrase = re.sub(r"\'ve", " have", phrase)
     phrase = re.sub(r"\'m", " am", phrase)
     return phrase
-
-
-#############################################################
-# To be removed
-# used in searchers/change later upon further analysis
-def preprocess(text):
-    """
-    Remove puntuation, lower and tokenize text
-    """
-    return tokenize_this(remove_punctuation(text.lower()))
     
-def remove_punctuation(text):
-    """
-    Remove all special character from text string
-    """
-    return text.translate(str.maketrans("", "", string.punctuation))
-
-def tokenize_this(text):
-    """
-    Tokenize with NLTK
-    Rules:
-        - drop all words of 1 and 2 characters
-        - drop all stopwords
-        - drop all numbers
-    """
-    stop_words_english = set(stopwords.words('english'))
-    words = nltk.word_tokenize(text)
-    return list(
-            set(
-                [
-                word
-                for word in words
-                if len(word) > 1
-                    and not word in stop_words_english
-                    and not word.isnumeric()
-                ]
-            )
-        )
-
-
