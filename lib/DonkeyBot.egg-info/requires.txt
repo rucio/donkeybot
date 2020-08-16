@@ -1,8 +1,0 @@
-pandas
-numpy
-nltk
-rank_bm25
-requests
-transformers
-uuid
-pytest
