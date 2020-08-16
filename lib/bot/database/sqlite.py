@@ -143,7 +143,6 @@ class Database:
         """
         Insert Issue objects into the database.
         
-        
         :param issue_obj  : Email object from bot.parser.issues
         :param table_name : name of the table to store the issue
         """
@@ -191,7 +190,6 @@ class Database:
     def insert_issue_comment(self, issue_comment_obj, table_name):
         """
         Insert IssueComment objects into the database.
-        
         
         :param issue_comment_obj  : IssueComment object from bot.parser.comments
         :param table_name         : name of the table to store the comments
