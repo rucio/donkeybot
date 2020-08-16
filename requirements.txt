@@ -32,9 +32,10 @@ sentencepiece==0.1.91
 six==1.15.0
 tokenizers==0.8.1rc1
 toml==0.10.1
-torch==1.6.0
-torchvision==0.7.0
 tqdm==4.47.0
 transformers==3.0.2
 urllib3==1.25.9
 uuid==1.30
+# pytorch on windows is not available through pypi
+torch==1.6.0  --find-links https://download.pytorch.org/whl/torch_stable.html
+torchvision==0.7.0  --find-links https://download.pytorch.org/whl/torch_stable.html
