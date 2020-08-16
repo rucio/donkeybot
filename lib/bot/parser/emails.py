@@ -3,6 +3,7 @@ import bot.utils as utils
 import bot.config as config
 from bot.database.sqlite import Database
 from bot.parser.interface import IParser
+
 # general python
 import pandas as pd
 import hashlib
@@ -10,34 +11,49 @@ import re
 import sys
 from tqdm import tqdm
 
+
 class Email:
     """Email object"""
 
-    def __init__(self, email_id, sender, receiver, subject, body,\
-        email_date, first_email, reply_email, fwd_email, clean_body, conversation_id ):
+    def __init__(
+        self,
+        email_id,
+        sender,
+        receiver,
+        subject,
+        body,
+        email_date,
+        first_email,
+        reply_email,
+        fwd_email,
+        clean_body,
+        conversation_id,
+    ):
         # email data
-        self.id              = email_id
-        self.sender          = sender
-        self.receiver        = receiver
-        self.subject         = subject
-        self.body            = body
-        self.date            = email_date
-        self.first_email     = first_email
-        self.reply_email     = reply_email
-        self.fwd_email       = fwd_email
-        self.clean_body      = clean_body
+        self.id = email_id
+        self.sender = sender
+        self.receiver = receiver
+        self.subject = subject
+        self.body = body
+        self.date = email_date
+        self.first_email = first_email
+        self.reply_email = reply_email
+        self.fwd_email = fwd_email
+        self.clean_body = clean_body
         self.conversation_id = conversation_id
-        # checks         
+        # checks
         self._check_sender()
 
-    def __str__(self): 
+    def __str__(self):
         return f'subject ="{self.subject}"; email_id ="{self.id}"; conversation ="{self.conversation_id}"'
 
     def _check_sender(self):
         """Keeps the single email sender or raises an error if multiple exist"""
         try:
             if len(self.sender) > 1:
-                raise MultipleSendersError(f"There are more than one senders in {id(self)}")
+                raise MultipleSendersError(
+                    f"There are more than one senders in {id(self)}"
+                )
             else:
                 # was a list thus [0]
                 self.sender = self.sender[0]
@@ -47,6 +63,7 @@ class Email:
 
 class MultipleSendersError(Exception):
     """Raised when there are more than one senders in an email"""
+
     pass
 
 
@@ -54,19 +71,28 @@ class EmailParser(IParser):
     """Email Parser"""
 
     def __init__(self):
-        self.type = 'Email Parser'
+        self.type = "Email Parser"
         self._get_conversation_dict()
-        
+
     def _get_conversation_dict(self):
         """Load the email conversations dictionary."""
-        try:  
-            with open(config.DATA_DIR+'conversation_dict.pickle', 'rb') as f:
+        try:
+            with open(config.DATA_DIR + "conversation_dict.pickle", "rb") as f:
                 self.conversation_dict = pickle.load(f)
         except:
             self.conversation_dict = {}
-            print('Error : Could not load conversation_dict.')
+            print("Error : Could not load conversation_dict.")
 
-    def parse(self, sender, receiver, subject, body, date, db = Database, emails_table_name='emails'):
+    def parse(
+        self,
+        sender,
+        receiver,
+        subject,
+        body,
+        date,
+        db=Database,
+        emails_table_name="emails",
+    ):
         """
         Parses a single email.
 
@@ -80,34 +106,42 @@ class EmailParser(IParser):
         :returns email            : Email object 
         """
         # new id is num of emails in our database incremented by one. (works for the first inserted email as well)
-        email_id                = int(db.query(f'''SELECT COUNT(email_id) FROM emails''')[0][0]) + 1
-        email_sender            = list(re.findall('<(.*?)>', sender))
-        email_receiver          = ', '.join(list(re.findall('<(.*?)>', receiver)))
-        email_subject           = subject
-        email_body              = body
+        email_id = int(db.query(f"""SELECT COUNT(email_id) FROM emails""")[0][0]) + 1
+        email_sender = list(re.findall("<(.*?)>", sender))
+        email_receiver = ", ".join(list(re.findall("<(.*?)>", receiver)))
+        email_subject = subject
+        email_body = body
         # '%a, %d %b %Y %H:%M:%S %z' is the date format we find in Rucio Emails
-        email_date              = utils.convert_to_utc(date, '%a, %d %b %Y %H:%M:%S %z') 
+        email_date = utils.convert_to_utc(date, "%a, %d %b %Y %H:%M:%S %z")
         (email_is_reply, email_is_fwd, email_is_first) = self.find_category(subject)
-        email_clean_body        = self.clean_body(body)
-        email_clean_subject     = self.clean_subject(subject)
-        email_conversation_id   = self.find_conversation(subject)
+        email_clean_body = self.clean_body(body)
+        email_clean_subject = self.clean_subject(subject)
+        email_conversation_id = self.find_conversation(subject)
 
-        email = Email(email_id        = email_id,
-                      sender          = email_sender,
-                      receiver        = email_receiver,
-                      subject         = email_subject,
-                      body            = email_body,
-                      email_date      = email_date,
-                      first_email     = email_is_first,
-                      reply_email     = email_is_reply,
-                      fwd_email       = email_is_fwd,
-                      clean_body      = email_clean_body,
-                      conversation_id = email_conversation_id)
-        
+        email = Email(
+            email_id=email_id,
+            sender=email_sender,
+            receiver=email_receiver,
+            subject=email_subject,
+            body=email_body,
+            email_date=email_date,
+            first_email=email_is_first,
+            reply_email=email_is_reply,
+            fwd_email=email_is_fwd,
+            clean_body=email_clean_body,
+            conversation_id=email_conversation_id,
+        )
+
         db.insert_email(email, table_name=emails_table_name)
         return email
-    
-    def parse_dataframe(self, emails_df=pd.DataFrame, db=Database, emails_table_name='emails', return_emails=False):
+
+    def parse_dataframe(
+        self,
+        emails_df=pd.DataFrame,
+        db=Database,
+        emails_table_name="emails",
+        return_emails=False,
+    ):
         """
         Parses the entire fetched emails dataframe, creates Email objects and saves them to db.
         
@@ -124,18 +158,20 @@ class EmailParser(IParser):
         print("Parsing emails...")
         emails = []
         for i in tqdm(range(len(emails_df.index))):
-            email = self.parse(sender = emails_df.sender.values[i],
-                               receiver = emails_df.receiver.values[i],
-                               subject = emails_df.subject.values[i],
-                               body = emails_df.body.values[i],
-                               date = emails_df.date.values[i], 
-                               db = db,
-                               emails_table_name=emails_table_name)
+            email = self.parse(
+                sender=emails_df.sender.values[i],
+                receiver=emails_df.receiver.values[i],
+                subject=emails_df.subject.values[i],
+                body=emails_df.body.values[i],
+                date=emails_df.date.values[i],
+                db=db,
+                emails_table_name=emails_table_name,
+            )
             if return_emails:
                 emails.append(email)
             else:
                 continue
-        return emails    
+        return emails
 
     @staticmethod
     def clean_subject(subject):
@@ -148,10 +184,12 @@ class EmailParser(IParser):
         4) remove starting re:
 
         :returns clean_email_subject : cleaned email subject
-        """ 
-        clean_email_subject = utils.remove_chars(subject.lower(), config.REGEX_METACHARACTERS).lstrip()
-        clean_email_subject = re.sub('^(fwd:)', '', clean_email_subject).lstrip()
-        clean_email_subject = re.sub('^(re:)', '', clean_email_subject).lstrip()
+        """
+        clean_email_subject = utils.remove_chars(
+            subject.lower(), config.REGEX_METACHARACTERS
+        ).lstrip()
+        clean_email_subject = re.sub("^(fwd:)", "", clean_email_subject).lstrip()
+        clean_email_subject = re.sub("^(re:)", "", clean_email_subject).lstrip()
         return clean_email_subject
 
     def find_conversation(self, subject):
@@ -166,16 +204,19 @@ class EmailParser(IParser):
         :param subject           : email's subject 
         :format conversation_id  : "cid_<md5hash>" or None
         :returns conversation_id : the conversation_id for the email's subject
-        """      
+        """
         clean_email_subject = self.clean_subject(subject)
 
         (email_is_reply, email_is_fwd, email_is_first) = self.find_category(subject)
         if clean_email_subject in self.conversation_dict:
             conversation_id = self.conversation_dict[clean_email_subject]
         elif email_is_reply:
-            conversation_id = 'cid_'+hashlib.md5(str(clean_email_subject).encode('utf-8')).hexdigest()[:6]
+            conversation_id = (
+                "cid_"
+                + hashlib.md5(str(clean_email_subject).encode("utf-8")).hexdigest()[:6]
+            )
             self.conversation_dict[clean_email_subject] = conversation_id
-            utils.save_dict('conversation_dict', self.conversation_dict)   
+            utils.save_dict("conversation_dict", self.conversation_dict)
         else:
             conversation_id = None
         return conversation_id
@@ -212,11 +253,9 @@ class EmailParser(IParser):
         :returns clean_email_body : cleaned body of an email
         """
         # steps 1-4 done with utils.pre_process_text function
-        clean_email_body = utils.pre_process_text(body, 
-                                                  fix_url = True,
-                                                  remove_newline = True,
-                                                  decontract_words = True
-                                                  )
+        clean_email_body = utils.pre_process_text(
+            body, fix_url=True, remove_newline=True, decontract_words=True
+        )
         # match the 4 regex patterns
         try:
             start_1 = start_2 = start_3 = start_4 = None
@@ -225,23 +264,29 @@ class EmailParser(IParser):
                     start_1 = on_hdr_match.start()
                     break
             if config.ORIGINAL_MSG_REGEX.search(clean_email_body) is not None:
-                for or_msg_match in config.ORIGINAL_MSG_REGEX.finditer(clean_email_body):
+                for or_msg_match in config.ORIGINAL_MSG_REGEX.finditer(
+                    clean_email_body
+                ):
                     start_2 = or_msg_match.start()
                     break
             if config.QUOTED_REGEX.search(clean_email_body) is not None:
                 for quote_match in config.QUOTED_REGEX.finditer(clean_email_body):
                     start_3 = quote_match.start()
-                    break           
+                    break
             if config.HEADER_REGEX.search(clean_email_body) is not None:
                 for hdr_match in config.HEADER_REGEX.finditer(clean_email_body):
                     start_4 = hdr_match.start()
                     break
-            
+
             # if any matches keep text up to the earliest/first match
             if all(start is None for start in [start_1, start_2, start_3, start_4]):
                 return clean_email_body
             else:
-                min_start = min(start for start in [start_1, start_2, start_3, start_4] if start is not None)
+                min_start = min(
+                    start
+                    for start in [start_1, start_2, start_3, start_4]
+                    if start is not None
+                )
                 clean_email_body = clean_email_body[:min_start]
                 return clean_email_body
         except Exception as _e:
@@ -257,10 +302,12 @@ class EmailParser(IParser):
         4) remove starting re:
 
         :returns clean_email_subject : cleaned email subject
-        """ 
-        clean_email_subject = utils.remove_chars(subject.lower(), config.REGEX_METACHARACTERS).lstrip()
-        clean_email_subject = re.sub('^(fwd:)', '', clean_email_subject).lstrip()
-        clean_email_subject = re.sub('^(re:)', '', clean_email_subject).lstrip()
+        """
+        clean_email_subject = utils.remove_chars(
+            subject.lower(), config.REGEX_METACHARACTERS
+        ).lstrip()
+        clean_email_subject = re.sub("^(fwd:)", "", clean_email_subject).lstrip()
+        clean_email_subject = re.sub("^(re:)", "", clean_email_subject).lstrip()
         return clean_email_subject
 
     @staticmethod
@@ -278,25 +325,25 @@ class EmailParser(IParser):
         : type fwd_email    : 0 / 1 INT
         : returns           : reply_email, fwd_email, first_email
         """
-        is_reply = re.search('^re:', subject.lower())
-        is_fwd = re.search('^fwd:', subject.lower())
+        is_reply = re.search("^re:", subject.lower())
+        is_fwd = re.search("^fwd:", subject.lower())
         if is_reply:
             reply_email = 1
-            fwd_email   = 0
+            fwd_email = 0
             first_email = 0
         elif is_fwd:
             reply_email = 0
-            fwd_email   = 1
+            fwd_email = 1
             first_email = 0
         else:
             reply_email = 0
-            fwd_email   = 0
+            fwd_email = 0
             first_email = 1
         return reply_email, fwd_email, first_email
 
     ##TODO improve code quality of create_conversations() method
     def create_conversations(self, emails_df):
-        '''
+        """
         Creates and saves a conversation dictionary containing an id and
         the corresponding subject based on the input emails dataframe.
 
@@ -311,16 +358,22 @@ class EmailParser(IParser):
         any emails that don't have replies will end up with conversation_id == None
 
         :return conversation_dict : dict of keys = email_subject, values = conversation_id
-        '''    
+        """
         print("Creating conversation dictionary...")
-        emails_df['reply_email'] = emails_df.subject.apply(lambda x: x.lower()).str.contains("^re:", na=False)
+        emails_df["reply_email"] = emails_df.subject.apply(
+            lambda x: x.lower()
+        ).str.contains("^re:", na=False)
         self.conversation_dict = {}
-        emails_df['subject'] = emails_df['subject'].apply(lambda x: utils.remove_chars(x.lower(), config.REGEX_METACHARACTERS))
-        reply_emails = emails_df[emails_df['reply_email'] == True]
+        emails_df["subject"] = emails_df["subject"].apply(
+            lambda x: utils.remove_chars(x.lower(), config.REGEX_METACHARACTERS)
+        )
+        reply_emails = emails_df[emails_df["reply_email"] == True]
         for i, re_subject in enumerate(reply_emails.subject):
-            subject = re.sub('^(re:)', '', re_subject).lstrip()
-            conversation_id = 'cid_'+hashlib.md5(str(subject).encode('utf-8')).hexdigest()[:6]
+            subject = re.sub("^(re:)", "", re_subject).lstrip()
+            conversation_id = (
+                "cid_" + hashlib.md5(str(subject).encode("utf-8")).hexdigest()[:6]
+            )
             self.conversation_dict[subject] = conversation_id
-        
-        utils.save_dict('conversation_dict', self.conversation_dict)
+
+        utils.save_dict("conversation_dict", self.conversation_dict)
         return self.conversation_dict

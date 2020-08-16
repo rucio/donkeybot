@@ -1,6 +1,7 @@
 import sqlite3
 from sqlite3 import Error
-sqlitedb = './db/emails.db'
+
+sqlitedb = "./db/emails.db"
 
 # creating db
 def create_connection(db_file):
@@ -11,7 +12,7 @@ def create_connection(db_file):
         return conn
     except Error as e:
         print(e)
-    
+
     return None
 
 
@@ -39,7 +40,6 @@ def main():
                                         body text
                                     ); """
 
-
     # create a database connection
     conn = create_connection(sqlitedb)
 
@@ -51,5 +51,6 @@ def main():
     else:
         print("Error! cannot create the database connection.")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

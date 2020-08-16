@@ -1,6 +1,8 @@
 import sqlite3
 from sqlite3 import Error
-sqlitedb = './db/emails.db'
+
+sqlitedb = "./db/emails.db"
+
 
 def create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -56,5 +58,5 @@ def main():
             print(email[1])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

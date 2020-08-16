@@ -1,16 +1,22 @@
 # bot modules
 from bot.database.sqlite import Database
+
 # general python
 from abc import abstractmethod, ABC
+
 # general python
 from uuid import uuid4
 
+
 class Question(ABC):
-    def __init__(self, question_text = None,
-                start_idx = None,
-                end_idx = None,
-                question_id = None,
-                origin = 'other'):
+    def __init__(
+        self,
+        question_text=None,
+        start_idx=None,
+        end_idx=None,
+        question_id=None,
+        origin="other",
+    ):
         """
         Question constructor.
 
@@ -18,14 +24,14 @@ class Question(ABC):
         """
         # Set unique ID or given from user input
         if question_id:
-            self.id    = str(question_id)
+            self.id = str(question_id)
         else:
-            self.id    = str(uuid4().hex)
-        self.question  = question_text
-        self.start     = start_idx
-        self.end       = end_idx
-        self.origin    = origin
-        self.context   = None
+            self.id = str(uuid4().hex)
+        self.question = question_text
+        self.start = start_idx
+        self.end = end_idx
+        self.origin = origin
+        self.context = None
 
     @abstractmethod
     def set_origin_id(self, origin_id):
@@ -41,9 +47,9 @@ class Question(ABC):
         and the rest are left equal to None.
 
         :param origin_id : id of a given question's origin        
-        """ 
-        self.email_id   = None
-        self.issue_id   = None
+        """
+        self.email_id = None
+        self.issue_id = None
         self.comment_id = None
 
     @abstractmethod
@@ -73,12 +79,13 @@ class Question(ABC):
     def set_context(self, text):
         """Used to set the context of a question object"""
         self.context = text
-    
+
     def __str__(self):
         """String printed when calling the print function"""
-        return f'id = {self.id}\nquestion_text = {self.question}\nstart = {self.start}\nend = {self.end}\norigin = {self.origin}'
+        return f"id = {self.id}\nquestion_text = {self.question}\nstart = {self.start}\nend = {self.end}\norigin = {self.origin}"
 
 
 class QuestionOriginNotSet(Exception):
     """Raised when the origin_id for the Question object has not been set"""
+
     pass

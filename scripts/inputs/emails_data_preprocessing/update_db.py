@@ -1,6 +1,8 @@
 import sqlite3
 from sqlite3 import Error
-sqlitedb = './db/emails.db'
+
+sqlitedb = "./db/emails.db"
+
 
 def create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -25,8 +27,8 @@ def _add_row(conn, row):
     :param row:      array of values, be careful about order. 
     :return: id
     """
-    sql = ''' INSERT INTO emails(sender, receiver, subject, date, thread, body)
-              VALUES(?,?,?,?,?,?) '''
+    sql = """ INSERT INTO emails(sender, receiver, subject, date, thread, body)
+              VALUES(?,?,?,?,?,?) """
     cur = conn.cursor()
     cur.execute(sql, row)
     return cur.lastrowid
