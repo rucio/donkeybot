@@ -22,7 +22,12 @@ $ git remote add upstream https://github.com/rucio/bot-nlp.git
 
 # Requirements
 * [Python 3 ](https://www.python.org/downloads/windows/), 64bit required for correct installation of PyTorch on Windows.
-* To install PyTorch head over to https://pytorch.org/ and follow the quick start guide for your operating system.
+* To install PyTorch head over to https://pytorch.org/ and follow the quick start guide for your operating system ( torch on windows is not available through pypi ) .
+    ``` python
+    # project's torch version as listed on requirements.txt
+    torch==1.6.0  --find-links https://download.pytorch.org/whl/torch_stable.html
+    torchvision==0.7.0  --find-links https://download.pytorch.org/whl/torch_stable.html
+    ```
 * Run the following command on the terminal:
     ``` bash
     $ pip install -r requirements.txt
