@@ -39,7 +39,7 @@ def main():
 
     # run parsing scripts
     subprocess.run(
-        f"python -m scripts.parse_issues         -i {issues_input_db} -o {output_db}",
+        f"python -m scripts.parse_issues -i {issues_input_db} -o {output_db}",
         shell=True,
     )
     subprocess.run(
@@ -47,11 +47,11 @@ def main():
         shell=True,
     )
     subprocess.run(
-        f"python -m scripts.parse_emails         -i {emails_input_db} -o {output_db}",
+        f"python -m scripts.parse_emails -i {emails_input_db} -o {output_db}",
         shell=True,
     )
     subprocess.run(
-        f"python -m scripts.parse_docs           -i {docs_input_db}   -o {output_db}",
+        f"python -m scripts.parse_docs -i {docs_input_db} -o {output_db}",
         shell=True,
     )
 
