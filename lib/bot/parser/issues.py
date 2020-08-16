@@ -58,7 +58,7 @@ class IssueParser(IParser):
         # The date format returned from the GitHub API is in the ISO 8601 format: "%Y-%m-%dT%H:%M:%SZ"
         issue_created_at = utils.convert_to_utc(created_at, "%Y-%m-%dT%H:%M:%SZ")
         issue_clean_body = utils.pre_process_text(
-            self.clean_issue_body(body), fix_url=True, decontract_words=True
+            self.clean_issue_body(body), fix_url=True
         )
         issue = Issue(
             issue_id=issue_id,

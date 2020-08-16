@@ -49,7 +49,7 @@ class IssueCommentParser(IParser):
             created_at, "%Y-%m-%dT%H:%M:%SZ"
         )
         issue_comment_clean_body = utils.pre_process_text(
-            body, fix_url=True, remove_newline=True, decontract_words=True
+            body, fix_url=True, remove_newline=True
         )
         issue_comment = IssueComment(
             issue_id=issue_id,

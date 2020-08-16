@@ -254,7 +254,7 @@ class EmailParser(IParser):
         """
         # steps 1-4 done with utils.pre_process_text function
         clean_email_body = utils.pre_process_text(
-            body, fix_url=True, remove_newline=True, decontract_words=True
+            body, fix_url=True, remove_newline=True
         )
         # match the 4 regex patterns
         try:
