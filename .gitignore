@@ -3,8 +3,11 @@
 /.vscode
 /data
 /virt
+
+# build info
 /dist
 /DonkeyBot.egg-info
+/lib/DonkeyBot.egg-info
 
 # files 
 __pycache__
