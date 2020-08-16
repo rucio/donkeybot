@@ -1,37 +1,40 @@
 from setuptools import setup, find_packages
-import os 
+import os
 
-os.mkdir('data')
+try:
+    os.mkdir("data")
+except FileExistsError as _e:
+    pass
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='DonkeyBot',
-    version='0.1.0.dev1',
+    name="DonkeyBot",
+    version="0.1.0.dev1",
     description="Rucio Support Bot",
     long_description=long_description,
     long_description_content_type="text/markdown",
     # packages=find_packages('lib'),
-    packages=['bot'],
-    package_dir={'':'lib'},
+    packages=["bot"],
+    package_dir={"": "lib"},
     install_requires=[
-          'pandas',
-          'numpy',
-          'nltk',
-          'rank_bm25',
-          'requests',
-          'transformers',
-          'uuid',
-          'pytest'
+        "pandas",
+        "numpy",
+        "nltk",
+        "rank_bm25",
+        "requests",
+        "transformers",
+        "uuid",
+        "pytest"
         # for torch you need to download based on https://pytorch.org/ quickstart guide
-      ],
+    ],
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'License :: OSI Approved :: Apache Software License',
-        'Programming Language :: Python :: 3',
-        'Natural Language :: English',
+        "Development Status :: 2 - Pre-Alpha",
+        "License :: OSI Approved :: Apache Software License",
+        "Programming Language :: Python :: 3",
+        "Natural Language :: English",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires=">=3.6",
 )
