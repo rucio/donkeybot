@@ -49,15 +49,15 @@ def main():
 
     # run parsing scripts
     subprocess.run(
-        f"python -m scripts.detect_email_questions -db {db_name} -emails_table {emails_table} -questions_table {questions_table}",
+        f"python -m scripts.detect_email_questions -db {db_name} --emails_table {emails_table} --questions_table {questions_table}",
         shell=True,
     )
     subprocess.run(
-        f"python -m scripts.detect_issue_questions -db {db_name} -issues_table {issues_table} -questions_table {questions_table}",
+        f"python -m scripts.detect_issue_questions -db {db_name} --issues_table {issues_table} --questions_table {questions_table}",
         shell=True,
     )
     subprocess.run(
-        f"python -m scripts.detect_comment_questions -db {db_name} -comments_table {comments_table} -questions_table {questions_table}",
+        f"python -m scripts.detect_comment_questions -db {db_name} --comments_table {comments_table} --questions_table {questions_table}",
         shell=True,
     )
 
