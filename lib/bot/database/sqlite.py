@@ -108,10 +108,10 @@ class Database:
 
         self.db.execute(
             f"INSERT INTO {table_name} \
-                          (email_id, sender, receiver, subject, body, clean_body, \
-                           email_date , first_email, reply_email, \
-                           fwd_email, conversation_id) \
-                          values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (email_id, sender, receiver, subject, body, clean_body, \
+                email_date , first_email, reply_email, \
+                fwd_email, conversation_id) \
+                values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             data,
         )
         self.db.commit()
@@ -158,9 +158,9 @@ class Database:
         )
         self.db.execute(
             f"INSERT INTO {table_name} \
-                           (issue_id, title, state, creator, created_at, \
-                           comments, body, clean_body) \
-                           values(?, ?, ?, ?, ?, ?, ?, ?)",
+                (issue_id, title, state, creator, created_at, \
+                comments, body, clean_body) \
+                values(?, ?, ?, ?, ?, ?, ?, ?)",
             data,
         )
         self.db.commit()
@@ -204,9 +204,9 @@ class Database:
         )
         self.db.execute(
             f"INSERT INTO {table_name} \
-                          (comment_id, issue_id, creator, created_at, \
-                           body, clean_body) \
-                          values(?, ?, ?, ?, ?, ?)",
+                (comment_id, issue_id, creator, created_at, \
+                body, clean_body) \
+                values(?, ?, ?, ?, ?, ?)",
             data,
         )
         self.db.commit()
@@ -247,9 +247,9 @@ class Database:
         )
         self.db.execute(
             f"INSERT INTO {table_name} \
-                           (doc_id, name, url, body, \
-                            doc_type) \
-                           values(?, ?, ?, ?, ?)",
+                (doc_id, name, url, body, \
+                doc_type) \
+                values(?, ?, ?, ?, ?)",
             data,
         )
         self.db.commit()
@@ -300,10 +300,9 @@ class Database:
 
         self.db.execute(
             f"INSERT INTO {table_name} \
-                                    (question_id, question, start,\
-                                     end, context, email_id, issue_id, \
-                                     comment_id) \
-                                     values(?, ?, ?, ?, ?, ?, ?, ?)",
+                (question_id, question, start,\
+                end, context, email_id, issue_id, comment_id) \
+                values(?, ?, ?, ?, ?, ?, ?, ?)",
             data,
         )
         self.db.commit()
