@@ -21,6 +21,8 @@ class Database:
     
     def get_dataframe(self, table):
         """Return a pandas DataFrame object of the Database contents."""
+        # caveat : if int column contains NaNs pandas tranforms it to float
+        # eg. in questions table where foreign keys can contain NaNs
         return pd.read_sql_query(f"SELECT * FROM {table}", self.db)
 
     def close_connection(self):
