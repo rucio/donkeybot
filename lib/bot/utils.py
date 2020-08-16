@@ -1,17 +1,20 @@
 # bot modules
 import bot.config as config
+
 # general python
 import re
 import requests
 import json
 import pickle
 import string
-from datetime import datetime 
+from datetime import datetime
 import pytz
+
 # nltk text processing
 import nltk
 from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer 
+from nltk.stem import WordNetLemmatizer
+
 nltk.download("stopwords", quiet=True)
 nltk.download("wordnet", quiet=True)
 nltk.download("punkt", quiet=True)
@@ -33,8 +36,8 @@ def print_df_column(dataframe, column, max_rows=None):
         if max_rows is None:
             max_rows = len(dataframe)
         for i in range(len(dataframe.head(max_rows))):
-            print(f'\nRow {i} in {column} of the dataframe')
-            print('###########################################')
+            print(f"\nRow {i} in {column} of the dataframe")
+            print("###########################################")
             print(dataframe[column].values[i])
     except:
         print("<!>ERROR: in print_df_body()")
@@ -42,23 +45,23 @@ def print_df_column(dataframe, column, max_rows=None):
 
 
 def turn_Series_into_string(series_obj):
-  """ 
+    """ 
   Turn a pandas Series object (of strings)
   into one large string. Intended for text columns
   in pandas DataFrames
 
   :param series_obj    : a pandas Series object (usually text column)
   :returns long_string : string of the series_obj
-  """ 
-  try:
-    long_string = ''
-    for i in range(len(series_obj)):
-      long_string += series_obj.values[i]
-      long_string += '\n'
-    return long_string
-  except:
-    print("<!>ERROR in turn_into_string()")
-    return
+  """
+    try:
+        long_string = ""
+        for i in range(len(series_obj)):
+            long_string += series_obj.values[i]
+            long_string += "\n"
+        return long_string
+    except:
+        print("<!>ERROR in turn_into_string()")
+        return
 
 
 # General helper functions
@@ -68,7 +71,7 @@ def save_dict(dict_name, dict_data):
     :param dict_name  : dictionary name
     :param dict_data  : dictionary
     """
-    with open(config.DATA_DIR+dict_name+'.pickle', 'wb') as f:
+    with open(config.DATA_DIR + dict_name + ".pickle", "wb") as f:
         pickle.dump(dict_data, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
@@ -85,8 +88,8 @@ def convert_to_utc(date, date_format):
     """
     date = datetime.strptime(date, date_format)
     if date.tzinfo is not None:
-        #timezone aware object
-        date = date.replace(tzinfo=pytz.UTC)- date.utcoffset()
+        # timezone aware object
+        date = date.replace(tzinfo=pytz.UTC) - date.utcoffset()
     else:
         # turn unaware of timezones datetime object to aware
         date = pytz.utc.localize(date)
@@ -121,8 +124,8 @@ def pre_process_text(
     tokenize_text=False,
     remove_stop_words=False,
     stem=False,
-    lemmatize=False
-    ):
+    lemmatize=False,
+):
     """ 
     Perform the pre processing steps on the text in the order shown :
     And depending on what was set to True :
@@ -165,33 +168,38 @@ def pre_process_text(
         text = remove_URL(text)
     # 4
     if remove_newline:
-        text = text.replace('\n', ' ')
+        text = text.replace("\n", " ")
     # 5
     if decontract_words:
         text = decontract(text)
     # 6
     if remove_punctuation:
-        text = remove_chars(text, string.punctuation, replace_with=punctuation_replacement)
-    # 7       
+        text = remove_chars(
+            text, string.punctuation, replace_with=punctuation_replacement
+        )
+    # 7
     if remove_numbers:
         text = remove_chars(text, string.digits, replace_with=numbers_replacement)
-    # 8 
+    # 8
     if remove_stop_words:
-        stop_words_english = set(stopwords.words('english'))
-        text = ' '.join(token for token in nltk.word_tokenize(text)
-                        if token.lower() not in stop_words_english)
-    # 9 
+        stop_words_english = set(stopwords.words("english"))
+        text = " ".join(
+            token
+            for token in nltk.word_tokenize(text)
+            if token.lower() not in stop_words_english
+        )
+    # 9
     if stem:
         stemmer = nltk.stem.porter.PorterStemmer()
-        text = ' '.join(stemmer.stem(token) for token in
-                        nltk.word_tokenize(text))
-    # 10 
+        text = " ".join(stemmer.stem(token) for token in nltk.word_tokenize(text))
+    # 10
     if lemmatize:
         lemmatizer = WordNetLemmatizer()
-        text = ' '.join(lemmatizer.lemmatize(token) for token in
-                        nltk.word_tokenize(text))
+        text = " ".join(
+            lemmatizer.lemmatize(token) for token in nltk.word_tokenize(text)
+        )
     # 11
-    text = re.sub(' +', ' ', text).strip(' ')
+    text = re.sub(" +", " ", text).strip(" ")
     # 12
     if tokenize_text:
         words = nltk.word_tokenize(text)
@@ -202,7 +210,7 @@ def pre_process_text(
 
 def remove_URL(text):
     """Removes URLs from the text"""
-    return re.sub(config.URL_REGEX, '', text)
+    return re.sub(config.URL_REGEX, "", text)
 
 
 def remove_chars(text, chars, replace_with=None):
@@ -224,7 +232,7 @@ def remove_chars(text, chars, replace_with=None):
         remove_char_map = dict((ord(char), None) for char in chars)
     text = text.translate(remove_char_map)
     # remove extra whitespace created from above processing
-    text = re.sub(' +', ' ', text).strip(' ')
+    text = re.sub(" +", " ", text).strip(" ")
     return text
 
 
@@ -236,15 +244,19 @@ def fix_urls(text):
 
     :returns text : text with 'fixed' urls
     """
-    if config.URL_REGEX.search(text)is not None:
+    if config.URL_REGEX.search(text) is not None:
         for quote_match in config.URL_REGEX.finditer(text):
-            text = text[:quote_match.start()] + text[quote_match.start():quote_match.end()].replace( '\n', '') + text[quote_match.end():]
+            text = (
+                text[: quote_match.start()]
+                + text[quote_match.start() : quote_match.end()].replace("\n", "")
+                + text[quote_match.end() :]
+            )
     return text
 
 
 def span_urls(text):
     """Given a text, generates (start, end) spans of URLs in the text."""
-    if config.URL_REGEX.search(text)is not None:
+    if config.URL_REGEX.search(text) is not None:
         for quote_match in config.URL_REGEX.finditer(text):
             yield (quote_match.start(), quote_match.end())
 
@@ -273,4 +285,3 @@ def decontract(phrase):
     phrase = re.sub(r"\'ve", " have", phrase)
     phrase = re.sub(r"\'m", " am", phrase)
     return phrase
-    
