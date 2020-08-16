@@ -2,15 +2,15 @@
 from bot.detector.question.base import Question, QuestionOriginNotSet
 from bot.database.sqlite import Database
 
+
 class CommentQuestion(Question):
     """Question originating from GitHub issue comments"""
-    
-    def __init__(self, question_text = None,
-                start_idx = None,
-                end_idx = None,
-                question_id = None):
-        super().__init__(question_text, start_idx, end_idx, question_id, 'comment')
-        
+
+    def __init__(
+        self, question_text=None, start_idx=None, end_idx=None, question_id=None
+    ):
+        super().__init__(question_text, start_idx, end_idx, question_id, "comment")
+
     def set_origin_id(self, origin_id):
         """ 
         Sets the origin id of a given question.
@@ -23,12 +23,12 @@ class CommentQuestion(Question):
         <!> Note: Ids from different origin left None.
 
         :param origin_id : id of a given question's origin        
-        """ 
-        self.email_id   = None
-        self.issue_id   = None
+        """
+        self.email_id = None
+        self.issue_id = None
         self.comment_id = origin_id
 
-    def find_context_from_table(self, db=Database, table_name='issue_comments'):
+    def find_context_from_table(self, db=Database, table_name="issue_comments"):
         """
         Depending on the question's origin, find the corresponding 
         context based on the appropriate table.
@@ -44,12 +44,14 @@ class CommentQuestion(Question):
         :param table_name : name of the table where the context exists
         """
         if self.comment_id is not None:
-            self.issue_id, self.date_question_was_asked = \
-                        db.query(f'''SELECT issue_id, created_at
+            self.issue_id, self.date_question_was_asked = db.query(
+                f"""SELECT issue_id, created_at
                                      FROM {table_name}
                                      WHERE comment_id == {self.comment_id}
-                                     ''')[0] 
-            result =  db.query(f'''SELECT clean_body
+                                     """
+            )[0]
+            result = db.query(
+                f"""SELECT clean_body
                                    FROM {table_name}
                                    WHERE comment_id IN (
                                        SELECT comment_id
@@ -58,7 +60,10 @@ class CommentQuestion(Question):
                                              and created_at   > "{self.date_question_was_asked}"
                                     )
                                     ORDER BY created_at ASC
-                                ''')
+                                """
+            )
             self.context = " ".join([res[0] for res in result])
         else:
-            raise QuestionOriginNotSet(f"\nError: The comment_id for the Question object has not been set.Try using set_origin_id() method.")
+            raise QuestionOriginNotSet(
+                f"\nError: The comment_id for the Question object has not been set.Try using set_origin_id() method."
+            )

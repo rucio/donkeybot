@@ -4,10 +4,12 @@ from bot.detector.question.emails import EmailQuestion
 from bot.detector.question.issues import IssueQuestion
 from bot.detector.question.comments import CommentQuestion
 import bot.config as config
+
 # general python
 import re
 import nltk
 from nltk.tokenize import PunktSentenceTokenizer
+
 
 class QuestionDetector:
     """Utilizes regex patterns to match questions inside a text."""
@@ -20,14 +22,15 @@ class QuestionDetector:
         :param type: one of ['email', 'issue', 'comment']
         """
 
-        assert detector_type in ['email', 'issue', 'comment']
+        assert detector_type in ["email", "issue", "comment"]
         self.type = detector_type
-        self.tokenizer = nltk.tokenize.punkt.PunktSentenceTokenizer() 
-        self.QUESTION_REGEX = re.compile(r'[A-Z][a-z][^A-Z]*[?]$') 
-        self.LOWERED_QUESTION_REGEX = re.compile(r'(how |wh|can |could |do |does |should |would |may |is |are |have |has |will |am ).*[?]$')   
+        self.tokenizer = nltk.tokenize.punkt.PunktSentenceTokenizer()
+        self.QUESTION_REGEX = re.compile(r"[A-Z][a-z][^A-Z]*[?]$")
+        self.LOWERED_QUESTION_REGEX = re.compile(
+            r"(how |wh|can |could |do |does |should |would |may |is |are |have |has |will |am ).*[?]$"
+        )
         # we can add more regexes to the list below for exceptions
-        self.EXCEPTIONS_REGEX = [config.URL_REGEX] 
-        
+        self.EXCEPTIONS_REGEX = [config.URL_REGEX]
 
     def detect(self, text):
         """
@@ -44,32 +47,37 @@ class QuestionDetector:
         questions = self._match_questions(text, self.QUESTION_REGEX)
         for i, question in enumerate(questions):
             # padding needed so that (start, end) indexes of Question object are correct
-            padding = ''
-            for _ in text[question.start:question.end]:
-                padding += ' '
-            assert len(text) == len(text[:question.start] + padding + text[question.end:])
+            padding = ""
+            for _ in text[question.start : question.end]:
+                padding += " "
+            assert len(text) == len(
+                text[: question.start] + padding + text[question.end :]
+            )
             # 'hide' already identified question and move on to next
-            text = text[:question.start] + padding + text[question.end:]
-        
-        # part 2 
+            text = text[: question.start] + padding + text[question.end :]
+
+        # part 2
         lowered_text = text.lower()
         # loop needed after first run since _match_questions returns a list (even if empty list)
-        [questions.append(match) for match in self._match_questions(lowered_text, self.LOWERED_QUESTION_REGEX)]
+        [
+            questions.append(match)
+            for match in self._match_questions(
+                lowered_text, self.LOWERED_QUESTION_REGEX
+            )
+        ]
         # The reason no padding exists here is because we don't have a 3rd regex trying to match if we did
         # we would have to hide already identified questions in the text from the next pattern
         return questions
 
-
     def _create_question(self, text, start, end):
         """Creates <Question obj> based on type"""
-        if self.type == 'email':
+        if self.type == "email":
             question = EmailQuestion(question_text=text, start_idx=start, end_idx=end)
-        elif self.type == 'issue':
+        elif self.type == "issue":
             question = IssueQuestion(question_text=text, start_idx=start, end_idx=end)
-        elif self.type == 'comment':
+        elif self.type == "comment":
             question = CommentQuestion(question_text=text, start_idx=start, end_idx=end)
         return question
-
 
     def _match_questions(self, text, pattern):
         """
@@ -92,15 +100,16 @@ class QuestionDetector:
             # sent_end = sentence_indices[i][1]
             if matches is not None:
                 # before appending check if the match is part of any exceptions
-                if self._is_exception(exceptions, matches.group()): 
+                if self._is_exception(exceptions, matches.group()):
                     continue
                 else:
                     q_start = sent_start + matches.start()
                     q_end = sent_start + matches.end()
-                    question = self._create_question(text=matches.group(),start=q_start,end=q_end)
+                    question = self._create_question(
+                        text=matches.group(), start=q_start, end=q_end
+                    )
                     questions.append(question)
         return questions
-
 
     def _get_exception_matches(self, text):
         """
@@ -118,8 +127,6 @@ class QuestionDetector:
                 for match in pattern.finditer(text):
                     exceptions.append(match.group())
         return exceptions
-
-
 
     @staticmethod
     def _is_exception(exceptions, question):

@@ -1,28 +1,29 @@
-
 # bot modules
 import bot.utils as utils
 import bot.config as config
 from bot.database.sqlite import Database
 from bot.fetcher.interface import (
-                            IFetcher,
-                            LoadingError,
-                            SavingError,
-                            InvalidRepoError,
-                            InvalidTokenError
-                            )
+    IFetcher,
+    LoadingError,
+    SavingError,
+    InvalidRepoError,
+    InvalidTokenError,
+)
+
 # general python
 import string
 import re
-import pandas as pd 
+import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import sys
 
+
 class IssueFetcher(IFetcher):
     """Fetcher for any repo's Issues in GitHub."""
-    
+
     def __init__(self):
-        self.type = 'Github Issues Fetcher'
+        self.type = "Github Issues Fetcher"
         return
 
     def _check_repo(self):
@@ -30,9 +31,11 @@ class IssueFetcher(IFetcher):
         try:
             ##TODO improve hacky approach below
             # if the request is correct then no message is returned and we have a TypeError
-            if utils.request(self.issues_url, self.headers)['message'] == 'Not Found':
-                raise InvalidRepoError(f"\nError: The repository is not in the correct format. Please use the format 'user/repo' eg. 'rucio/rucio'.")
-        except InvalidRepoError as _e: 
+            if utils.request(self.issues_url, self.headers)["message"] == "Not Found":
+                raise InvalidRepoError(
+                    f"\nError: The repository is not in the correct format. Please use the format 'user/repo' eg. 'rucio/rucio'."
+                )
+        except InvalidRepoError as _e:
             sys.exit(_e)
         except:
             # we don't care about the TypeError
@@ -43,13 +46,18 @@ class IssueFetcher(IFetcher):
         try:
             ##TODO improve hacky approach below
             # if the request is correct then no message is returned and we have a TypeError
-            if utils.request(self.issues_url, self.headers)['message'] == 'Bad credentials':
-                raise InvalidTokenError(f"\nError: Bad credentials. The OAUTH token {self.api_token} is not correct.")
-        except InvalidTokenError as _e: 
+            if (
+                utils.request(self.issues_url, self.headers)["message"]
+                == "Bad credentials"
+            ):
+                raise InvalidTokenError(
+                    f"\nError: Bad credentials. The OAUTH token {self.api_token} is not correct."
+                )
+        except InvalidTokenError as _e:
             sys.exit(_e)
-        except: 
+        except:
             # we don't care about the TypeError
-            pass       
+            pass
 
     def fetch(self, repo, api_token, max_pages=201):
         """
@@ -77,76 +85,104 @@ class IssueFetcher(IFetcher):
         :param api_token    : GitHub api token used for fetching the data
         :return issues_df   : DataFrame containing information for the issues
         :return comments_df : DataFrame containing information for the comments
-        """        
+        """
         self.max_pages = max_pages
         self.repo = repo
         self.api_token = api_token
-        self.headers = {'Content-Type': 'application/json', 'Authorization': f'token {self.api_token}'} 
+        self.headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"token {self.api_token}",
+        }
         self.issues_url = f"https://api.github.com/repos/{self.repo}/issues?state=all"
         self._check_repo()
         self._check_token()
 
-        issues_df   = pd.DataFrame(columns=['issue_id','title','state'
-                                        , 'creator', 'created_at','comments','body'])
-        comments_df = pd.DataFrame(columns=['issue_id', 'comment_id'
-                                        , 'creator','created_at','body'])
+        issues_df = pd.DataFrame(
+            columns=[
+                "issue_id",
+                "title",
+                "state",
+                "creator",
+                "created_at",
+                "comments",
+                "body",
+            ]
+        )
+        comments_df = pd.DataFrame(
+            columns=["issue_id", "comment_id", "creator", "created_at", "body"]
+        )
 
-        pages = range(1, self.max_pages) 
-        print('Fetching GitHub issues...')
+        pages = range(1, self.max_pages)
+        print("Fetching GitHub issues...")
         for page in tqdm(pages):
-            for issue in utils.request(self.issues_url + f'&page={page}', self.headers):
+            for issue in utils.request(self.issues_url + f"&page={page}", self.headers):
                 if type(issue) == str:
                     # if the api_token is not correct, we are going to get an error on every issue
-                    print(f"Error: Problem fetching issue {issue} moving on to the next...")
+                    print(
+                        f"Error: Problem fetching issue {issue} moving on to the next..."
+                    )
                     continue
-                if '/pull/' in issue['html_url']:
+                if "/pull/" in issue["html_url"]:
                     # don't care about pull requests
                     continue
 
-                # add comment data    
-                issue_number   = issue['number']
-                issue_comments = issue['comments'] 
+                # add comment data
+                issue_number = issue["number"]
+                issue_comments = issue["comments"]
                 if issue_comments != 0:
-                    for comment in utils.request(issue['comments_url'], self.headers):
+                    for comment in utils.request(issue["comments_url"], self.headers):
                         if type(comment) == dict:
-                            comment_id         = comment['id']
-                            comment_creator    = comment['user']['login']
-                            comment_created_at = comment['created_at']
-                            comment_body       = comment['body']
+                            comment_id = comment["id"]
+                            comment_creator = comment["user"]["login"]
+                            comment_created_at = comment["created_at"]
+                            comment_body = comment["body"]
 
-                            comments_df = comments_df.append({
-                                'issue_id'   : issue_number,
-                                'comment_id' : comment_id,
-                                'creator'    : comment_creator,
-                                'created_at' : comment_created_at,
-                                'body'       : comment_body,
-                                }, ignore_index=True)
+                            comments_df = comments_df.append(
+                                {
+                                    "issue_id": issue_number,
+                                    "comment_id": comment_id,
+                                    "creator": comment_creator,
+                                    "created_at": comment_created_at,
+                                    "body": comment_body,
+                                },
+                                ignore_index=True,
+                            )
                         else:
-                            print(f"Error: Problem fetching issue {issue} on comment {comment}, moving on to the next...")
+                            print(
+                                f"Error: Problem fetching issue {issue} on comment {comment}, moving on to the next..."
+                            )
                             continue
 
                 # add issue data
-                issue_body       = issue['body'].strip('/n/r') # strip for when its empty
-                issue_title      = issue['title']
-                issue_state      = issue['state']
-                issue_creator    = issue['user']['login']
-                issue_created_at = issue['created_at']
+                issue_body = issue["body"].strip("/n/r")  # strip for when its empty
+                issue_title = issue["title"]
+                issue_state = issue["state"]
+                issue_creator = issue["user"]["login"]
+                issue_created_at = issue["created_at"]
 
-                issues_df = issues_df.append({
-                    'issue_id'   : issue_number,
-                    'title'      : issue_title,
-                    'state'      : issue_state,
-                    'creator'    : issue_creator,
-                    'created_at' : issue_created_at,
-                    'comments'   : issue_comments,
-                    'body'       : issue_body,
-                    }, ignore_index=True)
+                issues_df = issues_df.append(
+                    {
+                        "issue_id": issue_number,
+                        "title": issue_title,
+                        "state": issue_state,
+                        "creator": issue_creator,
+                        "created_at": issue_created_at,
+                        "comments": issue_comments,
+                        "body": issue_body,
+                    },
+                    ignore_index=True,
+                )
 
-        self.issues   = issues_df
-        self.comments = comments_df    
+        self.issues = issues_df
+        self.comments = comments_df
         return issues_df, comments_df
 
-    def save(self, db = Database, issues_table_name = 'issues', comments_table_name='issue_comments'):
+    def save(
+        self,
+        db=Database,
+        issues_table_name="issues",
+        comments_table_name="issue_comments",
+    ):
         """
         Save the data in a .db file utilizing our sqlite wrapper.
 
@@ -154,14 +190,25 @@ class IssueFetcher(IFetcher):
         : issues_table_name   : name of the table where we'll store the issues
         : comments_table_name : name of the table where we'll store the comments
         """
-        if all(hasattr(self, attr) for attr in ['issues', 'comments']):
-            print('Saving...')
-            self.issues.to_sql(issues_table_name, con=db.db, if_exists='replace', index=False)
-            self.comments.to_sql(comments_table_name, con=db.db, if_exists='replace', index=False)
+        if all(hasattr(self, attr) for attr in ["issues", "comments"]):
+            print("Saving...")
+            self.issues.to_sql(
+                issues_table_name, con=db.db, if_exists="replace", index=False
+            )
+            self.comments.to_sql(
+                comments_table_name, con=db.db, if_exists="replace", index=False
+            )
         else:
-            raise SavingError(f"\nError: We are missing the data. Please use the .fetch() method before saving.")
+            raise SavingError(
+                f"\nError: We are missing the data. Please use the .fetch() method before saving."
+            )
 
-    def load(self, db = Database, issues_table_name = 'issues', comments_table_name='issue_comments'):
+    def load(
+        self,
+        db=Database,
+        issues_table_name="issues",
+        comments_table_name="issue_comments",
+    ):
         """
         Load the data from the .db file.
 
@@ -172,23 +219,25 @@ class IssueFetcher(IFetcher):
         : return comments            : DataFrame holding the comments data
         """
         try:
-            print('Loading...')
-            self.issues = db.get_dataframe(f'{issues_table_name}')
-            self.comments = db.get_dataframe(f'{comments_table_name}')
+            print("Loading...")
+            self.issues = db.get_dataframe(f"{issues_table_name}")
+            self.comments = db.get_dataframe(f"{comments_table_name}")
             return self.issues, self.comments
         except:
-            raise LoadingError(f"\nError: Data not found.")            
-            
+            raise LoadingError(f"\nError: Data not found.")
+
     def save_with_pickle(self):
         """Save the DataFrame in pickle file format."""
-        if all(hasattr(self, attr) for attr in ['issues', 'comments']):
-            print('Saving...')
-            repo_str = '_'.join(self.repo.split('/'))
+        if all(hasattr(self, attr) for attr in ["issues", "comments"]):
+            print("Saving...")
+            repo_str = "_".join(self.repo.split("/"))
             self.issues.to_pickle(config.DATA_DIR + f"{repo_str}_issues.pkl")
             self.comments.to_pickle(config.DATA_DIR + f"{repo_str}_comments.pkl")
         else:
-            raise SavingError(f"\nError: We are missing the data. Please use the .fetch() method before saving.")
-        
+            raise SavingError(
+                f"\nError: We are missing the data. Please use the .fetch() method before saving."
+            )
+
     def load_with_pickle(self, repo):
         """ 
         Load the DataFrame stored in pickle file format.
@@ -198,10 +247,10 @@ class IssueFetcher(IFetcher):
         : return comments   : DataFrame holding the comments data
         """
         try:
-            print('Loading...')
-            repo_str = '_'.join(repo.split('/'))
+            print("Loading...")
+            repo_str = "_".join(repo.split("/"))
             self.issues = pd.read_pickle(config.DATA_DIR + f"{repo_str}_issues.pkl")
             self.comments = pd.read_pickle(config.DATA_DIR + f"{repo_str}_comments.pkl")
             return self.issues, self.comments
         except:
-            raise LoadingError(f"\nError: Data not found.")       
+            raise LoadingError(f"\nError: Data not found.")

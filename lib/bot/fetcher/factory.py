@@ -2,7 +2,8 @@
 from bot.fetcher.issues import IssueFetcher
 from bot.fetcher.docs import RucioDocsFetcher
 
-class FetcherFactory():
+
+class FetcherFactory:
     """Factory used to create the Fetcher we need."""
 
     @staticmethod
@@ -16,15 +17,14 @@ class FetcherFactory():
         :returns fetcher: a <Fetcher object> 
         """
         try:
-            if data_type == 'Issue':
+            if data_type == "Issue":
                 return IssueFetcher()
-            if data_type == 'Rucio Documentation':
+            if data_type == "Rucio Documentation":
                 return RucioDocsFetcher()
-            # EmailFetcher doesn't exist because it's done through 
-            # separate scripts from CERN's side. 
-            if data_type == 'Email':
+            # EmailFetcher doesn't exist because it's done through
+            # separate scripts from CERN's side.
+            if data_type == "Email":
                 return EmailFetcher()
             raise AssertionError("Error: Fetcher not found.")
         except AssertionError as _e:
             print(_e)
-
