@@ -22,10 +22,10 @@ def main():
         required=True,
     )
     optional.add_argument(
-        "-db",
-        "--database",
-        default="dataset",
-        help="Output .db file where the data is stored (default is dataset)",
+        "-o",
+        "--output_db",
+        default="docs_input_data",
+        help="Output .db file where the data is stored (default is docs_input_data)",
     )
     optional.add_argument(
         "--documentation_table",
@@ -34,7 +34,7 @@ def main():
     )
 
     args = parser.parse_args()
-    db_name = args.database
+    db_name = args.output_db
     token = args.token
     docs_table = args.documentation_table
 

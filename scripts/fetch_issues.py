@@ -28,10 +28,10 @@ def main():
         required=True,
     )
     optional.add_argument(
-        "-db",
-        "--database",
-        default="dataset",
-        help="Output .db file where the data is stored (default is dataset)",
+        "-o",
+        "--output_db",
+        default="issues_input_data",
+        help="Output .db file where the data is stored (default is issues_input_data)",
     )
     optional.add_argument(
         "--max_pages",
@@ -52,7 +52,7 @@ def main():
     )
 
     args = parser.parse_args()
-    db_name = args.database
+    db_name = args.output_db
     repository = args.repo
     token = args.token
     issues_table = args.issues_table
@@ -70,7 +70,8 @@ def main():
         issues_table_name=issues_table,
         comments_table_name=comments_table,
     )
-    print(f"Data saved on {db_name}.db")
+
+    print(f"Raw issues data stored on {db_name}.db")
     print("Sample:")
     print("Issues")
     print(issues_df.head())
