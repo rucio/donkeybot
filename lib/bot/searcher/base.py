@@ -141,7 +141,7 @@ class SearchEngine:
         self.index.to_sql(table_name, con=db.db, if_exists="replace", index=True)
 
     def load_index(
-        self, db=Database, table_name="doc_term_matrix", original_table="docs"
+        self, db=Database, table_name="rucio_doc_term_matrix", original_table="docs"
     ):
         """
         Loads the document-term matrix and the original table we indexed to prepare
@@ -153,6 +153,10 @@ class SearchEngine:
         """
         try:
             self.corpus = db.get_dataframe(original_table)
+            # let's not index the release-notes in this version of the bot
+            # this code also exists in the create_se_indexes script for rucio documents
+            if self.type == "Document Search Engine": # for us this is rucio documentation
+                self.corpus = self.corpus[self.corpus["doc_type"] != "release_notes"]
             self.columns = self.corpus.columns
             self.index = db.get_dataframe(f"{table_name}").set_index(
                 self.document_ids_name, drop=True

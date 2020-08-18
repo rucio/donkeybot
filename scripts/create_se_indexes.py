@@ -42,6 +42,7 @@ def main():
     docs_se = SearchEngine()
     docs_df = data_storage.get_dataframe(docs_table)
     # let's not index the release-notes in this version of the bot
+    # this code also exists is load_index() for rucio documents
     docs_df = docs_df[docs_df["doc_type"] != "release_notes"]
     print("Indexing Rucio documentation for the SearchEngine...")
     docs_se.create_index(
