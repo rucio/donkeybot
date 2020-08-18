@@ -1,3 +1,14 @@
+# This script :
+# 1) Fetches GitHub Rucio issues and Documentation and saves them under
+#     -  '/data/issues_input_data.db'
+#     -  '/data/docs_input_data.db'
+# 2) Parses the above .db files + the emails_input_data.db file
+#     - expects '/data/emails_input_data.db' to exist
+#       (not fetched automatically as of 18/08/2020)
+# 3) Detects questions in issues/issue_comments/emails
+# 4) Creates rucio documentation and questions indexes for the SearchEngine
+# 5) Saves all of the above under '/data/data_storage.db'
+
 import subprocess
 import argparse
 
@@ -30,7 +41,7 @@ def main():
     subprocess.run(
         f"python -m scripts.parse_all", shell=True,
     )
-    detect questions in data_storage
+    # detect questions in data_storage
     subprocess.run(
         f"python -m scripts.detect_all_questions", shell=True,
     )
@@ -38,6 +49,7 @@ def main():
     subprocess.run(
         f"python -m scripts.create_se_indexes", shell=True,
     )
+
 
 if __name__ == "__main__":
     main()
