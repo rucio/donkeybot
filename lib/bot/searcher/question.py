@@ -9,7 +9,7 @@ import pandas as pd
 class QuestionSearchEngine(SearchEngine):
     """Question Search Engine"""
 
-    def __init__(self, doc_id="question_id", index=["question"]):
+    def __init__(self, ids="question_id", index=["question"]):
         """
         Creates the Question Search Engine.
 
@@ -20,11 +20,11 @@ class QuestionSearchEngine(SearchEngine):
         we are indexing is the result of the QuestionDetector.
         Which means the context of each question is known.
 
-        :param doc_id : id of the document we are indexing (default is question_id)
+        :param ids    : id of the document we are indexing (default is question_id)
         :param index  : Name of column(s) that will be indexed. (default is ['question']) 
         :type index   : list
         """
-        super().__init__(index=index, ids=doc_id)
+        super().__init__(index=index, ids=ids)
         self.type = "Question Search Engine"
 
     def _attach_qa_data(self, results, query):
@@ -46,7 +46,7 @@ class QuestionSearchEngine(SearchEngine):
     def load_index(
         self,
         db=Database,
-        table_name="question_doc_term_matrix",
+        table_name="questions_doc_term_matrix",
         original_table="questions",
     ):
         super().load_index(db=db, table_name=table_name, original_table=original_table)
