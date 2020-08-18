@@ -155,7 +155,9 @@ class SearchEngine:
             self.corpus = db.get_dataframe(original_table)
             # let's not index the release-notes in this version of the bot
             # this code also exists in the create_se_indexes script for rucio documents
-            if self.type == "Document Search Engine": # for us this is rucio documentation
+            if (
+                self.type == "Document Search Engine"
+            ):  # for us this is rucio documentation
                 self.corpus = self.corpus[self.corpus["doc_type"] != "release_notes"]
             self.columns = self.corpus.columns
             self.index = db.get_dataframe(f"{table_name}").set_index(
