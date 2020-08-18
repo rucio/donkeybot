@@ -11,8 +11,8 @@ def main():
 
     optional.add_argument(
         "--emails_input_db",
-        default="emails_noNER_22062020",
-        help="Input .db file name of the fetched emails (default is emails_noNER_22062020)",
+        default="emails_input_data",
+        help="Input .db file name of the fetched emails (default is emails_input_data)",
     )
     optional.add_argument(
         "--issues_input_db",
@@ -51,8 +51,7 @@ def main():
         shell=True,
     )
     subprocess.run(
-        f"python -m scripts.parse_docs -i {docs_input_db} -o {output_db}",
-        shell=True,
+        f"python -m scripts.parse_docs -i {docs_input_db} -o {output_db}", shell=True,
     )
 
 
