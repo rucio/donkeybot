@@ -5,10 +5,11 @@
 /virt
 
 # build info
-/dist
+/dist 
+.eggs/
 /DonkeyBot.egg-info
 /lib/DonkeyBot.egg-info
 
-# files 
+# files
 __pycache__
 .pytest_cache
