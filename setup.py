@@ -25,10 +25,11 @@ setup(
         "rank_bm25",
         "requests",
         "transformers",
-        "uuid",
-        "pytest"
+        "uuid"
         # for torch you need to download based on https://pytorch.org/ quickstart guide
-    ],
+    ], 
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: Apache Software License",

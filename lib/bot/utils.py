@@ -46,13 +46,13 @@ def print_df_column(dataframe, column, max_rows=None):
 
 def turn_Series_into_string(series_obj):
     """ 
-  Turn a pandas Series object (of strings)
-  into one large string. Intended for text columns
-  in pandas DataFrames
+    Turn a pandas Series object (of strings)
+    into one large string. Intended for text columns
+    in pandas DataFrames
 
-  :param series_obj    : a pandas Series object (usually text column)
-  :returns long_string : string of the series_obj
-  """
+    :param series_obj    : a pandas Series object (usually text column)
+    :returns long_string : string of the series_obj
+    """
     try:
         long_string = ""
         for i in range(len(series_obj)):
