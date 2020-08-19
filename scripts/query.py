@@ -125,11 +125,11 @@ def main():
         if match_docs:
             docs_results = docs_se.search(query, top_k)
             print(f"\nTop-{top_k} retrieved documentation:")
-            print(docs_results[["question", "name", "context"]])
+            print(docs_results[["doc_id","question", "name", "context"]])
         if match_questions:
             question_results = q_se.search(query, top_k)
             print(f"\nTop-{top_k} retrieved past questions:")
-            print(question_results[["query", "question", "context"]])
+            print(question_results[["question_id", "query", "question", "context"]])
 
     except Exception as _e:
         print("Error : ", end="")
