@@ -36,7 +36,7 @@ class SearchEngine:
         else:
             self.column_to_index = index
 
-    def search(self, query, top_n, return_dataframe=False):
+    def search(self, query, top_n):
         """
         Return at most the `top_n` results most similar to
         the input `query` based on BM25.
