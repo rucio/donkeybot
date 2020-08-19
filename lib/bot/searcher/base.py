@@ -82,7 +82,7 @@ class SearchEngine:
         the same (not a QuestionSearchEngine) and the columns 
         we have previously indexed are the context.
         """
-        results["user_query"] = query
+        results["query"] = query
         results["question"] = query
         results["context"] = self._get_documents().to_frame()
 
