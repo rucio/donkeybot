@@ -3,6 +3,7 @@
 /.vscode
 /data
 /virt
+/models
 
 # build info
 /dist 
