@@ -40,7 +40,7 @@ class SearchEngine:
         """
         Return at most the `top_n` results most similar to
         the input `query` based on BM25.
-           
+        
         :param top_n    : the maximum number of results that are returned
         :type top_n     : int
         :param query    : User's question/query 
@@ -73,14 +73,13 @@ class SearchEngine:
         DataFrame into SQuAD like data. 
 
         results include : {
-             'user_query': what the user queried in the SE
-             'question'  : the most similar question matched
-             'context'   : context of user_query/question
+             'query'    : what the user queried in the SE
+             'context'  : context of user_query/question
         }
 
-        For regular documents user_query and question are 
-        the same (not a QuestionSearchEngine) and the columns 
-        we have previously indexed are the context.
+        For regular documents user's "query" is added and
+        and the "context" will be the document info 
+        we have previously indexed.
         """
         results["query"] = query
         results["context"] = self._get_documents().to_frame()

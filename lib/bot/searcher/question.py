@@ -32,9 +32,13 @@ class QuestionSearchEngine(SearchEngine):
         Attach the columns needed to transform the results
         DataFrame into SQuAD like data. 
 
+        results include : {
+                    'query'    : what the user queried in the SE
+                    'context'   : context of user_query/question
+                }
+
         For Question documents (in QuestionSearchEngine) 
-        the question and context columns already exist and hold
-        stored data, only user_query is added.
+        "context" column already, only user's "query" is added.
         """
         results["query"] = query
 
