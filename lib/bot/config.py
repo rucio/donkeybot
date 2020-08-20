@@ -5,6 +5,7 @@ import re
 # PATHS
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = BOT_DIR + r"\..\..\data\\"
+MODELS_DIR = BOT_DIR + r"\..\..\models\\"
 
 # REGEX
 REGEX_METACHARACTERS = "^$.|?*+(){}[]"
