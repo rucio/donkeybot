@@ -125,7 +125,7 @@ def main():
         if match_docs:
             docs_results = docs_se.search(query, top_k)
             print(f"\nTop-{top_k} retrieved documentation:")
-            print(docs_results[["doc_id","question", "name", "context"]])
+            print(docs_results[["doc_id", "question", "name", "context"]])
         if match_questions:
             question_results = q_se.search(query, top_k)
             print(f"\nTop-{top_k} retrieved past questions:")
