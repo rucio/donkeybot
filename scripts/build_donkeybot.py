@@ -1,16 +1,9 @@
 # This script :
-# 1) Fetches GitHub Rucio issues and Documentation and saves them under
-#     -  '/data/issues_input_data.db'
-#     -  '/data/docs_input_data.db'
-# 2) Parses the above .db files + the emails_input_data.db file
-#     - expects '/data/emails_input_data.db' to exist
-#       (not fetched automatically as of 18/08/2020)
-# 3) Detects questions in issues/issue_comments/emails
-# 4) Creates rucio documentation and questions indexes for the SearchEngine
-# 5) Saves all of the above under '/data/data_storage.db'
+# - expects '/data/emails_input_data.db' to exist
 
 # bot modules
 from bot.config import MODELS_DIR
+from bot.utils import str2bool
 
 # general python
 import subprocess
@@ -22,7 +15,7 @@ from transformers import DistilBertForQuestionAnswering, DistilBertTokenizer
 
 def download_and_save_DistilBERT_model(name):
     """Download and save DistilBERT transformer model to MODELS_DIR"""
-    print(f"Downloading {name}")
+    print(f"Downloading: {name}")
     try:
         os.makedirs(MODELS_DIR + f"{name}")
     except FileExistsError as _e:
@@ -36,7 +29,7 @@ def download_and_save_DistilBERT_model(name):
 
 def download_and_save_BERT_model(name):
     """Download and save BERT transformer model to MODELS_DIR"""
-    print(f"Downloading {name}")
+    print(f"Downloading: {name}")
     try:
         os.makedirs(MODELS_DIR + f"{name}")
     except FileExistsError as _e:
@@ -54,6 +47,7 @@ def main():
         description="""Use this script to build DonkeyBot"""
     )
     required = parser.add_argument_group("required arguments")
+    optional = parser.add_argument_group("optional arguments")
 
     required.add_argument(
         "-t",
@@ -61,9 +55,20 @@ def main():
         help="GitHub api token to be used for the GET requests while fetching",
         required=True,
     )
+    optional.add_argument(
+        "-all",
+        "--all_models",
+        type=str2bool,
+        nargs="?",  # 0 or 1 argument,
+        const=True,
+        default=False,
+        help="If True then download all Question Answering models the bot supports. (default it False)",
+        
+    )
 
     args = parser.parse_args()
     api_token = args.token
+    download_all_models = args.all_models
 
     # fetch and store data
     subprocess.run(
@@ -84,13 +89,12 @@ def main():
     subprocess.run(
         f"python -m scripts.create_se_indexes", shell=True,
     )
-
     # download and cache Question Answering models
-    download_and_save_DistilBERT_model("distilbert-base-cased-distilled-squad")
-    download_and_save_BERT_model("bert-large-cased-whole-word-masking-finetuned-squad")
-    download_and_save_BERT_model(
-        "bert-large-uncased-whole-word-masking-finetuned-squad"
-    )
+    download_and_save_DistilBERT_model("distilbert-base-uncased-distilled-squad")
+    if download_all_models:
+        download_and_save_DistilBERT_model("distilbert-base-cased-distilled-squad")
+        download_and_save_BERT_model("bert-large-cased-whole-word-masking-finetuned-squad")
+        download_and_save_BERT_model("bert-large-uncased-whole-word-masking-finetuned-squad")
     print("Done!")
 
 
