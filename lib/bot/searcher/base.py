@@ -83,7 +83,6 @@ class SearchEngine:
         we have previously indexed are the context.
         """
         results["query"] = query
-        results["question"] = query
         results["context"] = self._get_documents().to_frame()
 
     def _get_documents(self):
