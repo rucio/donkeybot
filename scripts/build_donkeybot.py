@@ -9,13 +9,43 @@
 # 4) Creates rucio documentation and questions indexes for the SearchEngine
 # 5) Saves all of the above under '/data/data_storage.db'
 
-#bot modules
-import bot.config as config
+# bot modules
+from bot.config import MODELS_DIR
 
 # general python
 import subprocess
 import argparse
 import os
+from transformers import BertForQuestionAnswering, BertTokenizer
+from transformers import DistilBertForQuestionAnswering, DistilBertTokenizer
+
+
+def download_and_save_DistilBERT_model(name):
+    """Download and save DistilBERT transformer model to MODELS_DIR"""
+    print(f"Downloading {name}")
+    try:
+        os.makedirs(MODELS_DIR + f"{name}")
+    except FileExistsError as _e:
+        pass
+    model = DistilBertForQuestionAnswering.from_pretrained(f"{name}")
+    tokenizer = DistilBertTokenizer.from_pretrained(f"{name}")
+    model.save_pretrained(MODELS_DIR + f"{name}")
+    tokenizer.save_pretrained(MODELS_DIR + f"{name}")
+    return
+
+
+def download_and_save_BERT_model(name):
+    """Download and save BERT transformer model to MODELS_DIR"""
+    print(f"Downloading {name}")
+    try:
+        os.makedirs(MODELS_DIR + f"{name}")
+    except FileExistsError as _e:
+        pass
+    model = BertForQuestionAnswering.from_pretrained(f"{name}")
+    tokenizer = BertTokenizer.from_pretrained(f"{name}")
+    model.save_pretrained(MODELS_DIR + f"{name}")
+    tokenizer.save_pretrained(MODELS_DIR + f"{name}")
+    return
 
 
 def main():
@@ -35,36 +65,33 @@ def main():
     args = parser.parse_args()
     api_token = args.token
 
-    # # fetch and store data
-    # subprocess.run(
-    #     f"python -m scripts.fetch_issues -r rucio/rucio -t {api_token}", shell=True,
-    # )
-    # subprocess.run(
-    #     f"python -m scripts.fetch_rucio_docs -t {api_token}", shell=True,
-    # )
-    # # parse and store data
-    # subprocess.run(
-    #     f"python -m scripts.parse_all", shell=True,
-    # )
-    # # detect questions in data_storage
-    # subprocess.run(
-    #     f"python -m scripts.detect_all_questions", shell=True,
-    # )
+    # fetch and store data
+    subprocess.run(
+        f"python -m scripts.fetch_issues -r rucio/rucio -t {api_token}", shell=True,
+    )
+    subprocess.run(
+        f"python -m scripts.fetch_rucio_docs -t {api_token}", shell=True,
+    )
+    # parse and store data
+    subprocess.run(
+        f"python -m scripts.parse_all", shell=True,
+    )
+    # detect questions in data_storage
+    subprocess.run(
+        f"python -m scripts.detect_all_questions", shell=True,
+    )
     # create search engine for documents and questions
     subprocess.run(
         f"python -m scripts.create_se_indexes", shell=True,
     )
-    # download BERT models for Question Answering
-    try:
-        os.makedirs(config.DATA_DIR+"models/distilbert-base-cased-distilled-squad")
-        os.makedirs(config.DATA_DIR+"models/bert-large-cased-whole-word-masking-finetuned-squad")
-        os.makedirs(config.DATA_DIR+"models/bert-large-uncased-whole-word-masking-finetuned-squad")
-    except FileExistsError as _e:
-        print(_e)
-        print('moving on...')
 
-    print('Done!')
-
+    # download and cache Question Answering models
+    download_and_save_DistilBERT_model("distilbert-base-cased-distilled-squad")
+    download_and_save_BERT_model("bert-large-cased-whole-word-masking-finetuned-squad")
+    download_and_save_BERT_model(
+        "bert-large-uncased-whole-word-masking-finetuned-squad"
+    )
+    print("Done!")
 
 
 if __name__ == "__main__":
