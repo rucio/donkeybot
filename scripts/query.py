@@ -2,23 +2,12 @@
 from bot.searcher.base import SearchEngine
 from bot.searcher.question import QuestionSearchEngine
 from bot.database.sqlite import Database
+from bot.utils import str2bool
 
 # general python
 import pandas as pd
 import argparse
 import sys
-
-
-def str2bool(v):
-    """Used to convert string to boolean"""
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ("yes", "true", "t", "y", "1"):
-        return True
-    elif v.lower() in ("no", "false", "f", "n", "0"):
-        return False
-    else:
-        raise argparse.ArgumentTypeError("Boolean value expected.")
 
 
 def check_positive(value):
