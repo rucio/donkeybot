@@ -9,8 +9,13 @@
 # 4) Creates rucio documentation and questions indexes for the SearchEngine
 # 5) Saves all of the above under '/data/data_storage.db'
 
+#bot modules
+import bot.config as config
+
+# general python
 import subprocess
 import argparse
+import os
 
 
 def main():
@@ -30,25 +35,36 @@ def main():
     args = parser.parse_args()
     api_token = args.token
 
-    # fetch and store data
-    subprocess.run(
-        f"python -m scripts.fetch_issues -r rucio/rucio -t {api_token}", shell=True,
-    )
-    subprocess.run(
-        f"python -m scripts.fetch_rucio_docs -t {api_token}", shell=True,
-    )
-    # parse and store data
-    subprocess.run(
-        f"python -m scripts.parse_all", shell=True,
-    )
-    # detect questions in data_storage
-    subprocess.run(
-        f"python -m scripts.detect_all_questions", shell=True,
-    )
+    # # fetch and store data
+    # subprocess.run(
+    #     f"python -m scripts.fetch_issues -r rucio/rucio -t {api_token}", shell=True,
+    # )
+    # subprocess.run(
+    #     f"python -m scripts.fetch_rucio_docs -t {api_token}", shell=True,
+    # )
+    # # parse and store data
+    # subprocess.run(
+    #     f"python -m scripts.parse_all", shell=True,
+    # )
+    # # detect questions in data_storage
+    # subprocess.run(
+    #     f"python -m scripts.detect_all_questions", shell=True,
+    # )
     # create search engine for documents and questions
     subprocess.run(
         f"python -m scripts.create_se_indexes", shell=True,
     )
+    # download BERT models for Question Answering
+    try:
+        os.makedirs(config.DATA_DIR+"models/distilbert-base-cased-distilled-squad")
+        os.makedirs(config.DATA_DIR+"models/bert-large-cased-whole-word-masking-finetuned-squad")
+        os.makedirs(config.DATA_DIR+"models/bert-large-uncased-whole-word-masking-finetuned-squad")
+    except FileExistsError as _e:
+        print(_e)
+        print('moving on...')
+
+    print('Done!')
+
 
 
 if __name__ == "__main__":

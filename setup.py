@@ -1,10 +1,6 @@
 from setuptools import setup, find_packages
 import os
 
-try:
-    os.mkdir("data")
-except FileExistsError as _e:
-    pass
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
