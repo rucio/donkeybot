@@ -24,6 +24,7 @@ class Database:
         """Return a pandas DataFrame object of the Database contents."""
         # caveat : if int column contains NaNs pandas tranforms it to float
         # eg. in questions table where foreign keys can contain NaNs
+        # https://pandas.pydata.org/pandas-docs/stable/user_guide/gotchas.html#support-for-integer-na
         return pd.read_sql_query(f"SELECT * FROM {table}", self.db)
 
     def close_connection(self):
