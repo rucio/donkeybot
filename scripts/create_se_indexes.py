@@ -56,7 +56,6 @@ def main():
     questions_se.create_index(
         corpus=questions_df, db=data_storage, table_name="questions_doc_term_matrix"
     )
-    print("Done!")
 
 
 if __name__ == "__main__":
