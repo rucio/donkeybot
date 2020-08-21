@@ -63,7 +63,6 @@ def main():
         const=True,
         default=False,
         help="If True then download all Question Answering models the bot supports. (default it False)",
-        
     )
 
     args = parser.parse_args()
