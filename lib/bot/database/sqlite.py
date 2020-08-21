@@ -6,6 +6,7 @@ import sqlite3
 from sqlite3 import Error
 import os.path
 import pandas as pd
+import json
 
 
 class Database:
@@ -304,6 +305,70 @@ class Database:
                 (question_id, question, start,\
                 end, context, email_id, issue_id, comment_id) \
                 values(?, ?, ?, ?, ?, ?, ?, ?)",
+            data,
+        )
+        self.db.commit()
+
+    # answers
+    def create_answers_table(self, table_name="answers"):
+        """
+        Creates a table to store Answer objects objects from 
+        AnswerDetector.
+
+        :param table_name : name given to the table holding the Answers
+        """
+        self.drop_table(f"{table_name}")
+        self.create_table(
+            f"{table_name}",
+            {
+                "answer_id": "TEXT PRIMARY KEY",
+                "user_question_id": "TEXT",
+                "user_question": "TEXT",
+                "answer": "TEXT",
+                "start": "TEXT",
+                "end": "TEXT",
+                "confidence": "TEXT",
+                "extended_answer": "TEXT",
+                "extended_start": "INT",
+                "extended_end": "INT",
+                "model": "TEXT",
+                "origin": "TEXT",
+                "created_at": "TEXT",
+                "metadata": "JSON",
+            },
+        )
+
+    def insert_answer(self, answer_obj, table_name="answers"):
+        """
+        Insert Question objects into the database.
+        
+        :param question_obj   : Question object from bot.detector.question
+        :param table_name     : name of the table to store the question
+        """
+        data = (
+            answer_obj.id,
+            answer_obj.user_question_id,
+            answer_obj.user_question,
+            answer_obj.answer,
+            answer_obj.start,
+            answer_obj.end,
+            answer_obj.confidence,
+            answer_obj.extended_answer,
+            answer_obj.extended_start,
+            answer_obj.extended_end,
+            answer_obj.model,
+            answer_obj.origin,
+            answer_obj.created_at,
+            # remember json
+            json.dumps(answer_obj.metadata),
+        )
+
+        self.db.execute(
+            f"INSERT INTO {table_name} \
+                (answer_id, user_question_id, user_question, answer, start,\
+                end, confidence, extended_answer, extended_start,\
+                extended_end, model, origin, created_at, metadata) \
+                values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             data,
         )
         self.db.commit()
