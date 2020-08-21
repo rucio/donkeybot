@@ -2,20 +2,12 @@
 from bot.searcher.base import SearchEngine
 from bot.searcher.question import QuestionSearchEngine
 from bot.database.sqlite import Database
-from bot.utils import str2bool
+from bot.utils import str2bool, check_positive
 
 # general python
 import pandas as pd
 import argparse
 import sys
-
-
-def check_positive(value):
-    """Used to check that the value of the argument is a positive integer"""
-    ivalue = int(value)
-    if ivalue <= 0:
-        raise argparse.ArgumentTypeError("%s is an invalid positive int value" % value)
-    return ivalue
 
 
 def main():
