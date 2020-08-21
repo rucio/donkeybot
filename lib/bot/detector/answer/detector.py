@@ -9,12 +9,12 @@
 
 # bot modules
 import bot.config as config
+from bot.detector.answer.base import Answer
 
 # general python
 from transformers import pipeline
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 from tqdm import tqdm
-from uuid import uuid4
 import pandas as pd
 import sys
 
@@ -26,12 +26,13 @@ class AnswerDetector:
         self,
         model="distilbert-base-cased-distilled-squad",
         extended_answer_size=30,
-        handle_impossible_answer=True,  # changed
-        max_answer_len=25,  # changed
+        handle_impossible_answer=True,
+        max_answer_len=25,
         max_question_len=64,
-        max_seq_len=256,  # int,
-        num_answers_to_predict=5,
+        max_seq_len=256,
+        num_answers_to_predict=3,
         doc_stride=128,
+        device=0,
     ):
         """
         <!> Default values from source code for transformers.pipelines:
@@ -42,28 +43,36 @@ class AnswerDetector:
            ("max_question_len", 64)
            ("handle_impossible_answer", False)
 
-        :param model : name of the transformer model for QA (default is distilbert-base-uncased-distilled-squad)
+        :param model : name of the transformer model for QA (default is distilbert-base-cased-distilled-squad)
         :param extended_answer_size : Number of character before and after the answer detected by our
-                                     model that are returned to give more context for the user. (default is 50)
-        :param handle_impossible_answer :
-        :param max_answer_len : 
-        :param max_question_len :
-        :param max_seq_len :
-        :param num_answers_to_predict : num of answers that are predicted per context (default is 3)
-        :param doc_stride :
+                                      model that are returned to give more context for the user. (default is 30)
+        :param handle_impossible_answer : True if we wish to return impossible/empty answers, False otherwise (default is True)
+        :param max_answer_len : maximum length of an answer (default is 25)
+        :param max_question_len : maximum length of a question (default is 64)
+        :param max_seq_len : maximum length of one input sequence (default 256)
+        :param num_answers_to_predict : num of answers that are predicted per document (default is 3)
+        :param doc_stride : length of the split in the sliding window documents longer than max_sq_len.
+        :param device : if < 0 -> use cpu
+                        if >=0 -> use gpu 
         """
-        # load model
+
+        self.model_name = model
         try:
             qa_model = AutoModelForQuestionAnswering.from_pretrained(
-                config.MODELS_DIR + model
+                config.MODELS_DIR + self.model_name
             )
-            qa_tokenizer = AutoTokenizer.from_pretrained(config.MODELS_DIR + model)
+            qa_tokenizer = AutoTokenizer.from_pretrained(
+                config.MODELS_DIR + self.model_name
+            )
         except Exception as _e:
             print(_e)
             sys.exit(f"Make sure that the model exists under {config.MODELS_DIR}")
-        # assign attributes
         self.model = pipeline(
-            "question-answering", model=qa_model, tokenizer=qa_tokenizer, framework="pt"
+            "question-answering",
+            model=qa_model,
+            tokenizer=qa_tokenizer,
+            framework="pt",
+            device=device,
         )
         self.extended_answer_size = extended_answer_size
         self.num_answers_to_predict = num_answers_to_predict
@@ -73,16 +82,17 @@ class AnswerDetector:
         self.max_seq_len = max_seq_len
         self.doc_stride = doc_stride
 
-    def predict(self, question, documents, top_k=None):
+    def predict(self, question, documents, top_k=1):
         """
-        Use this method to predict answer(s) based on input 
-        question and contexts
+        Use this method to return top_k answer(s) based on input 
+        question and documents.
 
-        :param question : question string
-        :type question : str
-        :param documents : pd.DataFrame that contains 'context' and other metadata
-        :type contexts : pandas DataFrame object
-        :param topk : number of answers to predict for each context (default is 3)
+        :param question  : question string
+        :type question   : str
+        :param documents : pd.DataFrame that contains 'context' and other data
+        :type documents  : pandas DataFrame 
+        :param topk      : number of answers to return for each document (default is 1)
+        :returns top_k_answers : list of top_k number of Answer objects
         """
 
         answers = []
@@ -104,6 +114,7 @@ class AnswerDetector:
                     max_seq_len=self.max_seq_len,
                     doc_stride=self.doc_stride,
                 )
+            # reason for KeyError: https://github.com/huggingface/transformers/issues/5910
             except KeyError as _e:
                 continue
             except Exception as _other_e:
@@ -119,34 +130,30 @@ class AnswerDetector:
                 if pred["answer"]:
                     if pred["score"] > best_score:
                         best_score = pred["score"]
-                    answer = self._create_answer_object(pred, doc)
+                    answer = self._create_answer_object(question, pred, doc)
                     answers.append(answer)
                 else:
                     print("No answer was predicted for this document!")
-                    # print(pred)
-                    # no_ans_score = pred["score"]
 
                 if best_score > best_overall_score:
                     best_overall_score = best_score
 
         # sort answers by their `confidence` and select top-k
         sorted_answers = sorted(answers, key=lambda k: k.confidence, reverse=True)
-        # print("SORTED ANSWERS")
-        # sorted_results = {"question": question,
-        #         "answers": [answer.__dict__ for answer in sorted_answers] }
-        # print(sorted_results)
 
         top_k_answers = sorted_answers[:top_k]
 
         return top_k_answers
 
-    def _create_answer_object(self, pred, doc):
+    def _create_answer_object(self, question, pred, doc):
         extended_start = max(0, pred["start"] - self.extended_answer_size)
         extended_end = min(len(doc.context), pred["end"] + self.extended_answer_size)
         # drop extra metadata columns
-        # errors ignored for when its Question metadata and 'body' column doesn't exist
+        # errors ignored for when we have Question metadata and the 'body' column doesn't exist
         metadata = doc.drop(["context", "body", "query"], errors="ignore").to_dict()
         answer = Answer(
+            question=question,
+            model=self.model_name,
             answer=pred["answer"],
             start=pred["start"],
             end=pred["end"],
@@ -157,90 +164,3 @@ class AnswerDetector:
             metadata=metadata,
         )
         return answer
-
-
-class Answer:
-    def __init__(
-        self,
-        answer,
-        start,
-        end,
-        confidence,
-        extended_answer,
-        extended_start,
-        extended_end,
-        metadata,
-    ):
-        # Set unique ID
-        self.id = str(uuid4().hex)
-        self.answer = answer
-        self.start = start
-        self.end = end
-        self.confidence = confidence
-        self.extended_answer = extended_answer
-        self.extended_start = extended_start
-        self.extended_end = extended_end
-        self.metadata = metadata
-
-    def __str__(self):
-        return f"answer: {self.extended_answer}... , confidence: {self.confidence}''"
-
-
-##############
-
-if __name__ == "__main__":
-    from bot.searcher.base import SearchEngine
-    from bot.database.sqlite import Database
-
-    USER_QUESTION = "How are rucio account authenticated?"
-    db = Database("data_storage.db", "docs")
-    answer_detector = AnswerDetector(
-        "distilbert-base-cased-distilled-squad", num_answers_to_predict=1
-    )
-    docs_se = SearchEngine()
-    docs_se.load_index(db=db)
-    db.close_connection()
-    results_from_docs = docs_se.search(USER_QUESTION, top_n=5)
-    print("RETRIEVED RESULTS:")
-    print(results_from_docs)
-    # answers = list of answer objects
-    answers = answer_detector.predict(USER_QUESTION, results_from_docs, top_k=3)
-    print("ANSWER OBJECTS:")
-    results = {
-        "question": USER_QUESTION,
-        "answers": [answer.__dict__ for answer in answers],
-    }
-    print(results)
-    print()
-    print("type")
-    print(type(answers))
-    for i, answer in enumerate(answers):
-        print(i)
-        print(f"{USER_QUESTION}")
-        print(answer)
-        url = answer.metadata["url"]
-        print(f"for more info check {url}")
-
-    # from bot.searcher.question import QuestionSearchEngine
-
-    # question_se = QuestionSearchEngine()
-    # question_se.load_index(db=db)
-    # db.close_connection()
-    # results_from_questions = question_se.search(USER_QUESTION, top_n = 10)
-    # print('RETRIEVED RESULTS:')
-    # print(results_from_questions)
-    # # answers = list of answer objects
-    # answers = answer_detector.predict(USER_QUESTION, results_from_questions, top_k=3)
-    # print("ANSWER OBJECTS:")
-    # results = {"question": USER_QUESTION,
-    #             "answers": [answer.__dict__ for answer in answers] }
-    # print(results)
-    # print()
-    # print('type')
-    # print(type(answers))
-    # for i, answer in enumerate(answers):
-    #     print(i)
-    #     print(f"{USER_QUESTION}")
-    #     print(answer)
-    #     most_similar_question = answer.metadata["question"]
-    #     print(f'The most similar question was: {most_similar_question}')
