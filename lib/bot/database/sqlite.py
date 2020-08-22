@@ -384,7 +384,7 @@ class Database:
         self.create_table(
             f"{table_name}",
             {
-                "question_id": "TEXT PRIMARY KEY",
+                "faq_id": "TEXT PRIMARY KEY",
                 "question": "TEXT",
                 "answer": "TEXT",
                 "author": "TEXT",
@@ -411,7 +411,7 @@ class Database:
 
         self.db.execute(
             f"INSERT INTO {table_name} \
-                (question_id, question, answer, author, keywords, created_at) \
+                (faq_id, question, answer, author, keywords, created_at) \
                 values(?,?,?,?,?,?)",
             data,
         )
