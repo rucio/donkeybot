@@ -1,8 +1,7 @@
 # bot modules
-# from bot.detector.question.base import Question
-from bot.detector.question.emails import EmailQuestion
-from bot.detector.question.issues import IssueQuestion
-from bot.detector.question.comments import CommentQuestion
+from bot.question.emails import EmailQuestion
+from bot.question.issues import IssueQuestion
+from bot.question.comments import CommentQuestion
 import bot.config as config
 
 # general python
@@ -40,7 +39,7 @@ class QuestionDetector:
         1) First pattern matches questions without lowering the text
         2) Second pattern matches questions after having lowered the text
 
-        :param text         : String upon which the detection algorithm runs (clean_body from Emails)
+        :param text         : String upon which the detection algorithm runs 
         :return questions   : list of Question Objects
         """
         # part 1

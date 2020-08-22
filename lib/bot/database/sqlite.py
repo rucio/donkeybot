@@ -6,6 +6,7 @@ import sqlite3
 from sqlite3 import Error
 import os.path
 import pandas as pd
+import json
 
 
 class Database:
@@ -24,6 +25,7 @@ class Database:
         """Return a pandas DataFrame object of the Database contents."""
         # caveat : if int column contains NaNs pandas tranforms it to float
         # eg. in questions table where foreign keys can contain NaNs
+        # https://pandas.pydata.org/pandas-docs/stable/user_guide/gotchas.html#support-for-integer-na
         return pd.read_sql_query(f"SELECT * FROM {table}", self.db)
 
     def close_connection(self):
@@ -284,7 +286,7 @@ class Database:
         """
         Insert Question objects into the database.
         
-        :param question_obj   : Question object from bot.detector.question
+        :param question_obj   : Question object from bot.question
         :param table_name     : name of the table to store the question
         """
         data = (
@@ -303,6 +305,127 @@ class Database:
                 (question_id, question, start,\
                 end, context, email_id, issue_id, comment_id) \
                 values(?, ?, ?, ?, ?, ?, ?, ?)",
+            data,
+        )
+        self.db.commit()
+
+    # answers
+    def create_answers_table(self, table_name="answers"):
+        """
+        Creates a table to store Answer objects objects from 
+        AnswerDetector.
+
+        :param table_name : name given to the table holding the Answers
+        """
+        self.drop_table(f"{table_name}")
+        self.create_table(
+            f"{table_name}",
+            {
+                "answer_id": "TEXT PRIMARY KEY",
+                "user_question_id": "TEXT",
+                "user_question": "TEXT",
+                "answer": "TEXT",
+                "start": "TEXT",
+                "end": "TEXT",
+                "confidence": "TEXT",
+                "extended_answer": "TEXT",
+                "extended_start": "INT",
+                "extended_end": "INT",
+                "model": "TEXT",
+                "origin": "TEXT",
+                "created_at": "TEXT",
+                "label": "TEXT",
+                "metadata": "JSON",
+            },
+        )
+
+    def insert_answer(self, answer_obj, table_name="answers"):
+        """
+        Insert Answer objects into the database.
+        
+        :param answer_obj   : Answer object from bot.answer
+        :param table_name   : name of the table to store the answer
+        """
+        data = (
+            answer_obj.id,
+            answer_obj.user_question_id,
+            answer_obj.user_question,
+            answer_obj.answer,
+            answer_obj.start,
+            answer_obj.end,
+            answer_obj.confidence,
+            answer_obj.extended_answer,
+            answer_obj.extended_start,
+            answer_obj.extended_end,
+            answer_obj.model,
+            answer_obj.origin,
+            answer_obj.created_at,
+            answer_obj.label,
+            # remember json
+            json.dumps(answer_obj.metadata),
+        )
+
+        self.db.execute(
+            f"INSERT INTO {table_name} \
+                (answer_id, user_question_id, user_question, answer, start,\
+                end, confidence, extended_answer, extended_start,\
+                extended_end, model, origin, created_at, label, metadata) \
+                values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            data,
+        )
+        self.db.commit()
+
+    # faq
+    def create_faq_table(self, table_name="faq"):
+        """
+        Creates a table to store FAQ objects objects.
+
+        :param table_name : name given to the table holding the FAQ
+        """
+        self.drop_table(f"{table_name}")
+        self.create_table(
+            f"{table_name}",
+            {
+                "faq_id": "TEXT PRIMARY KEY",
+                "question": "TEXT",
+                "answer": "TEXT",
+                "author": "TEXT",
+                "keywords": "TEXT",
+                "created_at": "TEXT",
+            },
+        )
+
+    def insert_faq(self, faq_obj, table_name="faq"):
+        """
+        Insert FAQ objects into the database.
+        
+        :param faq_obj    : FAQ object from bot.faq.base
+        :param table_name : name of the table to store the FAQ
+        """
+        # when loading from json in build_donkeybot.py -> fetch_faq_data()
+        if type(faq_obj) == dict:
+            data = (
+                faq_obj["faq_id"],
+                faq_obj["question"],
+                faq_obj["answer"],
+                faq_obj["author"],
+                faq_obj["keywords"],
+                faq_obj["created_at"],
+            )
+        else:
+            data = (
+                faq_obj.faq_id,
+                faq_obj.question,
+                faq_obj.answer,
+                faq_obj.author,
+                faq_obj.keywords,
+                faq_obj.created_at,
+            )
+
+        self.db.execute(
+            f"INSERT INTO {table_name} \
+                (faq_id, question, answer, author, keywords, created_at) \
+                values(?,?,?,?,?,?)",
             data,
         )
         self.db.commit()

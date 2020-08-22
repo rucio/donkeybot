@@ -109,6 +109,26 @@ def request(url, headers):
     return r_dict
 
 
+def str2bool(v):
+    """Used to convert string to boolean"""
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ("yes", "true", "t", "y", "1"):
+        return True
+    elif v.lower() in ("no", "false", "f", "n", "0"):
+        return False
+    else:
+        raise argparse.ArgumentTypeError("Boolean value expected.")
+
+
+def check_positive(value):
+    """Used to check that the value of the argument is a positive integer"""
+    ivalue = int(value)
+    if ivalue <= 0:
+        raise argparse.ArgumentTypeError("%s is an invalid positive int value" % value)
+    return ivalue
+
+
 # Text Processing related helper functions
 def pre_process_text(
     text,

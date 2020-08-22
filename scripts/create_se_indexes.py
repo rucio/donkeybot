@@ -1,6 +1,7 @@
 # bot modules
 from bot.searcher.base import SearchEngine
 from bot.searcher.question import QuestionSearchEngine
+from bot.searcher.faq import FAQSearchEngine
 from bot.database.sqlite import Database
 
 # general python
@@ -30,11 +31,17 @@ def main():
         default="questions",
         help="Name given to the table holding the questions. (default is questions)",
     )
+    optional.add_argument(
+        "--faq_table",
+        default="faq",
+        help="Name given to the table holding the FAQ. (default is faq)",
+    )
 
     args = parser.parse_args()
     db_name = args.db_name
     docs_table = args.documentation_table
     questions_table = args.questions_table
+    faq_table = args.faq_table
 
     data_storage = Database(f"{db_name}.db")
 
@@ -42,6 +49,7 @@ def main():
     docs_se = SearchEngine()
     docs_df = data_storage.get_dataframe(docs_table)
     # let's not index the release-notes in this version of the bot
+    # this code also exists is load_index() for rucio documents
     docs_df = docs_df[docs_df["doc_type"] != "release_notes"]
     print("Indexing Rucio documentation for the SearchEngine...")
     docs_se.create_index(
@@ -51,11 +59,20 @@ def main():
     # QuestionSearchEngine
     questions_se = QuestionSearchEngine()
     questions_df = data_storage.get_dataframe(questions_table)
-    print("Indexing questions for the QuestionSearchEngine...")
+    print("Indexing Questions for the QuestionSearchEngine...")
     questions_se.create_index(
-        corpus=questions_df, db=data_storage, table_name="questions_doc_term_matrix"
+        corpus=questions_df,
+        db=data_storage,
+        table_name=f"{questions_table}_doc_term_matrix",
     )
-    print("Done!")
+
+    # FAQSearchEngine
+    faq_se = FAQSearchEngine()
+    faq_df = data_storage.get_dataframe(faq_table)
+    print("Indexing FAQ for the FAQSearchEngine...")
+    faq_se.create_index(
+        corpus=faq_df, db=data_storage, table_name=f"{faq_table}_doc_term_matrix"
+    )
 
 
 if __name__ == "__main__":

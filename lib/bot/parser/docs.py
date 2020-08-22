@@ -5,6 +5,7 @@ from bot.parser.interface import IParser
 # general python
 import pandas as pd
 from tqdm import tqdm
+import re
 
 
 class RucioDoc:
@@ -35,6 +36,8 @@ class RucioDocsParser(IParser):
         :param docs_table_name        : in case we need use a different table name (default 'docs')
         :returns doc                  : RucioDoc object 
         """
+        # remove extra spaces
+        clean_body = re.sub(" +", " ", body).strip(" ")
         doc = RucioDoc(doc_id=doc_id, name=name, url=url, body=body, doc_type=doc_type)
 
         # only insert relevant documentation to db

@@ -36,11 +36,11 @@ class SearchEngine:
         else:
             self.column_to_index = index
 
-    def search(self, query, top_n, return_dataframe=False):
+    def search(self, query, top_n):
         """
         Return at most the `top_n` results most similar to
         the input `query` based on BM25.
-           
+        
         :param top_n    : the maximum number of results that are returned
         :type top_n     : int
         :param query    : User's question/query 
@@ -73,17 +73,15 @@ class SearchEngine:
         DataFrame into SQuAD like data. 
 
         results include : {
-             'user_query': what the user queried in the SE
-             'question'  : the most similar question matched
-             'context'   : context of user_query/question
+             'query'    : what the user queried in the SE
+             'context'  : context of user_query/question
         }
 
-        For regular documents user_query and question are 
-        the same (not a QuestionSearchEngine) and the columns 
-        we have previously indexed are the context.
+        For regular documents user's "query" is added and
+        and the "context" will be the document info 
+        we have previously indexed.
         """
-        results["user_query"] = query
-        results["question"] = query
+        results["query"] = query
         results["context"] = self._get_documents().to_frame()
 
     def _get_documents(self):
@@ -141,7 +139,7 @@ class SearchEngine:
         self.index.to_sql(table_name, con=db.db, if_exists="replace", index=True)
 
     def load_index(
-        self, db=Database, table_name="doc_term_matrix", original_table="docs"
+        self, db=Database, table_name="rucio_doc_term_matrix", original_table="docs"
     ):
         """
         Loads the document-term matrix and the original table we indexed to prepare
@@ -153,6 +151,12 @@ class SearchEngine:
         """
         try:
             self.corpus = db.get_dataframe(original_table)
+            # let's not index the release-notes in this version of the bot
+            # this code also exists in the create_se_indexes script for rucio documents
+            if (
+                self.type == "Document Search Engine"
+            ):  # for us this is rucio documentation
+                self.corpus = self.corpus[self.corpus["doc_type"] != "release_notes"]
             self.columns = self.corpus.columns
             self.index = db.get_dataframe(f"{table_name}").set_index(
                 self.document_ids_name, drop=True

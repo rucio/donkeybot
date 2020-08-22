@@ -2,31 +2,12 @@
 from bot.searcher.base import SearchEngine
 from bot.searcher.question import QuestionSearchEngine
 from bot.database.sqlite import Database
+from bot.utils import str2bool, check_positive
 
 # general python
 import pandas as pd
 import argparse
 import sys
-
-
-def str2bool(v):
-    """Used to convert string to boolean"""
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ("yes", "true", "t", "y", "1"):
-        return True
-    elif v.lower() in ("no", "false", "f", "n", "0"):
-        return False
-    else:
-        raise argparse.ArgumentTypeError("Boolean value expected.")
-
-
-def check_positive(value):
-    """Used to check that the value of the argument is a positive integer"""
-    ivalue = int(value)
-    if ivalue <= 0:
-        raise argparse.ArgumentTypeError("%s is an invalid positive int value" % value)
-    return ivalue
 
 
 def main():
@@ -125,11 +106,11 @@ def main():
         if match_docs:
             docs_results = docs_se.search(query, top_k)
             print(f"\nTop-{top_k} retrieved documentation:")
-            print(docs_results[["question", "name", "context"]])
+            print(docs_results[["doc_id", "question", "name", "context"]])
         if match_questions:
             question_results = q_se.search(query, top_k)
             print(f"\nTop-{top_k} retrieved past questions:")
-            print(question_results[["query", "question", "context"]])
+            print(question_results[["question_id", "query", "question", "context"]])
 
     except Exception as _e:
         print("Error : ", end="")

@@ -3,8 +3,6 @@ from bot.database.sqlite import Database
 
 # general python
 from abc import abstractmethod, ABC
-
-# general python
 from uuid import uuid4
 
 

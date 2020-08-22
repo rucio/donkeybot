@@ -1,14 +1,22 @@
 # folders
 /some-folder
 /.vscode
-/data
 /virt
+/models
 
 # build info
 /dist 
 .eggs/
 /DonkeyBot.egg-info
 /lib/DonkeyBot.egg-info
+
+# data (created locally on your machine after running build_donkeybot.py)
+/data/old
+/data/conversation_dict.pickle
+/data/data_storage.db
+/data/docs_input_data.db
+/data/emails_input_data.db
+/data/issues_input_data.db
 
 # files
 __pycache__

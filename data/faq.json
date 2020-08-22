@@ -1,0 +1,41 @@
+[{
+        "answer": "You can find the contact information for all authors and contributors to Rucio on:\nhttps://github.com/rucio/rucio/blob/master/AUTHORS.rst",
+        "author": "Vasilis",
+        "created_at": "2020-08-22 13:18:10+00:00",
+        "faq_id": "faq_847d5843a5e040c6ae272f01110d7728",
+        "keywords": "authors,contributors",
+        "question": "Who are the Rucio authors?"
+    },
+    {
+        "answer": "To register a data set you can use the python replica client:\nhttps://github.com/rucio/rucio/blob/de7ad68cabe8bcd39a2e7301ffab2642e2b70256/lib/rucio/client/replicaclient.py#L195",
+        "author": "Martin",
+        "created_at": "2020-08-22 13:24:18+00:00",
+        "faq_id": "faq_a754aa4a921b4239abbc7e578bf4a73f",
+        "keywords": "dataset,register",
+        "question": "What is the command to use to register a data set?"
+    },
+    {
+        "answer": "If you define the RSE as non-deterministic, you can rely on your own directory structure and just have to register the PFN where the file is located as well.\nIn case of a deterministic RSE, you would have to place the files based on the deterministic function being used (Most likely the hashing).\nIn that case you can do the registration as well, but Rucio would require that the file is based in a directory based on the has function.",
+        "author": "Martin",
+        "created_at": "2020-08-22 13:25:55+00:00",
+        "faq_id": "faq_74551d3125cb4925b0352092b2732167",
+        "keywords": "dataset,directory,structure",
+        "question": "What is the logic behind the dataset directory structuring?"
+    },
+    {
+        "answer": "Not easily, this would require manual changes in the database. \nFor example, you would need to update all rules that use the RSE name in their RSE expression.",
+        "author": "Dimitrios",
+        "created_at": "2020-08-22 13:27:01+00:00",
+        "faq_id": "faq_d34159f4297c4eb6894820dbe42587d5",
+        "keywords": "rse,rename",
+        "question": "Is it possible to rename an RSE?"
+    },
+    {
+        "answer": "The full schema in SQL Alchemy description is at https://github.com/rucio/rucio/blob/master/lib/rucio/db/sqla/models.py\nThis is the one being used if you initiate the database with alembic.\nIn parallel we also maintain a schema file for oracle, this is equivalent to the models file from sqlalchemy, but has some oracle specific optimizations.\nhttps://github.com/rucio/rucio/blob/master/etc/sql/oracle/schema.sql",
+        "author": "Martin",
+        "created_at": "2020-08-22 13:27:49+00:00",
+        "faq_id": "faq_98135db779aa4ead9544b816fadbb654",
+        "keywords": "database,schema",
+        "question": "Where can I see the database schema of the Rucio DB?"
+    }
+]

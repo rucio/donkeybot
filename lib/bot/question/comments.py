@@ -1,5 +1,5 @@
 # bot modules
-from bot.detector.question.base import Question, QuestionOriginNotSet
+from bot.question.base import Question, QuestionOriginNotSet
 from bot.database.sqlite import Database
 
 
