@@ -340,10 +340,10 @@ class Database:
 
     def insert_answer(self, answer_obj, table_name="answers"):
         """
-        Insert Question objects into the database.
+        Insert Answer objects into the database.
         
-        :param question_obj   : Question object from bot.detector.question
-        :param table_name     : name of the table to store the question
+        :param answer_obj   : Answer object from bot.detector.answer
+        :param table_name   : name of the table to store the answer
         """
         data = (
             answer_obj.id,
