@@ -2,13 +2,15 @@
 # - expects '/data/emails_input_data.db' to exist
 
 # bot modules
-from bot.config import MODELS_DIR
+from bot.config import MODELS_DIR, DATA_DIR
 from bot.utils import str2bool
+from bot.database.sqlite import Database
 
 # general python
 import subprocess
 import argparse
 import os
+import json
 from transformers import BertForQuestionAnswering, BertTokenizer
 from transformers import DistilBertForQuestionAnswering, DistilBertTokenizer
 
@@ -41,6 +43,22 @@ def download_and_save_BERT_model(name):
     return
 
 
+def fetch_faq_data():
+    """Creates FAQ table and populates it with data in faq.json"""
+    # create faq table
+    print(f"Creating faq table in data_storage.db")
+    data_storage = Database("data_storage.db")
+    data_storage.create_faq_table()
+    # load faq data
+    with open(DATA_DIR + "faq.json") as json_file:
+        data = json.load(json_file)
+    # insert data to db
+    print(f"Inserting data from faq.json file...")
+    for faq in data:
+        data_storage.insert_faq(faq)
+    data_storage.close_connection()
+
+
 def main():
     # Parse cli arguments
     parser = argparse.ArgumentParser(
@@ -69,7 +87,9 @@ def main():
     api_token = args.token
     download_all_models = args.all_models
 
-    # fetch and store data
+    # Fetch FAQ data from faq.json
+    fetch_faq_data()
+    # Fetch and store issues and rucio documentation data
     subprocess.run(
         f"python -m scripts.fetch_issues -r rucio/rucio -t {api_token}", shell=True,
     )
@@ -84,7 +104,11 @@ def main():
     subprocess.run(
         f"python -m scripts.detect_all_questions", shell=True,
     )
-    # create search engine for documents and questions
+    # detect questions in data_storage
+    subprocess.run(
+        f"python -m scripts.create_and_populate_faq", shell=True,
+    )
+    # create search engine for documents questions and faq
     subprocess.run(
         f"python -m scripts.create_se_indexes", shell=True,
     )
@@ -92,8 +116,12 @@ def main():
     download_and_save_DistilBERT_model("distilbert-base-uncased-distilled-squad")
     if download_all_models:
         download_and_save_DistilBERT_model("distilbert-base-cased-distilled-squad")
-        download_and_save_BERT_model("bert-large-cased-whole-word-masking-finetuned-squad")
-        download_and_save_BERT_model("bert-large-uncased-whole-word-masking-finetuned-squad")
+        download_and_save_BERT_model(
+            "bert-large-cased-whole-word-masking-finetuned-squad"
+        )
+        download_and_save_BERT_model(
+            "bert-large-uncased-whole-word-masking-finetuned-squad"
+        )
     print("Done!")
 
 
