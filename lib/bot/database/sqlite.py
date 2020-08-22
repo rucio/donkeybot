@@ -334,6 +334,7 @@ class Database:
                 "model": "TEXT",
                 "origin": "TEXT",
                 "created_at": "TEXT",
+                "label": "TEXT",
                 "metadata": "JSON",
             },
         )
@@ -359,6 +360,7 @@ class Database:
             answer_obj.model,
             answer_obj.origin,
             answer_obj.created_at,
+            answer_obj.label,
             # remember json
             json.dumps(answer_obj.metadata),
         )
@@ -367,8 +369,8 @@ class Database:
             f"INSERT INTO {table_name} \
                 (answer_id, user_question_id, user_question, answer, start,\
                 end, confidence, extended_answer, extended_start,\
-                extended_end, model, origin, created_at, metadata) \
-                values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                extended_end, model, origin, created_at, label, metadata) \
+                values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             data,
         )
         self.db.commit()
