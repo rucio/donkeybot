@@ -1,5 +1,5 @@
 # bot modules
-from bot.detector.question.detector import QuestionDetector
+from bot.question.detector import QuestionDetector
 from bot.database.sqlite import Database
 
 # general python

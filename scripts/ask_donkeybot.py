@@ -7,7 +7,7 @@
 from bot.brain import QAInterface
 from bot.searcher.base import SearchEngine
 from bot.searcher.question import QuestionSearchEngine
-from bot.detector.answer.detector import AnswerDetector
+from bot.answer.detector import AnswerDetector
 from bot.database.sqlite import Database
 from bot.utils import check_positive, str2bool
 from bot.config import MODELS_DIR

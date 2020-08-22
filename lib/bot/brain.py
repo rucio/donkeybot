@@ -1,7 +1,7 @@
 # bot modules
 from bot.searcher.base import SearchEngine
 from bot.searcher.question import QuestionSearchEngine
-from bot.detector.answer.detector import AnswerDetector
+from bot.answer.detector import AnswerDetector
 
 # general python
 import sys

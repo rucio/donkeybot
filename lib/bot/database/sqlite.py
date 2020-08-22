@@ -286,7 +286,7 @@ class Database:
         """
         Insert Question objects into the database.
         
-        :param question_obj   : Question object from bot.detector.question
+        :param question_obj   : Question object from bot.question
         :param table_name     : name of the table to store the question
         """
         data = (
@@ -342,7 +342,7 @@ class Database:
         """
         Insert Answer objects into the database.
         
-        :param answer_obj   : Answer object from bot.detector.answer
+        :param answer_obj   : Answer object from bot.answer
         :param table_name   : name of the table to store the answer
         """
         data = (
