@@ -8,7 +8,7 @@ class FAQ:
         self, question, answer, author, keywords,
     ):
         # Set unique ID
-        self.id = "faq_" + str(uuid4().hex)
+        self.faq_id = "faq_" + str(uuid4().hex)
         self.question = question
         self.answer = answer
         self.author = author
