@@ -6,8 +6,8 @@
 # build info
 /dist 
 .eggs/
-/DonkeyBot.egg-info
-/lib/DonkeyBot.egg-info
+/donkeybot.egg-info
+/lib/donkeybot.egg-info
 
 # data (created locally on your machine after running build_donkeybot.py)
 /data/old

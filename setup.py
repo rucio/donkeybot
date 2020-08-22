@@ -6,12 +6,12 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="DonkeyBot",
+    name="donkeybot",
     version="0.1.0.dev1",
     description="Rucio Support Bot",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=["bot"],
+    packages=find_packages(where="lib"),
     package_dir={"": "lib"},
     install_requires=[
         "pandas",
