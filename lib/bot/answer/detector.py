@@ -150,7 +150,11 @@ class AnswerDetector:
         extended_end = min(len(doc.context), pred["end"] + self.extended_answer_size)
         # drop extra metadata columns
         # errors ignored for when we have Question metadata and the 'body' column doesn't exist
-        metadata = doc.drop(["context", "body", "query"], errors="ignore").to_dict()
+        metadata = (
+            doc.drop(["context", "body", "query"], errors="ignore")
+            .rename({"question": "most_similar_question"}, axis=1)
+            .to_dict()
+        )
         answer = Answer(
             question=question,
             model=self.model_name,
