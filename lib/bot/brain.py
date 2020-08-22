@@ -1,7 +1,9 @@
 # bot modules
 from bot.searcher.base import SearchEngine
 from bot.searcher.question import QuestionSearchEngine
+from bot.searcher.faq import FAQSearchEngine
 from bot.answer.detector import AnswerDetector
+from bot.answer.base import Answer
 
 # general python
 import sys
@@ -12,7 +14,7 @@ class QAInterface:
         self,
         detector=AnswerDetector,
         question_engine=QuestionSearchEngine,
-        faq_engine=QuestionSearchEngine,
+        faq_engine=FAQSearchEngine,
         docs_engine=SearchEngine,
     ):
         self.detector = detector
@@ -33,7 +35,7 @@ class QAInterface:
     def _check_engines(self):
         try:
             assert type(self.question_engine) == QuestionSearchEngine
-            assert type(self.faq_engine) == QuestionSearchEngine
+            assert type(self.faq_engine) == FAQSearchEngine
             assert type(self.docs_engine) == SearchEngine
         except AssertionError as _e:
             sys.exit(
@@ -51,8 +53,36 @@ class QAInterface:
 
         :return faq_answers : list of Answer objects
         """
-        # retrieved_faqs = self.faq_engine.search(self.query, num_faqs)
-        return None
+        self.retrieved_faqs = self.faq_engine.search(self.query, num_faqs)
+        print("\nRETRIEVED FAQ:")
+        print(self.retrieved_faqs)
+        faq_answers = []
+        for index, faq in self.retrieved_faqs.iterrows():
+            metadata = (
+                faq.drop(["context", "query"])
+                .rename({"question": "most_similar_faq_question"}, axis=1)
+                .to_dict()
+            )
+            answer = Answer(
+                question=self.query,  # what the user asked
+                model="FAQSearchEngine",  # Answer returns is retrieved FAQ so no transformer used
+                answer=faq["answer"],
+                start=0,
+                end=len(faq["answer"]),
+                confidence=None,  # no confidence since model used is a SearchEngine not transformer
+                extended_answer=faq["answer"],
+                extended_start=0,
+                extended_end=len(faq["answer"]),
+                metadata=metadata,
+            )
+            faq_answers.append(answer)
+        print("\nFAQ ANSWERS:")
+        results = {
+            "question": self.query,
+            "answers": [answer.__dict__ for answer in faq_answers],
+        }
+        print(results)
+        return faq_answers
 
     def _get_question_answers(self, num_questions):
         """Returns top_k answers based on the most similar questions and their context."""
@@ -99,7 +129,7 @@ class QAInterface:
         :param num_faqs      : Number of retrieved FAQ answers (default is 3)
         :param num_questions : Number of retrieved Questions (default is 10)
         :param num_docs      : Number of retrieved Documents (default is 10)
-        :returns answers     : List of Answer objects
+        :returns answers     : List of top_k Answer objects + num_faq Answer objects from FAQ
         """
         self.query = query
         self.top_k = top_k
@@ -111,8 +141,11 @@ class QAInterface:
         # Try to find answers in Documentation table
         self.doc_answers = self._get_docs_answers(num_docs)
 
-        # sort answers by their `confidence` and select top-k
+        # sort answers by their `confidence` and select top-k from question/doc answers
         self.answers = self.question_answers + self.doc_answers
         self.answers = sorted(self.answers, key=lambda k: k.confidence, reverse=True)
         self.answers = self.answers[:top_k]
-        return self.answers
+        
+        # concat the faq answers
+        self.final_answers = self.answers + self.faq_answers
+        return self.final_answers
