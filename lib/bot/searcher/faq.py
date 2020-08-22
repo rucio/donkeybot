@@ -37,7 +37,7 @@ class FAQSearchEngine(SearchEngine):
         from the retrieved question.
         """
         results["query"] = query
-        results["context"] = answer 
+        results["context"] = results["answer"]
 
     def create_index(
         self, corpus=pd.DataFrame, db=Database, table_name="faq_doc_term_matrix"
@@ -45,9 +45,6 @@ class FAQSearchEngine(SearchEngine):
         super().create_index(corpus=corpus, db=db, table_name=table_name)
 
     def load_index(
-        self,
-        db=Database,
-        table_name="faq_doc_term_matrix",
-        original_table="faq",
+        self, db=Database, table_name="faq_doc_term_matrix", original_table="faq",
     ):
         super().load_index(db=db, table_name=table_name, original_table=original_table)
