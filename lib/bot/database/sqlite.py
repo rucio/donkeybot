@@ -372,3 +372,47 @@ class Database:
             data,
         )
         self.db.commit()
+
+    # faq
+    def create_faq_table(self, table_name="faq"):
+        """
+        Creates a table to store FAQ objects objects.
+
+        :param table_name : name given to the table holding the FAQ
+        """
+        self.drop_table(f"{table_name}")
+        self.create_table(
+            f"{table_name}",
+            {
+                "question_id": "TEXT PRIMARY KEY",
+                "question": "TEXT",
+                "answer": "TEXT",
+                "author": "TEXT",
+                "keywords": "TEXT",
+                "created_at": "TEXT",
+            },
+        )
+
+    def insert_faq(self, faq_obj, table_name="faq"):
+        """
+        Insert FAQ objects into the database.
+        
+        :param faq_obj    : FAQ object from bot.faq.base
+        :param table_name : name of the table to store the FAQ
+        """
+        data = (
+            faq_obj.id,
+            faq_obj.question,
+            faq_obj.answer,
+            faq_obj.author,
+            faq_obj.keywords,
+            faq_obj.created_at,
+        )
+
+        self.db.execute(
+            f"INSERT INTO {table_name} \
+                (question_id, question, answer, author, keywords, created_at) \
+                values(?,?,?,?,?,?)",
+            data,
+        )
+        self.db.commit()
