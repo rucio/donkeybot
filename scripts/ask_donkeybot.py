@@ -7,6 +7,7 @@
 from bot.brain import QAInterface
 from bot.searcher.base import SearchEngine
 from bot.searcher.question import QuestionSearchEngine
+from bot.searcher.faq import FAQSearchEngine
 from bot.answer.detector import AnswerDetector
 from bot.database.sqlite import Database
 from bot.utils import check_positive, str2bool
@@ -42,18 +43,25 @@ def print_answers(answers):
     print("\nFINAL ANSWERS: (descending order)")
     for i, answer in enumerate(answers):
         print(f"Question: '{answer.user_question}'")
-        try:
+        # faq answers:
+        if answer.origin == 'faq':
+            print("FAQ answers: ")
+            most_similar_faq_question = answer.metadata["most_similar_faq_question"]
+            author = answer.metadata["author"]
+            print(
+                f"Answer: '{answer.extended_answer} \nMost similar FAQ question: {most_similar_faq_question}"
+            )
+            print(f"Author: {author}")
+        elif answer.origin == 'documentation':
             url = answer.metadata["url"]
             print(f"Answer: '{answer.extended_answer} \nFor more info check: {url}")
             print(f"Confidence: {answer.confidence}")
-        except:
-            pass
-        try:
-            most_similar_question = answer.metadata["question"]
-            print(f"Answer: '{answer.extended_answer} \nMost similar question: {url}")
+        elif answer.origin == 'questions':
+            most_similar_question = answer.metadata["most_similar_question"]
+            print(
+                f"Answer: '{answer.extended_answer} \nMost similar question: {most_similar_question}"
+            )
             print(f"Confidence: {answer.confidence}")
-        except:
-            pass
 
 
 def setup_search_engines(db=Database):
@@ -62,11 +70,8 @@ def setup_search_engines(db=Database):
     docs_se.load_index(db=db, table_name="rucio_doc_term_matrix")
     question_se = QuestionSearchEngine()
     question_se.load_index(db=db, table_name="questions_doc_term_matrix")
-
-    # TODO create the FAQ
-    faq_se = QuestionSearchEngine()
-    # faq_se.load_index(db=db, table='faq_doc_term_matrix')
-
+    faq_se = FAQSearchEngine()
+    faq_se.load_index(db=db, table_name="faq_doc_term_matrix")
     return faq_se, docs_se, question_se
 
 
