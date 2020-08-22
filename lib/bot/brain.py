@@ -59,7 +59,7 @@ class QAInterface:
         faq_answers = []
         for index, faq in self.retrieved_faqs.iterrows():
             metadata = (
-                faq.drop(["context", "query"])
+                faq.drop(["context", "query", "answer"])
                 .rename({"question": "most_similar_faq_question"}, axis=1)
                 .to_dict()
             )
