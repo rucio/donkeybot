@@ -400,14 +400,25 @@ class Database:
         :param faq_obj    : FAQ object from bot.faq.base
         :param table_name : name of the table to store the FAQ
         """
-        data = (
-            faq_obj.id,
-            faq_obj.question,
-            faq_obj.answer,
-            faq_obj.author,
-            faq_obj.keywords,
-            faq_obj.created_at,
-        )
+        # when loading from json in build_donkeybot.py -> fetch_faq_data()
+        if type(faq_obj) == dict:
+            data = (
+                faq_obj["faq_id"],
+                faq_obj["question"],
+                faq_obj["answer"],
+                faq_obj["author"],
+                faq_obj["keywords"],
+                faq_obj["created_at"],
+            )
+        else:
+            data = (
+                faq_obj.faq_id,
+                faq_obj.question,
+                faq_obj.answer,
+                faq_obj.author,
+                faq_obj.keywords,
+                faq_obj.created_at,
+            )
 
         self.db.execute(
             f"INSERT INTO {table_name} \
