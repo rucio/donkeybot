@@ -28,7 +28,9 @@ class Answer:
         # disregard all trailing question marks and spaces from the hashing
         if clean_question[-1] == "?":
             clean_question = re.sub("[ ?]*$", "", clean_question)
-        self.user_question_id = hashlib.md5(clean_question.encode("utf-8")).hexdigest()[:10]
+        self.user_question_id = hashlib.md5(clean_question.encode("utf-8")).hexdigest()[
+            :10
+        ]
         self.answer = answer
         self.start = start
         self.end = end
@@ -40,10 +42,13 @@ class Answer:
         # TODO add FAQ option as an origin
         if "doc_id" in metadata:
             self.origin = "documentation"
+        elif "faq_id" in metadata:
+            self.origin = "faq"
         else:
             self.origin = "questions"
         # +00:00 since its utcnow() + same format as other dates saved in data_storage
         self.created_at = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S+00:00")
+        self.label = None
         self.metadata = metadata
 
     def __str__(self):
