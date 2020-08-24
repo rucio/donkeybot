@@ -59,18 +59,27 @@ See [How it Works](./docs/how_it_works.md) for more detailed information.
 
 ## Build
 
-**Step 1:** Clone the repository to your development machine and configure it. 
+**Step 1:**  A 64 bit [Python 3.x](https://www.python.org/downloads/windows/) installation is required by PyTorch.
+   
+**Step 2:** To install PyTorch head over to https://pytorch.org/ and follow the quick start guide based on your operating system.  
+``` python
+# versions used in development 
+torch==1.6.0  --find-links https://download.pytorch.org/whl/torch_stable.html
+torchvision==0.7.0  --find-links https://download.pytorch.org/whl/torch_stable.html
+```
+
+**Step 3:** Clone the repository to your development machine and configure it. 
 ``` bash
 $ git clone https://github.com/rucio/donkeybot.git
 $ cd donkeybot
 ```
-**Step 2:** Download the requirements.  
+
+**Step 4:** For additional requirements run. 
 ``` bash
 $ pip install -r requirements.txt
-```
-You also need to have [PyTorch]( https://pytorch.org/ ) installed.
-
-**Step 3:** Build and populate Donkeybot's data storage.  
+``` 
+    
+**Step 5:** Build and populate Donkeybot's data storage. 
 ``` bash
 $ python scripts/build_donkeybot -t <GITHUB_API_TOKEN>
 ```
