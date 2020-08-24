@@ -86,7 +86,7 @@ $ python scripts/build_donkeybot -t <GITHUB_API_TOKEN>
 - To generate a GitHub token visit [Personal Access Tokens](https://github.com/settings/tokens) and follow [Creating a Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
 
 
-See the [Getting Started](./docs/getting_started.md) page for more details on building Donkeybot, troubleshooting, installing PyTorch and initiating the developer mode.
+See the [Getting Started](./docs/getting_started.md) page for more details on contributing, initiating the developer mode and testing.
 
 ## Bugs and Feedback
 
