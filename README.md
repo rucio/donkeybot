@@ -17,9 +17,10 @@ Donkeybot can be expanded and applied as a Question-Answering system for your ne
 
 See the full [documentation](./docs/README.md) for examples, operational details and other information.
 
-## Google Summer of Code
+## Google Summer of Code (GSoC)
 
-See [FAQ : GSoC](./docs/faq_gsoc.md) for a detailed timeline, problems faced, future improvements and other information.
+**Are you a GSoC student and/or want to learn more?**  
+See [FAQ : GSoC](./docs/faq_gsoc.md) for a detailed timeline, [@mageirakos](https://github.com/mageirakos) student information, problems faced, future improvements, a reading list and more.
 
 ## Demo 
 
