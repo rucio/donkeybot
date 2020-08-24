@@ -28,7 +28,7 @@ You can try asking Donkeybot yourself!
 $  python .\scripts\ask_donkeybot.py
 ```
 
-You will see output similar to the following example:  
+You will see an output similar to the following example:  
 - Question : "How are Rucio Users authenticated?"   
 - BERT model : [distilbert-base-cased-distilled-squad](https://huggingface.co/distilbert-base-cased-distilled-squad)  
 - top_k : 1
@@ -48,13 +48,13 @@ See [How it Works](./docs/how_it_works.md) for more detailed information.
 
 1) **Data storage** : Creates a Question-Answering (QA) Rucio specific data storage for our domain data. Current implementation is in SQLite for fast prototyping. Data sources include secure and anonymous [support emails](https://rucio.cern.ch/contact.html) from Rucio users, [Rucio GitHub issues](https://github.com/rucio/rucio/issues) and [Rucio documentation](https://rucio.readthedocs.io/en/latest/).
    
-2) **Question detection** : Provides module for question detection from within a given text. Currently used to extract past user questions from email and GitHub issues by using regex patterns.
+2) **Question detection** : Provides module for question detection from within a given text. Currently used to extract past user questions from emails and GitHub issues by using regex patterns.
    
-3) **Document Retrieval** : Utilizes [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm from [rank-bm25](https://pypi.org/project/rank-bm25/) for the retrieval of most similar documents - be it previously asked questions or documentation - to be used as context by the answer detection module.
+3) **Document Retrieval** : Utilizes [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm implementation from [rank-bm25](https://pypi.org/project/rank-bm25/) for the retrieval of most similar documents - be it previously asked questions or documentation - to be used as context by the answer detection module.
    
 4) **Answer Detection** : Follows a transfer-learning approach, using pre-trained transformer models such as BERT from [Hugginface transformers](https://github.com/huggingface/transformers) to provide the user with top-k number of answers based on the retrieved documents. Additionally, an FAQ-based supervised approach is provided to tackle more specific and common questions that the user might ask.
 
-5) **FAQ creation** : User can use a very simple GUI as an interface to insert FAQ questions, re-index the search engine and expand Donkeybot's data storage.
+5) **FAQ creation** : User can use a GUI as an interface to insert FAQ questions, re-index the search engine and expand Donkeybot's data storage.
 
 ## Build
 
