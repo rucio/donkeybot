@@ -19,7 +19,7 @@ See the full [documentation](./docs/README.md) for examples, operational details
 
 ## Google Summer of Code
 
-See [FAQ: GSoC](./docs/faq_gsoc.md) for a detailed timeline, problems faced, future improvements and other information.
+See [FAQ : GSoC](./docs/faq_gsoc.md) for a detailed timeline, problems faced, future improvements and other information.
 
 ## Demo 
 
