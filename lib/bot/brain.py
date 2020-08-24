@@ -42,7 +42,6 @@ class QAInterface:
                 "Error: Wrong search engine type. Make sure to use one of DonkeyBot's Search Engines."
             )
 
-    # TODO once FAQ table exists implement the function
     def _get_faq_answers(self, num_faqs):
         """
         Returns the most similar answers from FAQ table.
@@ -134,11 +133,9 @@ class QAInterface:
         self.query = query
         self.top_k = top_k
 
-        # TODO Try to find answers in FAQ table
+        # extract answers
         self.faq_answers = self._get_faq_answers(num_faqs)
-        # Try to find answers in Questions table
         self.question_answers = self._get_question_answers(num_questions)
-        # Try to find answers in Documentation table
         self.doc_answers = self._get_docs_answers(num_docs)
 
         # sort answers by their `confidence` and select top-k from question/doc answers
