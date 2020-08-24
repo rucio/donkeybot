@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="donkeybot",
-    version="0.1.0.dev1",
+    version="0.1.0",
     description="Rucio Support Bot",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -26,7 +26,7 @@ setup(
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: 3",
         "Natural Language :: English",
