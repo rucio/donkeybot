@@ -21,7 +21,7 @@ You probably guessed half of that if you know about GSoC and the other half by l
 The important thing you need to know is that I loved this experience and working with everyone in the Rucio team, so if you're thinking about applying to [GSoC](https://summerofcode.withgoogle.com/) or [contributing to Rucio](https://rucio.readthedocs.io/en/latest/contributing.html), give it a shot !
 
 If you have any questions regarding Donkeybot, Google Summer of Code or anything else just [contact me](https://github.com/mageirakos).     
-I'm always happy to respond 
+I'm always happy to respond 😁
 
 ## What is GSoC?
 
