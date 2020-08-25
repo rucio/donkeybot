@@ -176,6 +176,14 @@ Once you run `build_donkeybot.py`, `data_storage.db` will be created under the d
 
 Let's take a look at the information is stored in each of the tables under our Data Storage.
 
+- `questions` table   
+![questions_table](img/questions_table.png)   
+    - **_ids** : 
+      - **email_id** : when the archived question's origin is an email
+      - **issue_id** : when the archived question's origin is a GitHub issue
+      - **comment_id** : along with issue_id when the origin is a comment under a GitHub issue.
+    - **context** : This is what is used by the AnswerDetection along with the user query to try and detect a new answer. To understand the context of each question see "**Detecting previously asked Questions**" under [What happens in the background?](#what-happens-in-the-background) to understand the 
+
 - `answers` table for [Answer objects](https://github.com/rucio/donkeybot/blob/master/lib/bot/answer/base.py#L8) from [AnswerDetector](https://github.com/rucio/donkeybot/blob/master/lib/bot/answer/detector.py#L22).   
 ![answers_table](/docs/img/answers_table.png)    
   * **metadata** : json holding metadata from the origin of where the answer was detected from. (eg. Link of original documentation or most similar question)
@@ -192,13 +200,6 @@ Let's take a look at the information is stored in each of the tables under our D
 ![faq_table](img/faq_table.png)
     - **keywords** : Used by the [FAQSearchEngine](https://github.com/rucio/donkeybot/blob/master/lib/bot/searcher/faq.py#L9) to better match FAQs with new user queries.
 
-- `questions` table   
-![questions_table](img/questions_table.png)   
-    - **_ids** : 
-      - **email_id** : when the archived question's origin is an email
-      - **issue_id** : when the archived question's origin is a GitHub issue
-      - **comment_id** : along with issue_id when the origin is a comment under a GitHub issue.
-    - **context** : This is what is used by the AnswerDetection along with the user query to try and detect a new answer. To understand the context of each question see "**Detecting previously asked Questions**" under [What happens in the background?](#what-happens-in-the-background) to understand the 
 
 The rest of the tables include : 
 - `docs` table
