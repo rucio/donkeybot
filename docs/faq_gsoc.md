@@ -1,8 +1,9 @@
-This page is written from the Google Summer of Code (GSoC) student's perspective and tries to answer some FAQs related to GSoC while also providing ideas for improvement and problems face in this project.
+This page is written from the Google Summer of Code (GSoC) student's perspective and tries to answer some FAQs related to GSoC.    
+While also providing ideas for improvement and problems faced in this project.
 
 ## Contents
 - [Contents](#contents)
-- [Who wrote the code for GSoC '20?](#who-wrote-the-code-for-gsoc-20)
+- [Who wrote Donkeybot during GSoC '20?](#who-wrote-donkeybot-during-gsoc-20)
 - [What is GSoC?](#what-is-gsoc)
 - [Is there an official GSoC FAQ besides this... thing?](#is-there-an-official-gsoc-faq-besides-this-thing)
 - [Where can I see a detailed timeline of the project?](#where-can-i-see-a-detailed-timeline-of-the-project)
@@ -11,15 +12,16 @@ This page is written from the Google Summer of Code (GSoC) student's perspective
 - [Do you suggest any future improvements?](#do-you-suggest-any-future-improvements)
 - [Can you provide a Reading List with material that helped you during GSoC?](#can-you-provide-a-reading-list-with-material-that-helped-you-during-gsoc)
 
-## Who wrote the code for GSoC '20?
+## Who wrote Donkeybot during GSoC '20?
 
-Hey there!👋  
-My name is Vasilis, from Greece and I'm a student developer.  
-You probably could guess half of that if you know GSoC and then the other half just by looking at my name.   
+Hey there👋  
+My name is Vasilis, from Greece and I'm a student developer !    
+You probably guessed half of that if you know about GSoC and the other half by looking at my name.   
 
-The important thing you need to know is that I loved this experience and working with everyone in the Rucio team, so if you're thinking about applying to [GSoC](https://summerofcode.withgoogle.com/) or [contributing to Rucio](https://rucio.readthedocs.io/en/latest/contributing.html), give it a shot!
+The important thing you need to know is that I loved this experience and working with everyone in the Rucio team, so if you're thinking about applying to [GSoC](https://summerofcode.withgoogle.com/) or [contributing to Rucio](https://rucio.readthedocs.io/en/latest/contributing.html), give it a shot !
 
-If you have any questions regarding this project, Google Summer of Code or anything else make sure to [contact me](https://github.com/mageirakos). I'm always happy to respond 😁
+If you have any questions regarding Donkeybot, Google Summer of Code or anything else just [contact me](https://github.com/mageirakos).     
+I'm always happy to respond 
 
 ## What is GSoC?
 
