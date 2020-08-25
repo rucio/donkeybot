@@ -11,6 +11,7 @@
 
 # Flow Chart
 Here have a flow chart of the question answering interface and what happens when a user queries a question.
+![qa_flow_chart](./img/qa_flow_chart.png)
 
 # Architecture
 Here explain the bots architecture have a pictures that shows how everything links together and what goes into the database
