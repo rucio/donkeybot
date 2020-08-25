@@ -15,7 +15,7 @@ torch==1.6.0  --find-links https://download.pytorch.org/whl/torch_stable.html
 torchvision==0.7.0  --find-links https://download.pytorch.org/whl/torch_stable.html
 ```
 
-**Step 3:** Clone the repository to your development machine and configure it. 
+**Step 3:** Clone the repository to your development machine.
 ``` bash
 $ git clone https://github.com/rucio/donkeybot.git
 $ cd donkeybot
@@ -49,13 +49,13 @@ $ git remote add upstream https://github.com/rucio/donkeybot.git
 
 For development and testing purposes you need to have the bot installed as a package under a virtual environment (venv).
 
-**Step 1:** Creating a virtual enviroment : 
+**Step 1:** Creating a virtual enviroment   
 ``` bash 
 # virt is the name of the virtual environment, you can change it.
 $ python -m venv virt 
 ```
 
-**Step 2:** Activate the enviroment :  
+**Step 2:** Activate the enviroment   
 ``` bash
 # on Linux/macOS
 $ source virt/bin/activate
@@ -63,7 +63,7 @@ $ source virt/bin/activate
 $ virt/Scripts/activate
 ```
 
-**Step 3:** Use setuptools :  
+**Step 3:** Run setuptools   
 ``` bash
 # make sure setuptools exists inside this venv
 $(virt) python -c 'import setuptools'
@@ -73,12 +73,12 @@ $(virt) python setup.py sdist
 $(virt) python setup.py develop
 ```
 
-**Step 4 (Optional) :**  Check contents.
+**Step 4 (Optional) :**  Check package contents   
 ``` bash
 $(virt) tar --list -f .\dist\donkeybot-0.1.0.tar.gz
 ```
 
-You're now able to run `donkeybot/scripts` and `donkeybot/tests` correctly.
+You're now able to develop and run `donkeybot/scripts` and `donkeybot/tests` correctly.
 
 # Testing
 Make sure to run any tests before pushing your code. The testing module used is [pytest](https://docs.pytest.org/en/stable/).  
