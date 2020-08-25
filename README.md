@@ -19,8 +19,7 @@ See the full [documentation](./docs/README.md) for examples, operational details
 
 ## Google Summer of Code (GSoC)
 
-**Are you a GSoC student and/or want to learn more?**  
-See [FAQ : GSoC](./docs/faq_gsoc.md) for a detailed timeline, [@mageirakos](https://github.com/mageirakos) student information, problems faced, future improvements, a reading list and more.
+See [FAQ : GSoC](./docs/faq_gsoc.md) for a detailed timeline, student information, problems faced, future improvements, a reading list and more.
 
 ## Demo 
 
@@ -35,33 +34,32 @@ You will see an output similar to the following example :
 - BERT model : [distilbert-base-cased-distilled-squad](https://huggingface.co/distilbert-base-cased-distilled-squad)  
 - top_k : 1
 - Answers : 
-  - 1 answer from 2x Rucio Documentation + 2x Past Questions retrieved docs 
-  - 1 answer from [FAQ](./data/faq.json)
+  - 1 answer from retrieved documents (2x Rucio Documentation + 2x Past Questions).
+  - 1 answer from similar [FAQs](./data/faq.json).
 
 ![demo](./docs/img/demo.gif)
 
 More examples and information can be found in the [How To Use](./docs/how_to_use.md) section.
 
-Example source code can be found in the [donkeybot-examples](https://github.com/rucio/donkeybot/tree/master/donkeybot-examples) module.
-
-
 ## What does it do?
 
-1) **Data storage** : Creates a Question-Answering (QA) Rucio specific data storage for our domain data. Current implementation is in SQLite for fast prototyping. Data sources include secure and anonymous [support emails](https://rucio.cern.ch/contact.html) from Rucio users, [Rucio GitHub issues](https://github.com/rucio/rucio/issues) and [Rucio documentation](https://rucio.readthedocs.io/en/latest/).
+1) **Data storage** : Creates a Question-Answering (QA)  specific data storage for Rucio domain data. Current implementation is in SQLite for fast prototyping. Data sources include secure and anonymous [support emails](https://rucio.cern.ch/contact.html) from Rucio users, [Rucio GitHub issues](https://github.com/rucio/rucio/issues) and [Rucio documentation](https://rucio.readthedocs.io/en/latest/).
    
-2) **Question detection** : Provides module for question detection from within a given text. Currently used to extract past user questions from emails and GitHub issues by using regex patterns.
+2) **Question detection** : Provides a module for question detection from in a given text. Currently used to extract past user questions from emails and GitHub issues by using regex patterns.
    
-3) **Document Retrieval** : Utilizes [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm implementation from [rank-bm25](https://pypi.org/project/rank-bm25/) for the retrieval of most similar documents - be it previously asked questions or documentation - to be used as context by the answer detection module.
+3) **Document Retrieval** : Utilizes [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm implementation for the retrieval of top-n most similar documents - be it previously asked questions or documentation - to be used as context by the answer detection module.
    
-4) **Answer Detection** : Follows a transfer-learning approach, using pre-trained transformer models such as BERT from [Hugginface transformers](https://github.com/huggingface/transformers) to provide the user with top-k number of answers based on the retrieved documents. Additionally, an FAQ-based supervised approach is provided to tackle more specific and common questions that the user might ask.
+4) **Answer Detection** : Follows a transfer-learning approach, using pre-trained transformer models such as BERT from [Hugginface transformers](https://github.com/huggingface/transformers) to provide the user with top-k number of answers based on the top-n retrieved documents. Additionally, an FAQ-based supervised approach is provided to tackle more specific and common questions that the user might ask.
 
 5) **FAQ creation** : User can use a GUI as an interface to insert FAQ questions, re-index the search engine and expand Donkeybot's data storage.
 
 **Additional Features** include :
 
--  **Name hashing** : Using Stanford's NER tagger private user information is hashed to follow CERN's privacy guidelines.
+-  **Name hashing** : Using [Stanford's NER tagger](https://nlp.stanford.edu/software/CRF-NER.html) private user information is hashed to follow CERN's privacy guidelines.
 
-See [How To Use](docs/how_to_use.md) and [How It Works](docs/how_it_works.md) for more details.
+See [How It Works](docs/how_it_works.md) and [How To Use](docs/how_to_use.md) for more details.
+
+
 ## Build
 
 **Step 1:**  A 64 bit [Python 3.x](https://www.python.org/downloads/windows/) installation is required by PyTorch.
@@ -73,7 +71,7 @@ torch==1.6.0  --find-links https://download.pytorch.org/whl/torch_stable.html
 torchvision==0.7.0  --find-links https://download.pytorch.org/whl/torch_stable.html
 ```
 
-**Step 3:** Clone the repository to your development machine and configure it. 
+**Step 3:** Clone the repository to your development machine. 
 ``` bash
 $ git clone https://github.com/rucio/donkeybot.git
 $ cd donkeybot
@@ -95,7 +93,7 @@ See the [Getting Started](./docs/getting_started.md) page for more details on co
 
 ## Bugs and Feedback
 
-For bugs, questions and discussions please use the [GitHub Issues](https://github.com/rucio/donkeybot/issues).
+For bugs, questions and discussions please use the [GitHub Issues](https://github.com/rucio/donkeybot/issues) or contact the student [@mageirakos](https://github.com/mageirakos).
 
  
 ## LICENSE
