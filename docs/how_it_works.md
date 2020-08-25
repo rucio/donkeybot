@@ -1,10 +1,10 @@
-# Contents
+## Contents
 - [Contents](#contents)
 - [How are questions answered?](#how-are-questions-answered)
 - [What happens in the background?](#what-happens-in-the-background)
 - [How do tables in the Data Storage look?](#how-do-tables-in-the-data-storage-look)
 
-# How are questions answered?
+## How are questions answered?
 `ask_donkeybot.py` and you shall receive an answer!
 
 Flow chart for the Question-Answering pipeline.   
@@ -76,7 +76,7 @@ Donkeybot's answer to the above will look something like this :
 
 ```
 
-# What happens in the background?
+## What happens in the background?
 
 To setup Donkeybot for use we need to run `build_donkeybot.py` script.
 
@@ -180,7 +180,7 @@ Donkeybot can work with any pretrained language model from this list:
 https://huggingface.co/models?filter=question-answering   
 *very*  small code changes are needed under the `build_donkeybot.py` script to do this.
 
-# How do tables in the Data Storage look?
+## How do tables in the Data Storage look?
 
 Once you run `build_donkeybot.py`, then `data_storage.db` will be created under the `data/` folder of your cloned repository.  
 
