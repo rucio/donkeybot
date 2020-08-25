@@ -192,8 +192,8 @@ Let's take a look at the information is stored in each of the tables under our D
 ![faq_table](img/faq_table.png)
     - **keywords** : Used by the [FAQSearchEngine](https://github.com/rucio/donkeybot/blob/master/lib/bot/searcher/faq.py#L9) to better match FAQs with new user queries.
 
-- `questions` table
-![questions_table](img/questions_table.png)
+- `questions` table   
+![questions_table](img/questions_table.png)   
     - **_ids** : 
       - **email_id** : when the archived question's origin is an email
       - **issue_id** : when the archived question's origin is a GitHub issue
