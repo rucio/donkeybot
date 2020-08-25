@@ -46,7 +46,6 @@ Example source code can be found in the [donkeybot-examples](https://github.com/
 
 
 ## What does it do?
-See [How it Works](./docs/how_it_works.md) for more detailed information.
 
 1) **Data storage** : Creates a Question-Answering (QA) Rucio specific data storage for our domain data. Current implementation is in SQLite for fast prototyping. Data sources include secure and anonymous [support emails](https://rucio.cern.ch/contact.html) from Rucio users, [Rucio GitHub issues](https://github.com/rucio/rucio/issues) and [Rucio documentation](https://rucio.readthedocs.io/en/latest/).
    
@@ -58,6 +57,11 @@ See [How it Works](./docs/how_it_works.md) for more detailed information.
 
 5) **FAQ creation** : User can use a GUI as an interface to insert FAQ questions, re-index the search engine and expand Donkeybot's data storage.
 
+**Additional Features** include :
+
+-  **Name hashing** : Using Stanford's NER tagger private user information is hashed to follow CERN's privacy guidelines.
+
+See [How To Use](docs/how_to_use.md) and [How It Works](docs/how_it_works.md) for more details.
 ## Build
 
 **Step 1:**  A 64 bit [Python 3.x](https://www.python.org/downloads/windows/) installation is required by PyTorch.
