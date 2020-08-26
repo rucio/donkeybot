@@ -17,6 +17,13 @@
 - [Search Engines](#search-engines)
   - [How can I create a Search Engine?](#how-can-i-create-a-search-engine)
   - [How can I query the Search Engine?](#how-can-i-query-the-search-engine)
+- [Answer Detector](#answer-detector)
+  - [How can I create an AnswerDetector?](#how-can-i-create-an-answerdetector)
+  - [How does the AnswerDetecor work?](#how-does-the-answerdetecor-work)
+  - [So what data is stored for each answer?](#so-what-data-is-stored-for-each-answer)
+  - [What is the difference between the AnswerDetector and the QAInterface?](#what-is-the-difference-between-the-answerdetector-and-the-qainterface)
+  - [How can I create a QAInterface?](#how-can-i-create-a-qainterface)
+  - [Can I use the AnswerDetector for my projects?](#can-i-use-the-answerdetector-for-my-projects)
 - [How can I add FAQs?](#how-can-i-add-faqs)
 - [How does Donkeybot handle the text processing needed?](#how-does-donkeybot-handle-the-text-processing-needed)
 
@@ -70,28 +77,18 @@ results = detector.detect(text)
 results
 ```
 
-
-
-
     [<bot.question.issues.IssueQuestion at 0x2223974d348>,
      <bot.question.issues.IssueQuestion at 0x2223974d448>,
      <bot.question.issues.IssueQuestion at 0x2223974d908>]
 
-
-
 And all 3 questions from the sample text above have been identified!
-
 
 ```python
 [(question.question) for question in results]
 ```
-
-
-
-
-    ["What is this 'text', you ask?",
-     'Did that answer all your questions?',
-     'can it help with something you still ask?']
+    [ "What is this 'text', you ask?",
+      "Did that answer all your questions?",
+      "can it help with something you still ask?"]
 
 
 
@@ -105,9 +102,6 @@ Look at [What is this `context` attribute I'm seeing?](b#What-is-this-context-at
 ```python
 results[1].__dict__
 ```
-
-
-
 
     {'id': '8621376d766242ab9fd740a3698f0dd2',
      'question': 'Did that answer all your questions?',
@@ -175,19 +169,11 @@ from bot.fetcher.factory import FetcherFactory
 
 Let's create a GitHub `IssueFetcher`.
 
-
 ```python
 issues_fetcher = FetcherFactory.get_fetcher("Issue")
 issues_fetcher
 ```
-
-
-
-
     <bot.fetcher.issues.IssueFetcher at 0x1b75c30b6c8>
-
-
-
 
 ### How can I fetch GitHub issues?
 
@@ -447,6 +433,175 @@ qse.search(query, top_n)
 
 
 This is pretty much the logic of the FAQ table which holds Question and Answer pairs.
+
+## Answer Detector
+
+### How can I create an AnswerDetector?
+
+It's very simple, just call the constructor!  
+
+
+```python
+from bot.answer.detector import AnswerDetector
+```
+
+
+```python
+answer_detector = AnswerDetector(model='distilbert-base-cased-distilled-squad',
+                                 extended_answer_size=30,
+                                 handle_impossible_answer=True,
+                                 max_answer_len=20,
+                                 max_question_len=20,
+                                 max_seq_len=256,
+                                 num_answers_to_predict=3,
+                                 doc_stride=128,
+                                 device=0)
+```
+
+**What do all these paremeters mean?**
+
+Well if you want to go deeper you can always look at the [Source Code](https://github.com/rucio/donkeybot/blob/master/lib/bot/answer/detector.py).   
+
+The important parameters for now are : 
+- **model :**  name of the transformer model used for QuestionAnswering.
+- **num_answers_to_predit :** Number of answers that are predicted for each document that the AnswerDetector is given.    
+
+Remember these documents are the ones retrieved by each Search Engine so a lot of answers are predicted until top_k are returned.   
+
+### How does the AnswerDetecor work?
+
+**Step 1.** Have a **question**.   
+
+**Step 2.** Have some **documents** in which the answer might reside in.    
+
+**Step 3.** Make sure those documents are in a pandas **DataFrame** and the context used for answer detection is under the "context" column.
+
+As of right now there is no option to simply use the AnswerDetector with strings.  
+For Donkeybot which uses different datasources we decided to utilize pandas DataFrames.  
+Donkeybot can always be expanded if the functionality is required.  
+
+
+```python
+import pandas as pd
+```
+
+
+```python
+question = "What is the aim of Donkeybot?" 
+
+documents = pd.DataFrame({
+    "context" : ["""
+                The aim of the Donkeybot project under GSoC 2020 is to use Native Language Processing (NLP) 
+                to develop an intelligent bot prototype able to provide satisfying answers to Rucio users 
+                and handle support requests up to a certain level of complexity, 
+                forwarding only the remaining ones to the experts.
+                """,
+                """
+                Different levels of expert support are available for users in case of problems. 
+                When satisfying answers are not found at lower support levels, a request from a user or a group 
+                of users can be escalated to the Rucio support. Due to the vast amount of support requests, 
+                methods to assist the support team in answering these requests are needed.
+                """],
+    "col_2" : ["first_doc", "second_doc"],
+    "col_3" : ["other", "data"]
+})
+```
+
+
+```python
+answers = answer_detector.predict(question, documents, top_k=2)
+```
+
+So asking `What is the aim of Donkeybot?`, providing the above documents and asking for 2 answers gives us:
+
+
+```python
+print(question)
+[(f"answer {i+1}: {answer.answer} | confidence : {answer.confidence}") for i,answer in enumerate(answers)]
+```
+
+    What is the aim of Donkeybot?
+    
+
+
+
+
+    ['answer 1: assist the support team | confidence : 0.44691182870541724',
+     'answer 2: to use Native Language Processing (NLP) | confidence : 0.24011110691572668']
+
+
+
+### So what data is stored for each answer?
+
+
+```python
+answers[1].__dict__
+```
+
+    {'id': 'c3e44f0799b645c9b690f98e4b5e07ea',
+     'user_question': 'What is the aim of Donkeybot?',
+     'user_question_id': '2fc28e8f32',
+     'answer': 'to use Native Language Processing (NLP)',
+     'start': 69,
+     'end': 125,
+     'confidence': 0.24011110691572668,
+     'extended_answer': 'ot project under GSoC 2020 is to use Native Language Processing (NLP) \n                to develop an intelligent bot',
+     'extended_start': 39,
+     'extended_end': 155,
+     'model': 'distilbert-base-cased-distilled-squad',
+     'origin': 'questions',
+     'created_at': '2020-08-26 18:08:08+00:00',
+     'label': None,
+     'metadata': {'col_2': 'first_doc', 'col_3': 'other'}}
+
+
+
+See [How it Works](https://github.com/rucio/donkeybot/blob/master/docs/how_it_works.md) where we cover the same information and explain in more detail.
+
+### What is the difference between the AnswerDetector and the QAInterface? 
+
+Basically the QAInterface under `brain.py` of Donkeybot, glues together all `SearchEngines` nd the  `AnswerDetector`.   
+
+It is the interface used in `ask_donkeybot.py` script. Take a look at the [Source Code](https://github.com/rucio/donkeybot/blob/master/scripts/ask_donkeybot.py) for more information.
+
+### How can I create a QAInterface?
+
+Given that you have correctly created:
+- `AnswerDetector`
+- `SearchEngine` 
+- `QuestionSearchEngine` 
+- `FAQSearchEngine`   
+
+All correctly.
+
+Then simply load the interface
+
+
+```python
+from bot.brain import QAInterface
+```
+
+
+```python
+# load interface
+qa_interface = QAInterface(
+    detector=answer_detector,
+    question_engine=question_se,
+    faq_engine=faq_se,
+    docs_engine=docs_se,
+)
+```
+
+### Can I use the AnswerDetector for my projects?
+
+Yes, but it probably will require some tweaking and if you aren't using Donkeybot for setting up and curating your data then it might not be worth it.   
+
+Simply look under the hood and use Transformer pipelines for your needs.
+
+
+
+
+
 
 ## How can I add FAQs?
 The easiest way to do this is to use the *very* simple GUI Donkeybot provides.
