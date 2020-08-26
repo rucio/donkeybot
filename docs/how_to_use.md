@@ -18,6 +18,7 @@
   - [How can I create a Search Engine?](#how-can-i-create-a-search-engine)
   - [How can I query the Search Engine?](#how-can-i-query-the-search-engine)
 - [How can I add FAQs?](#how-can-i-add-faqs)
+- [How does Donkeybot handle the text processing needed?](#how-does-donkeybot-handle-the-text-processing-needed)
 
 ## Outline
 
@@ -475,6 +476,11 @@ Just make sure that the Database and FAQ table are the same in both cases.
 ![index_faq_gui](img/index_faq_gui.png)
 
 
+## How does Donkeybot handle the text processing needed? 
+
+With the help of libraries like [string](https://docs.python.org/2/library/string.html), [datetime](https://docs.python.org/3/library/datetime.html), [pytz](https://pypi.org/project/pytz/) and [nltk](https://www.nltk.org/) 😁 
+
+See [bot.utils](https://github.com/rucio/donkeybot/blob/master/lib/bot/utils.py) for the text-processing source code.
 
 
 [Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
