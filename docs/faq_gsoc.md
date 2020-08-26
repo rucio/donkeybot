@@ -1,10 +1,8 @@
 [Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
 
-This page is written from the Google Summer of Code (GSoC) student's perspective and tries to answer some FAQs related to GSoC.    
-While also providing ideas for improvement and problems faced in this project.
-
 ## Contents
 - [Contents](#contents)
+- [Outline](#outline)
 - [Who wrote Donkeybot during GSoC '20?](#who-wrote-donkeybot-during-gsoc-20)
 - [What is GSoC?](#what-is-gsoc)
 - [Is there an official GSoC FAQ besides this... thing?](#is-there-an-official-gsoc-faq-besides-this-thing)
@@ -13,6 +11,11 @@ While also providing ideas for improvement and problems faced in this project.
 - [What problems did you face?](#what-problems-did-you-face)
 - [Do you suggest any future improvements?](#do-you-suggest-any-future-improvements)
 - [Can you provide a Reading List with material that helped you during GSoC?](#can-you-provide-a-reading-list-with-material-that-helped-you-during-gsoc)
+
+## Outline
+
+This page is written from the Google Summer of Code (GSoC) student's perspective and tries to answer some FAQs related to GSoC.    
+While also providing ideas for improvement and problems faced in this project.
 
 ## Who wrote Donkeybot during GSoC '20?
 
