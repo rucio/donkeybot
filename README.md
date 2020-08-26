@@ -1,65 +1,103 @@
-# DonkeyBot
-**Rucio Support Bot with NLP (GSOC Project)**
+# Donkeybot: Rucio Support Bot with NLP (GSoC Project)
 
-Different levels of expert support are available for users in case of problems. When satisfying answers are not found at lower support levels, a request from a user or a group of users can be escalated to the Rucio support. Due to the vast amount of support requests, methods to assist the support team in answering these requests are needed.  
+![license](https://img.shields.io/badge/License-Apache%202-blue.svg)
+![language](https://img.shields.io/badge/python-3.x-green.svg)
 
-The aim of the project under GSoC 2020 is to use Native Language Processing (NLP) to develop an intelligent bot prototype able to provide satisfying answers to Rucio users and handle support requests up to a certain level of complexity, forwarding only the remaining ones to the experts. 
+Donkeybot is an end-to-end Question Answering system that utilizes multiple data sources, an FAQ table and transfer-learning language models like BERT to answer Rucio support questions.
 
-Additional information on the project's description and initial milestones for the student are provided on [Rucio Support Bot proposal.](https://github.com/TomasJavurek/hsf.github.io/blob/master/_gsocproposals/2020/proposal_RucioSupportBot.md)
+Currently only a prototype and not ready for production.
 
-You can find everything related to the bot under our [documentation](/docs/home.md) and our wiki.
+## Introduction
 
-# Setting up the repository
+The aim of the project under GSoC 2020 is to use Native Language Processing (NLP) to develop an intelligent bot prototype able to provide satisfying answers to Rucio users and handle support requests up to a certain level of complexity, forwarding only the remaining ones to the experts.
 
-**Step 1:**  Fork the [repository](https://github.com/rucio/bot-nlp) on Github.
+Donkeybot can be expanded and applied as a Question-Answering system for your needs. Changes in the code are required to use Donkeybot for your specific use case and data. Current implementation applies to Rucio specific data sources.
 
-**Step 2:** Clone the repository to your development machine and configure it:
+## Full Documentation
+
+See the full [documentation](./docs/README.md) for examples, operational details and other information.
+
+## Google Summer of Code (GSoC)
+
+See [FAQ : GSoC](./docs/faq_gsoc.md) for a detailed timeline, student information, problems faced, future improvements, a reading list and more.
+
+## Demo 
+
+You can try asking Donkeybot yourself!   
+Use :  
 ``` bash
-$ git clone https://github.com/<YOUR_USER>/bot-nlp/
-$ cd bot-nlp
-$ git remote add upstream https://github.com/rucio/bot-nlp.git
+$  python .\scripts\ask_donkeybot.py
 ```
 
-# Requirements
-* [Python 3 ](https://www.python.org/downloads/windows/), 64bit required for correct installation of PyTorch on Windows.
-* To install PyTorch head over to https://pytorch.org/ and follow the quick start guide for your operating system ( torch on windows is not available through pypi ) .
-    ``` python
-    # project's torch version as listed on requirements.txt
-    torch==1.6.0  --find-links https://download.pytorch.org/whl/torch_stable.html
-    torchvision==0.7.0  --find-links https://download.pytorch.org/whl/torch_stable.html
-    ```
-* Run the following command on the terminal:
-    ``` bash
-    $ pip install -r requirements.txt
-    ``` 
-# Bot in developer mode
+You will see an output similar to the following example :  
+- Question : "How are Rucio Users authenticated?"   
+- BERT model : [distilbert-base-cased-distilled-squad](https://huggingface.co/distilbert-base-cased-distilled-squad)  
+- top_k : 1
+- Answers : 
+  - 1 answer from retrieved documents (2x Rucio Documentation + 2x Past Questions).
+  - 1 answer from similar [FAQs](./data/faq.json).
 
-**Step 1:** Creating a virtual enviroment.
-``` bash 
-# virt is an example name of the virtual enviroment
-# command might be 'py' or 'python3' on your machine
-$ python -m venv virt 
+![demo](./docs/img/demo.gif)
+
+More examples and information can be found in the [How To Use](./docs/how_to_use.md) section.
+
+## What does it do?
+
+1) **Data storage** : Creates a Question-Answering (QA)  specific data storage for Rucio domain data. Current implementation is in SQLite for fast prototyping. Data sources include secure and anonymous [support emails](https://rucio.cern.ch/contact.html) from Rucio users, [Rucio GitHub issues](https://github.com/rucio/rucio/issues) and [Rucio documentation](https://rucio.readthedocs.io/en/latest/).
+   
+2) **Question detection** : Provides a module for question detection from in a given text. Currently used to extract past user questions from emails and GitHub issues by using regex patterns.
+   
+3) **Document Retrieval** : Utilizes [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm implementation for the retrieval of top-n most similar documents - be it previously asked questions or documentation - to be used as context by the answer detection module.
+   
+4) **Answer Detection** : Follows a transfer-learning approach, using pre-trained transformer models such as BERT from [Hugginface transformers](https://github.com/huggingface/transformers) to provide the user with top-k number of answers based on the top-n retrieved documents. Additionally, an FAQ-based supervised approach is provided to tackle more specific and common questions that the user might ask.
+
+5) **FAQ creation** : User can use a GUI as an interface to insert FAQ questions, re-index the search engine and expand Donkeybot's data storage.
+
+**Additional Features** include :
+
+-  **Name hashing** : Using [Stanford's NER tagger](https://nlp.stanford.edu/software/CRF-NER.html) private user information is hashed to follow CERN's privacy guidelines.
+
+See [How It Works](docs/how_it_works.md) and [How To Use](docs/how_to_use.md) for more details.
+
+
+## Build
+
+**Step 1:**  A 64 bit [Python 3.x](https://www.python.org/downloads/windows/) installation is required by PyTorch.
+   
+**Step 2:** To install PyTorch head over to https://pytorch.org/ and follow the quick start guide based on your operating system.  
+``` python
+# versions used in development 
+torch==1.6.0  --find-links https://download.pytorch.org/whl/torch_stable.html
+torchvision==0.7.0  --find-links https://download.pytorch.org/whl/torch_stable.html
 ```
 
-**Step 2:** Activate the enviroment
+**Step 3:** Clone the repository to your development machine. 
 ``` bash
-$ source virt/bin/activate
-# or on Windows
-$ virt/Scripts/activate
+$ git clone https://github.com/rucio/donkeybot.git
+$ cd donkeybot
 ```
 
-**Step 3:** Run `setup.py`
+**Step 4:** For additional requirements run. 
 ``` bash
-# make sure setuptools exists inside this venv
-$(virt) python -c 'import setuptools'
-# create distribution package
-$(virt) python setup.py sdist 
-# Optional, check whats inside 
-$(virt) tar --list -f .\dist\bot-<BOT_VERSION_HERE>.tar.gz
+$ pip install -r requirements.txt
+``` 
+    
+**Step 5:** Build and populate Donkeybot's data storage. 
+``` bash
+$ python scripts/build_donkeybot -t <GITHUB_API_TOKEN>
 ```
+- To generate a GitHub token visit [Personal Access Tokens](https://github.com/settings/tokens) and follow [Creating a Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
 
-**Step 4:** Developer mode 
-``` bash
-$(virt) python setup.py develop
-```
-You're now able to run any scripts and imports work correctly
+
+See the [Getting Started](./docs/getting_started.md) page for more details on contributing, initiating the developer mode and testing.
+
+## Bugs and Feedback
+
+For bugs, questions and discussions please use the [GitHub Issues](https://github.com/rucio/donkeybot/issues) or contact the student [@mageirakos](https://github.com/mageirakos).
+
+ 
+## LICENSE
+
+Licensed under the Apache License, Version 2.0;
+
+<http://www.apache.org/licenses/LICENSE-2.0>

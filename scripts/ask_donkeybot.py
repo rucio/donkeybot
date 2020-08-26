@@ -24,11 +24,11 @@ import argparse
 def check_model_availability(model):
     """Assert that all the model files exist in the MODELS_DIR"""
     try:
-        assert os.path.isfile(MODELS_DIR + model + r"\\config.json") == True
-        assert os.path.isfile(MODELS_DIR + model + r"\\pytorch_model.bin") == True
-        assert os.path.isfile(MODELS_DIR + model + r"\\special_tokens_map.json") == True
-        assert os.path.isfile(MODELS_DIR + model + r"\\tokenizer_config.json") == True
-        assert os.path.isfile(MODELS_DIR + model + r"\\vocab.txt") == True
+        assert os.path.isfile(MODELS_DIR + model + "\\config.json") == True
+        assert os.path.isfile(MODELS_DIR + model + "\\pytorch_model.bin") == True
+        assert os.path.isfile(MODELS_DIR + model + "\\special_tokens_map.json") == True
+        assert os.path.isfile(MODELS_DIR + model + "\\tokenizer_config.json") == True
+        assert os.path.isfile(MODELS_DIR + model + "\\vocab.txt") == True
     except AssertionError as _e:
         print(
             f"Error: Make sure that the model is correct and exists in '{MODELS_DIR}'."

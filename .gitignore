@@ -1,5 +1,4 @@
 # folders
-/some-folder
 /.vscode
 /virt
 /models
@@ -21,3 +20,4 @@
 # files
 __pycache__
 .pytest_cache
+.ipynb_checkpoints
