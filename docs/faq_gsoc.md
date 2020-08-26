@@ -43,7 +43,7 @@ I won't be able to explain it any better than Google, so make sure to check the 
 Of course! Don't just read my thoughts, visit the official Google Summer of Code [FAQ page](https://developers.google.com/open-source/gsoc/faq) and read more. 
 
 Maybe I should just feed Donkeybot the GSoC documentation and see how that performs!    
-Or you can [contribute]([/docs/getting_started.md](https://github.com/rucio/donkeybot/blob/master/docs/getting_started.md#contributing)) and do it yourself 😁
+Or you can [contribute](https://github.com/rucio/donkeybot/blob/master/docs/getting_started.md#contributing) and do it yourself 😁
 
 ## Where can I see a detailed timeline of the project?
 
