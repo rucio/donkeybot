@@ -1,17 +1,21 @@
 [Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
 
-Everything inside each section of this page has a notebook corresponding to it.    
-See [examples](https://github.com/rucio/donkeybot/tree/master/examples) for a more hands on
- guide.
-
 ## Contents
 - [Contents](#contents)
+- [Outline](#outline)
 - [How can I use the Question Detector?](#how-can-i-use-the-question-detector)
   - [How can I create a `QuestionDetector`?](#how-can-i-create-a-questiondetector)
   - [So how does the QuestionDetector work?](#so-how-does-the-questiondetector-work)
   - [What is the difference between `IssueQuestion` vs `EmailQuestion` vs `IssueCommentQuestion`?](#what-is-the-difference-between-issuequestion-vs-emailquestion-vs-issuecommentquestion)
   - [What is this `context` attribute I'm seeing in the Question objects?](#what-is-this-context-attribute-im-seeing-in-the-question-objects)
   - [Can I use the QuestionDetector for my projects that aren't issue/email/comment related?](#can-i-use-the-questiondetector-for-my-projects-that-arent-issueemailcomment-related)
+
+## Outline
+
+Almost everything in the sections of this page have a corresponding notebook.  
+See [examples](https://github.com/rucio/donkeybot/tree/master/examples) for a more hands on guide by looking at the notebooks.
+
+Also, the functionality explained here is what runs 'under the hood' in the [scripts](https://github.com/rucio/donkeybot/tree/master/scripts) which run Donkeybot. So instead of explaining those I chose a more straightforward approach and look at the code with easy examples.
 
 ## How can I use the Question Detector?
 
