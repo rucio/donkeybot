@@ -480,7 +480,7 @@ Just make sure that the Database and FAQ table are the same in both cases.
 
 With the help of libraries like [string](https://docs.python.org/2/library/string.html), [datetime](https://docs.python.org/3/library/datetime.html), [pytz](https://pypi.org/project/pytz/) and [nltk](https://www.nltk.org/) 😁 
 
-See [bot.utils](https://github.com/rucio/donkeybot/blob/master/lib/bot/utils.py) for the text-processing source code.
+See [bot.utils](https://github.com/rucio/donkeybot/blob/master/lib/bot/utils.py) module for the text-processing source code.
 
 
 [Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
