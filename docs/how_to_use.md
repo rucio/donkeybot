@@ -15,7 +15,7 @@
 Almost everything in the sections of this page have a corresponding notebook.  
 See [examples](https://github.com/rucio/donkeybot/tree/master/examples) for a more hands on guide by looking at the notebooks.
 
-Also, the functionality explained here is what runs 'under the hood' in the [scripts](https://github.com/rucio/donkeybot/tree/master/scripts) which run Donkeybot. So instead of explaining those I chose a more straightforward approach and look at the code with easy examples.
+Also, the functionality explained here is what runs 'under the hood' in the [scripts](https://github.com/rucio/donkeybot/tree/master/scripts) which use Donkeybot. So instead of explaining those I chose a more straightforward approach and look at the code with easy examples.
 
 ## How can I use the Question Detector?
 
