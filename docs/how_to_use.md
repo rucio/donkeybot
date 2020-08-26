@@ -3,21 +3,21 @@
 ## Contents
 - [Contents](#contents)
 - [Outline](#outline)
-- [How can I use the Question Detector?](#how-can-i-use-the-question-detector)
+- [Question Detector](#question-detector)
   - [How can I create a QuestionDetector?](#how-can-i-create-a-questiondetector)
   - [So how does the QuestionDetector work?](#so-how-does-the-questiondetector-work)
   - [What is the difference between IssueQuestion vs EmailQuestion vs IssueCommentQuestion?](#what-is-the-difference-between-issuequestion-vs-emailquestion-vs-issuecommentquestion)
   - [What is this context attribute I'm seeing in the Question objects?](#what-is-this-context-attribute-im-seeing-in-the-question-objects)
   - [Can I use the QuestionDetector for my projects that aren't issue/email/comment related?](#can-i-use-the-questiondetector-for-my-projects-that-arent-issueemailcomment-related)
-- [How can I use the Fetchers?](#how-can-i-use-the-fetchers)
+- [Fetchers](#fetchers)
   - [How can I create a Fetcher ?](#how-can-i-create-a-fetcher-)
   - [How can I fetch GitHub issues?](#how-can-i-fetch-github-issues)
   - [How does Donkeybot Fetch Rucio Documentation?](#how-does-donkeybot-fetch-rucio-documentation)
   - [How does Donkeybot save the fetched data?](#how-does-donkeybot-save-the-fetched-data)
-- [What about the workings of the Search Engines?](#what-about-the-workings-of-the-search-engines)
+- [Search Engines](#search-engines)
   - [How can I create a Search Engine?](#how-can-i-create-a-search-engine)
   - [How can I query the Search Engine?](#how-can-i-query-the-search-engine)
-- [How do I add FAQs?](#how-do-i-add-faqs)
+- [How can I add FAQs?](#how-can-i-add-faqs)
 
 ## Outline
 
@@ -27,7 +27,7 @@ See [examples](https://github.com/rucio/donkeybot/tree/master/examples) for a mo
 Also, the functionality explained here is what runs 'under the hood' in the [scripts](https://github.com/rucio/donkeybot/tree/master/scripts) which use Donkeybot.   
 So instead of explaining those I chose a more straightforward approach and look at the code with easy examples.
 
-## How can I use the Question Detector?
+## Question Detector
 
 ### How can I create a QuestionDetector?
 
@@ -149,7 +149,7 @@ If you want to see this in Donkeybot [open an issue](https://github.com/rucio/do
 I'll see that you've been reading the documentation and that this functionality is needed :D 
 
 
-## How can I use the Fetchers?
+## Fetchers
 
 The scripts `fetch_issues.py`, `fetch_rucio_docs.py` do everything explained here. 
 See [scripts](https://github.com/rucio/donkeybot/tree/master/scripts) for source code and run the scripts with the '-h' option for info on the arguments they take.  
@@ -333,7 +333,7 @@ data_storage.close_connection()
 
 **Alternative :** If you don't want to use Donkeybot's Data Storage you can use the `save_with_pickle()` and `load_with_pickle()` methods to achieve the same results.
 
-## What about the workings of the Search Engines?
+## Search Engines
 
 You can use the script `query.py` to query the search engines and  `create_se_indexes.py` is what creates the Search Engine
 indexes for Donkeybot. 
@@ -447,7 +447,7 @@ qse.search(query, top_n)
 
 This is pretty much the logic of the FAQ table which holds Question and Answer pairs.
 
-## How do I add FAQs?
+## How can I add FAQs?
 The easiest way to do this is to use the *very* simple GUI Donkeybot provides.
 
 **All you need to remember is:**  
