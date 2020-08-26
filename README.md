@@ -5,8 +5,6 @@
 
 Donkeybot is an end-to-end Question Answering system that utilizes multiple data sources, an FAQ table and transfer-learning language models like BERT to answer Rucio support questions.
 
-Currently only a prototype and not ready for production.
-
 ## Introduction
 
 The aim of the project under GSoC 2020 is to use Native Language Processing (NLP) to develop an intelligent bot prototype able to provide satisfying answers to Rucio users and handle support requests up to a certain level of complexity, forwarding only the remaining ones to the experts.
