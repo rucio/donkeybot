@@ -12,7 +12,7 @@
 
 ## Outline
 
-Almost everything in the sections of this page have a corresponding notebook.
+Almost everything in the sections of this page have a corresponding notebook.  
 See [examples](https://github.com/rucio/donkeybot/tree/master/examples) for a more hands on guide by looking at the notebooks.
 
 Also, the functionality explained here is what runs 'under the hood' in the [scripts](https://github.com/rucio/donkeybot/tree/master/scripts) which use Donkeybot.   
