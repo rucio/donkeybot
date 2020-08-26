@@ -1,3 +1,5 @@
+[Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
+
 Everything inside each section of this page has a notebook corresponding to it.    
 See [examples](https://github.com/rucio/donkeybot/tree/master/examples) for a more hands on
  guide.
@@ -131,3 +133,5 @@ Then, Donkeybot needs to be expanded to have a `Question` superclass and a `set_
 
 If you want to see this in Donkeybot [open an issue](https://github.com/rucio/donkeybot/issues) and suggest it.
 I'll see that you've been reading the documentation and that this functionality is needed :D 
+
+[Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)

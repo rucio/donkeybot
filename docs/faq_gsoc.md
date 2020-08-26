@@ -1,3 +1,5 @@
+[Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
+
 This page is written from the Google Summer of Code (GSoC) student's perspective and tries to answer some FAQs related to GSoC.    
 While also providing ideas for improvement and problems faced in this project.
 
@@ -56,3 +58,8 @@ Original Proposal
 
 
 ## Can you provide a Reading List with material that helped you during GSoC?
+
+
+
+
+[Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)

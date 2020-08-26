@@ -1,3 +1,5 @@
+[Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
+
 ## Contents
 - [Contents](#contents)
 - [How are questions answered?](#how-are-questions-answered)
@@ -230,3 +232,5 @@ And the search engine indexes :
   
     Which simply hold the document_ids and corresponding terms.   
     ( used by the Search Engines )
+
+[Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)

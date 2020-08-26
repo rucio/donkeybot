@@ -1,3 +1,5 @@
+[Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
+
 ## Contents
 - [Contents](#contents)
 - [How is this used at Rucio?](#how-is-this-used-at-rucio)
@@ -16,3 +18,6 @@ Blah blah
 
 ## How did this project came to be?
 Look at FAQ : GSoC for more info etc.
+
+
+[Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)

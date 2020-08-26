@@ -1,3 +1,5 @@
+[Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
+
 # Contents
 - [Contents](#contents)
 - [Build](#build)
@@ -112,3 +114,5 @@ Which moves us back to the top level directory.
 That will look for setup.py in the current directory and install Donkeybot in developer mode :)   
 
 See the [official docs](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs) for more info on the the pip install -e option.
+
+[Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
