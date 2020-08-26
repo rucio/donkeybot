@@ -398,63 +398,7 @@ corpus_df = pd.DataFrame({"question_id": [0,1,2,3],
 corpus_df
 ```
 
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>question_id</th>
-      <th>question</th>
-      <th>answer</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0</td>
-      <td>What happened in GSoC 2020 ?</td>
-      <td>Donkeybot was created!</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1</td>
-      <td>How can I create an index ?</td>
-      <td>With the .create_index() method!</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>2</td>
-      <td>How can I load an index ?</td>
-      <td>With the .load_index() method!</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>3</td>
-      <td>Why are there so many questions in this example?</td>
-      <td>Because BM25 need enough data to create good t...</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
+![corpus_df_out](/docs/img/corpus_df_out.png)
 
 ```python
 # Step 2
@@ -471,56 +415,7 @@ qse.create_index(
 qse.index
 ```
 
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>terms</th>
-    </tr>
-    <tr>
-      <th>question_id</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>gsoc, happen</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>creat, index</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>load, index</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>exampl, mani, question</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
+![qse_index_out](/docs/img/qse_index_out.png)
 
 
 ```python
@@ -546,50 +441,7 @@ And just run the `.search()` method.
 qse.search(query, top_n)
 ```
 
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>question_id</th>
-      <th>question</th>
-      <th>answer</th>
-      <th>bm25_score</th>
-      <th>query</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0</td>
-      <td>What happened in GSoC 2020 ?</td>
-      <td>Donkeybot was created!</td>
-      <td>1.783785</td>
-      <td>Anything cool that happened in this year's GSoC?</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
+![qse_search_out](/docs/img/qse_search_out.png)
 
 
 [Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
