@@ -17,7 +17,7 @@ See the full [documentation](./docs/README.md) for examples, operational details
 
 ## Google Summer of Code (GSoC)
 
-See [FAQ : GSoC](./docs/faq_gsoc.md) for a detailed timeline, student information, problems faced, future improvements, a reading list and more.
+See [FAQ : GSoC](./docs/faq_gsoc.md) for a detailed timeline, student information, problems faced, future improvement suggestions, a reading list and more.
 
 ## Demo 
 
