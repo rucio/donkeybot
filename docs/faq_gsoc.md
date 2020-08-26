@@ -7,7 +7,6 @@
 - [What is GSoC?](#what-is-gsoc)
 - [Is there an official GSoC FAQ besides this... thing?](#is-there-an-official-gsoc-faq-besides-this-thing)
 - [Where can I see a detailed timeline of the project?](#where-can-i-see-a-detailed-timeline-of-the-project)
-- [What was the original proposal for the project?](#what-was-the-original-proposal-for-the-project)
 - [What problems did you face?](#what-problems-did-you-face)
 - [Do you suggest any future improvements?](#do-you-suggest-any-future-improvements)
 - [Can you provide a Reading List with material that helped you during GSoC?](#can-you-provide-a-reading-list-with-material-that-helped-you-during-gsoc)
@@ -51,11 +50,6 @@ Or you can [contribute](/docs/getting_started.md) and do it yourself 😁
 Like every student I kept a daily/weekly [Progress Report](https://docs.google.com/document/d/1ZwDS5vze91rO0WSC9IQEmBAzL9gpJytaLW-eqj1kTpQ/edit?usp=sharing) to track everything I did throughout the project. It is not detailed to the point of mentioning specific methods/functions/lines of code implemented per day. But, you get a good idea at how and most importantly when I worked on everything. 
 
 I went back while writing this document and added some 'notes from the future' for some things mentioned that you won't find in the source code.  
-
-## What was the original proposal for the project?
-
-Original Proposal
- [Original Proposal](https://github.com/TomasJavurek/hsf.github.io/blob/master/_gsocproposals/2020/proposal_RucioSupportBot.md) Which changed and was expanded upon etc
 
 ## What problems did you face?
 
