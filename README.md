@@ -13,7 +13,7 @@ Donkeybot can be expanded and applied as a Question-Answering system for your ne
 
 ## Full Documentation
 
-See the full [documentation]([./docs/](https://github.com/rucio/donkeybot/tree/master/docs)) for examples, operational details and other information.
+See the full [documentation](https://github.com/rucio/donkeybot/tree/master/docs) for examples, operational details and other information.
 
 ## Google Summer of Code (GSoC)
 
