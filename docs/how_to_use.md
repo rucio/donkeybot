@@ -14,6 +14,9 @@
   - [How can I fetch GitHub issues?](#how-can-i-fetch-github-issues)
   - [How does Donkeybot Fetch Rucio Documentation?](#how-does-donkeybot-fetch-rucio-documentation)
   - [How does Donkeybot save the fetched data?](#how-does-donkeybot-save-the-fetched-data)
+- [What about the workings of the Search Engines?](#what-about-the-workings-of-the-search-engines)
+  - [How can I create a Search Engine?](#how-can-i-create-a-search-engine)
+  - [How can I query the Search Engine?](#how-can-i-query-the-search-engine)
 
 ## Outline
 
@@ -147,11 +150,12 @@ I'll see that you've been reading the documentation and that this functionality 
 
 ## How can I use the Fetchers?
 
-**The scripts `fetch_issues.py`, `fetch_rucio_docs.py` do everything explained here.**  
+The scripts `fetch_issues.py`, `fetch_rucio_docs.py` do everything explained here. 
 See [scripts](https://github.com/rucio/donkeybot/tree/master/scripts) for source code and run the scripts with the '-h' option for info on the arguments they take.  
 eg.  
 
 `(virt)$ python scripts/fetch_rucio_docs.py -h`
+
 
 ### How can I create a `Fetcher` ?
 
@@ -179,6 +183,7 @@ issues_fetcher
 
 
     <bot.fetcher.issues.IssueFetcher at 0x1b75c30b6c8>
+
 
 
 
@@ -249,6 +254,7 @@ comments_df.info()
     memory usage: 768.0+ bytes
     
 
+
 ### How does Donkeybot Fetch Rucio Documentation? 
 
 It's the same process we followed with the `IssueFetcher` only now the factory will create a `RucioDocsFetcher`
@@ -280,6 +286,7 @@ token = "<YOUR_TOKEN>"
 ```python
 docs_df = docs_fetcher.fetch(api_token=token)
 ```
+
 
 ### How does Donkeybot save the fetched data?
 
@@ -325,9 +332,260 @@ data_storage.close_connection()
 
 **Alternative :** If you don't want to use Donkeybot's Data Storage you can use the `save_with_pickle()` and `load_with_pickle()` methods to achieve the same results.
 
+## What about the workings of the Search Engines?
+
+You can use the script `query.py` to query the search engines and  `create_se_indexes.py` is what creates the Search Engine
+indexes for Donkeybot. 
+See [scripts](https://github.com/rucio/donkeybot/tree/master/scripts) for source code and run the scripts with the '-h' option for info on the arguments they take.  
+eg.  
+
+`(virt)$ python scripts/query.py -h`
+
+### How can I create a Search Engine?
+
+There are 3 types of Search Engines in Donkeybot at the moment:  
+- `SearchEngine` which is used to query general documenation ( in our case Rucio Documentation )  
+- `QuestionSearchEngine` which is used to query Question objects saved in Data Storage  
+- `FAQSearchEngine` which is used to query FAQs saved in Data Storage  
+
+Let's create a `QuestionSearchEngine`
+
+
+```python
+from bot.searcher.question import QuestionSearchEngine
+```
+
+
+```python
+qse = QuestionSearchEngine()
+qse
+```
 
 
 
+
+    <bot.searcher.question.QuestionSearchEngine at 0x2a2cf58a348>
+
+
+
+**The QuestionSearchEngine is not yet usable!**    
+
+We need 3 things:   
+
+**Step 1.** Have a pandas **DataFrame** with the column **question** that holds the information we will index. The document id for th QuestionSearchEngine will be a column named **question_id** under corpus.   
+
+*sidenote*: A nice addition to Donkeybot will be the ability to change the name of these columns and have something more general.  
+But, this is only needed for the sqlite implementation. If in the future we move to Elasticsearch there is no need.
+
+**Step 2.** Have an open connection to the Data Storage
+
+**Step 3.** `create_index()` or `load_index()` which is the document term matrix of the questions.
+
+
+```python
+# Step 1
+import pandas as pd
+# example DataFrame
+corpus_df = pd.DataFrame({"question_id": [0,1,2,3],
+                          "question":["What happened in GSoC 2020 ?",
+                                      "How can I create an index ?",
+                                      "How can I load an index ?", 
+                                      "Why are there so many questions in this example?"], 
+                          "answer":["Donkeybot was created!", 
+                                    "With the .create_index() method!",
+                                    "With the .load_index() method!",
+                                    "Because BM25 need enough data to create good tf-df vectors :D"]})
+corpus_df
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>question_id</th>
+      <th>question</th>
+      <th>answer</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>What happened in GSoC 2020 ?</td>
+      <td>Donkeybot was created!</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>How can I create an index ?</td>
+      <td>With the .create_index() method!</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>How can I load an index ?</td>
+      <td>With the .load_index() method!</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>Why are there so many questions in this example?</td>
+      <td>Because BM25 need enough data to create good t...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+# Step 2
+from bot.database.sqlite import Database
+data_storage = Database('your_data_storage.db')
+```
+
+
+```python
+# Step 3 create the index!
+qse.create_index(
+        corpus=corpus_df, db=data_storage, table_name="corpus_doc_term_matrix"
+    )
+qse.index
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>terms</th>
+    </tr>
+    <tr>
+      <th>question_id</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>gsoc, happen</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>creat, index</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>load, index</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>exampl, mani, question</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+data_storage.close_connection()
+```
+
+Now the QuestionSearchEngine is ready!
+
+### How can I query the Search Engine?
+
+Let's try and query the `QuestionSearchEngine` we just created above
+
+
+```python
+query = "Anything cool that happened in this year's GSoC?" # whatever you want to ask
+top_n = 1 # number of retrieved documents 
+```
+
+And just run the `.search()` method.
+
+
+```python
+qse.search(query, top_n)
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>question_id</th>
+      <th>question</th>
+      <th>answer</th>
+      <th>bm25_score</th>
+      <th>query</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>What happened in GSoC 2020 ?</td>
+      <td>Donkeybot was created!</td>
+      <td>1.783785</td>
+      <td>Anything cool that happened in this year's GSoC?</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
