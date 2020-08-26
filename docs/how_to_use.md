@@ -6,7 +6,7 @@
 - [How can I use the Question Detector?](#how-can-i-use-the-question-detector)
   - [How can I create a QuestionDetector?](#how-can-i-create-a-questiondetector)
   - [So how does the QuestionDetector work?](#so-how-does-the-questiondetector-work)
-  - [What is the difference between IssueQuestion vs`EmailQuestion vs IssueCommentQuestion?](#what-is-the-difference-between-issuequestion-vsemailquestion-vs-issuecommentquestion)
+  - [What is the difference between IssueQuestion vs EmailQuestion vs IssueCommentQuestion?](#what-is-the-difference-between-issuequestion-vs-emailquestion-vs-issuecommentquestion)
   - [What is this context attribute I'm seeing in the Question objects?](#what-is-this-context-attribute-im-seeing-in-the-question-objects)
   - [Can I use the QuestionDetector for my projects that aren't issue/email/comment related?](#can-i-use-the-questiondetector-for-my-projects-that-arent-issueemailcomment-related)
 - [How can I use the Fetchers?](#how-can-i-use-the-fetchers)
@@ -94,7 +94,7 @@ And all 3 questions from the sample text above have been identified!
 
 
 
-### What is the difference between IssueQuestion vs`EmailQuestion vs IssueCommentQuestion? 
+### What is the difference between IssueQuestion vs EmailQuestion vs IssueCommentQuestion? 
 
 The only difference is their `origin` and how they get their `context` attributes.     
 
