@@ -4,13 +4,13 @@
 - [Contents](#contents)
 - [Outline](#outline)
 - [How can I use the Question Detector?](#how-can-i-use-the-question-detector)
-  - [How can I create a `QuestionDetector`?](#how-can-i-create-a-questiondetector)
+  - [How can I create a QuestionDetector?](#how-can-i-create-a-questiondetector)
   - [So how does the QuestionDetector work?](#so-how-does-the-questiondetector-work)
-  - [What is the difference between `IssueQuestion` vs `EmailQuestion` vs `IssueCommentQuestion`?](#what-is-the-difference-between-issuequestion-vs-emailquestion-vs-issuecommentquestion)
-  - [What is this `context` attribute I'm seeing in the Question objects?](#what-is-this-context-attribute-im-seeing-in-the-question-objects)
+  - [What is the difference between IssueQuestion vs`EmailQuestion vs IssueCommentQuestion?](#what-is-the-difference-between-issuequestion-vsemailquestion-vs-issuecommentquestion)
+  - [What is this context attribute I'm seeing in the Question objects?](#what-is-this-context-attribute-im-seeing-in-the-question-objects)
   - [Can I use the QuestionDetector for my projects that aren't issue/email/comment related?](#can-i-use-the-questiondetector-for-my-projects-that-arent-issueemailcomment-related)
 - [How can I use the Fetchers?](#how-can-i-use-the-fetchers)
-  - [How can I create a `Fetcher` ?](#how-can-i-create-a-fetcher-)
+  - [How can I create a Fetcher ?](#how-can-i-create-a-fetcher-)
   - [How can I fetch GitHub issues?](#how-can-i-fetch-github-issues)
   - [How does Donkeybot Fetch Rucio Documentation?](#how-does-donkeybot-fetch-rucio-documentation)
   - [How does Donkeybot save the fetched data?](#how-does-donkeybot-save-the-fetched-data)
@@ -29,7 +29,7 @@ So instead of explaining those I chose a more straightforward approach and look 
 
 ## How can I use the Question Detector?
 
-### How can I create a `QuestionDetector`?
+### How can I create a QuestionDetector?
 
 Donkeybot's `QuestionDetector` must be one of the following types : "email", "issue" or "comment"  
 This is so that the `QuestionDetector` creates the correct type of Question objects.  
@@ -94,7 +94,7 @@ And all 3 questions from the sample text above have been identified!
 
 
 
-### What is the difference between `IssueQuestion` vs `EmailQuestion` vs `IssueCommentQuestion`? 
+### What is the difference between IssueQuestion vs`EmailQuestion vs IssueCommentQuestion? 
 
 The only difference is their `origin` and how they get their `context` attributes.     
 
@@ -117,7 +117,7 @@ results[1].__dict__
 
 
 
-### What is this `context` attribute I'm seeing in the Question objects?
+### What is this context attribute I'm seeing in the Question objects?
 
 Well, that's what the AnswerDetector uses to try and answer each question!  
 
@@ -158,7 +158,7 @@ eg.
 `(virt)$ python scripts/fetch_rucio_docs.py -h`
 
 
-### How can I create a `Fetcher` ?
+### How can I create a Fetcher ?
 
 Simple, use the `FetcherFactory` and just pick the fetcher type 
 - Issue for a GitHub `IssueFetcher`
