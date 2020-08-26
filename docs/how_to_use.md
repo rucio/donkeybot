@@ -17,6 +17,7 @@
 - [What about the workings of the Search Engines?](#what-about-the-workings-of-the-search-engines)
   - [How can I create a Search Engine?](#how-can-i-create-a-search-engine)
   - [How can I query the Search Engine?](#how-can-i-query-the-search-engine)
+- [How do I add FAQs?](#how-do-i-add-faqs)
 
 ## Outline
 
@@ -442,6 +443,38 @@ qse.search(query, top_n)
 ```
 
 ![qse_search_out](/docs/img/qse_search_out.png)
+
+
+This is pretty much the logic of the FAQ table which holds Question and Answer pairs.
+
+## How do I add FAQs?
+The easiest way to do this is to use the *very* simple GUI Donkeybot provides.
+
+**All you need to remember is:**  
+Always re-index the FAQ table after adding new FAQs.    
+Otherwise, the FAQSearchEngine won't see them.  
+
+Donkeybot will remind you in case you forget what the docs 😊
+
+![gui_reminder](img/gui_reminder.png)
+
+
+**Main Window**  
+You'll see the window's logic follows the 2 step process for adding any new data that the Search Engines needs to query.
+
+![faq_gui_main_window](img/faq_gui_main_window.png)
+
+**Step 1.** Insert new FAQ.  
+
+![insert_faq_gui](img/insert_faq_gui.png)
+
+**Step 2.** Re-index the FAQ table with the new data.    
+
+Just make sure that the Database and FAQ table are the same in both cases.
+
+![index_faq_gui](img/index_faq_gui.png)
+
+
 
 
 [Move back to documentation homepage](https://github.com/rucio/donkeybot/tree/master/docs)
