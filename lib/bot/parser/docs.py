@@ -38,7 +38,7 @@ class RucioDocsParser(IParser):
         """
         # remove extra spaces
         clean_body = re.sub(" +", " ", body).strip(" ")
-        doc = RucioDoc(doc_id=doc_id, name=name, url=url, body=body, doc_type=doc_type)
+        doc = RucioDoc(doc_id=doc_id, name=name, url=url, body=clean_body, doc_type=doc_type)
 
         # only insert relevant documentation to db
         if len(doc.body) < 50:
