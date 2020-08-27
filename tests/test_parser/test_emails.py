@@ -5,7 +5,6 @@ import bot.config as config
 import bot.utils as utils
 
 # general python
-import pandas as pd
 from datetime import datetime
 import os
 import pytest

@@ -4,7 +4,6 @@ from bot.parser.docs import RucioDocsParser, RucioDoc
 import bot.config as config
 
 # general python
-import pandas as pd
 import os
 import pytest
 
