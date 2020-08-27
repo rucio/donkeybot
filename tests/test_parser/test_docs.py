@@ -42,7 +42,6 @@ def rucio_doc_parser(test_doc):
 
 @pytest.fixture(scope="module")
 def parsed_doc(test_doc, rucio_doc_parser):
-    print(test_doc)
     parsed_doc = rucio_doc_parser.parse(**test_doc)
     yield parsed_doc
 
@@ -58,14 +57,14 @@ def test_doc_in_db(parsed_doc, test_db):
     yield the_doc_in_the_db
 
 
-def test_doc_data_saved_on_db(test_doc, test_doc_in_db):
-    assert len(test_doc["body"]) >= 50
+def test_doc_data_saved_on_db(parsed_doc, test_doc_in_db):
+    assert len(parsed_doc.body) >= 50
     # columns from .create_docs_table() in bot.sqlite.Database
-    assert test_doc_in_db[0] == test_doc["doc_id"]  # doc_id
-    assert test_doc_in_db[1] == test_doc["name"]  # name
-    assert test_doc_in_db[2] == test_doc["url"]  # url
-    assert test_doc_in_db[3] == test_doc["body"]  # body
-    assert test_doc_in_db[4] == test_doc["doc_type"]  # doc_type
+    assert test_doc_in_db[0] == parsed_doc.doc_id   # doc_id
+    assert test_doc_in_db[1] == parsed_doc.name     # name
+    assert test_doc_in_db[2] == parsed_doc.url      # url
+    assert test_doc_in_db[3] == parsed_doc.body     # body
+    assert test_doc_in_db[4] == parsed_doc.doc_type # doc_type
 
 
 def test_doc_types_on_db(test_doc, test_doc_in_db):
