@@ -28,9 +28,7 @@ def test_email(test_db):
     email["sender"] = "<jdoe@gmail.com>"
     email["receiver"] = "<smith@hotmail.com>"
     # choose subject that already exists so that no new cids are created
-    # + first email subject
     email["subject"] = "update to art container"
-    # body larger than len(50) in test_doc
     email["body"] = "empty body"
     email["date"] = "Wed, 27 Mar 2019 22:11:01 +0100"
     email["db"] = test_db
