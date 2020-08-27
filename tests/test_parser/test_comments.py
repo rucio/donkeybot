@@ -46,7 +46,6 @@ def parsed_comment(test_comment, comment_parser):
 @pytest.fixture(scope="module")
 # parsed_comment because when we parse -> thats when its inserted into db
 def test_comment_in_db(parsed_comment, test_db):
-    print(parsed_comment)
     the_comment_in_the_db = test_db.query(
         "SELECT * \
          FROM test_table\

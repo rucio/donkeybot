@@ -48,7 +48,6 @@ def parsed_issue(test_issue, issue_parser):
 @pytest.fixture(scope="module")
 # parsed_issue because when we parse -> thats when its inserted into db
 def test_issue_in_db(parsed_issue, test_db):
-    print(parsed_issue)
     the_issue_in_the_db = test_db.query(
         "SELECT * \
          FROM test_table\
