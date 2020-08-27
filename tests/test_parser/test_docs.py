@@ -11,11 +11,9 @@ import pytest
 
 @pytest.fixture(scope="module")
 def test_db():
-    print("\nsetting up")
     db = Database("test.db", "test_doc_table")
     db.create_docs_table("test_doc_table")
     yield db
-    print("\nclosing up")
     db.close_connection()
     os.remove(config.DATA_DIR + "test.db")
 
