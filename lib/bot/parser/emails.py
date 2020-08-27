@@ -6,6 +6,7 @@ from bot.parser.interface import IParser
 
 # general python
 import pandas as pd
+import pickle
 import hashlib
 import re
 import sys
@@ -79,9 +80,10 @@ class EmailParser(IParser):
         try:
             with open(config.DATA_DIR + "conversation_dict.pickle", "rb") as f:
                 self.conversation_dict = pickle.load(f)
-        except:
+        except Exception as _e:
             self.conversation_dict = {}
             print("Error : Could not load conversation_dict.")
+            print(_e)
 
     def parse(
         self,
@@ -106,7 +108,7 @@ class EmailParser(IParser):
         :returns email            : Email object 
         """
         # new id is num of emails in our database incremented by one. (works for the first inserted email as well)
-        email_id = int(db.query(f"""SELECT COUNT(email_id) FROM emails""")[0][0]) + 1
+        email_id = int(db.query(f"""SELECT COUNT(email_id) FROM {emails_table_name}""")[0][0]) + 1
         email_sender = list(re.findall("<(.*?)>", sender))
         email_receiver = ", ".join(list(re.findall("<(.*?)>", receiver)))
         email_subject = subject
