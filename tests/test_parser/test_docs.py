@@ -12,7 +12,6 @@ import pytest
 @pytest.fixture(scope="module")
 def test_db():
     print("\nsetting up")
-    # db
     db = Database("test.db", "test_doc_table")
     db.create_docs_table("test_doc_table")
     yield db
@@ -49,7 +48,7 @@ def parsed_doc(test_doc, rucio_doc_parser):
 
 
 @pytest.fixture(scope="module")
-# parsed_doc because when we parse -> thats when its inserted into db
+# when we parse -> thats when its inserted into db
 def test_doc_in_db(parsed_doc, test_db):
     the_doc_in_the_db = test_db.query(
         "SELECT * \
@@ -61,7 +60,7 @@ def test_doc_in_db(parsed_doc, test_db):
 
 def test_doc_data_saved_on_db(test_doc, test_doc_in_db):
     assert len(test_doc["body"]) >= 50
-    # columns fromon .create_docs_table()
+    # columns from .create_docs_table() in bot.sqlite.Database
     assert test_doc_in_db[0] == test_doc["doc_id"]  # doc_id
     assert test_doc_in_db[1] == test_doc["name"]  # name
     assert test_doc_in_db[2] == test_doc["url"]  # url
@@ -82,7 +81,6 @@ def test_that_db_empty_for_doc_with_len_lt_50(test_doc, rucio_doc_parser, test_d
     small_body_doc = {k:v for k,v in test_doc.items()}
     small_body_doc["doc_id"] = 1000
     small_body_doc["body"] = "less than 50 chars"
-    # small_body_doc["db"] = test_db
     small_body_parsed_doc = rucio_doc_parser.parse(**small_body_doc)
     small_body_doc_in_db = test_db.query(
         "SELECT * \
