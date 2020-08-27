@@ -5,7 +5,6 @@ import bot.config as config
 
 # general python
 import pandas as pd
-import copy
 import os
 import pytest
 
@@ -80,7 +79,7 @@ def test_doc_types_on_db(test_doc, test_doc_in_db):
 
 
 def test_that_db_empty_for_doc_with_len_lt_50(test_doc, rucio_doc_parser, test_db):
-    small_body_doc = {k: v for k, v in test_doc.items()}
+    small_body_doc = {k:v for k,v in test_doc.items()}
     small_body_doc["doc_id"] = 1000
     small_body_doc["body"] = "less than 50 chars"
     # small_body_doc["db"] = test_db
@@ -96,7 +95,7 @@ def test_that_db_empty_for_doc_with_len_lt_50(test_doc, rucio_doc_parser, test_d
 
 
 def test_parsed_doc_cls_type(parsed_doc):
-    assert type(parsed_doc) == RucioDoc
+    assert type(parsed_doc) == RucioDoc 
 
 
 def test_parsed_doc_attribute_types(parsed_doc):
@@ -113,4 +112,4 @@ def test_parsed_doc_attribute_content(test_doc, parsed_doc):
     assert parsed_doc.name == test_doc["name"]
     assert parsed_doc.url == test_doc["url"]
     assert parsed_doc.body == test_doc["body"]
-    assert parsed_doc.doc_type == test_doc["doc_type"]
+    assert parsed_doc.doc_type == test_doc["doc_type"] 
