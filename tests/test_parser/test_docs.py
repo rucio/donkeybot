@@ -113,3 +113,11 @@ def test_parsed_doc_attribute_content(test_doc, parsed_doc):
     assert parsed_doc.url == test_doc["url"]
     assert parsed_doc.body == test_doc["body"]
     assert parsed_doc.doc_type == test_doc["doc_type"] 
+
+
+def test_parser_text_processing(test_doc, rucio_doc_parser):
+    extra_spaces_doc = {k:v for k,v in test_doc.items()}
+    extra_spaces_doc["body"] += '     a     ' # 5 spaces + a + 5 spaces == 11 chars
+    extra_spaces_doc["doc_id"] += 111 # must be unique id
+    parsed_extra_spaces_doc = rucio_doc_parser.parse(**extra_spaces_doc)
+    assert parsed_extra_spaces_doc.body == extra_spaces_doc["body"][:-11] + ' a'
