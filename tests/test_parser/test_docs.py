@@ -57,11 +57,11 @@ def test_doc_in_db(parsed_doc, test_db):
 def test_doc_data_saved_on_db(parsed_doc, test_doc_in_db):
     assert len(parsed_doc.body) >= 50
     # columns from .create_docs_table() in bot.sqlite.Database
-    assert test_doc_in_db[0] == parsed_doc.doc_id   # doc_id
-    assert test_doc_in_db[1] == parsed_doc.name     # name
-    assert test_doc_in_db[2] == parsed_doc.url      # url
-    assert test_doc_in_db[3] == parsed_doc.body     # body
-    assert test_doc_in_db[4] == parsed_doc.doc_type # doc_type
+    assert test_doc_in_db[0] == parsed_doc.doc_id  # doc_id
+    assert test_doc_in_db[1] == parsed_doc.name  # name
+    assert test_doc_in_db[2] == parsed_doc.url  # url
+    assert test_doc_in_db[3] == parsed_doc.body  # body
+    assert test_doc_in_db[4] == parsed_doc.doc_type  # doc_type
 
 
 def test_doc_types_on_db(test_doc, test_doc_in_db):
@@ -74,7 +74,7 @@ def test_doc_types_on_db(test_doc, test_doc_in_db):
 
 
 def test_that_db_empty_for_doc_with_len_lt_50(test_doc, rucio_doc_parser, test_db):
-    small_body_doc = {k:v for k,v in test_doc.items()}
+    small_body_doc = {k: v for k, v in test_doc.items()}
     small_body_doc["doc_id"] = 1000
     small_body_doc["body"] = "less than 50 chars"
     small_body_parsed_doc = rucio_doc_parser.parse(**small_body_doc)
@@ -89,7 +89,7 @@ def test_that_db_empty_for_doc_with_len_lt_50(test_doc, rucio_doc_parser, test_d
 
 
 def test_parsed_doc_cls_type(parsed_doc):
-    assert type(parsed_doc) == RucioDoc 
+    assert type(parsed_doc) == RucioDoc
 
 
 def test_parsed_doc_attribute_types(parsed_doc):
@@ -106,12 +106,12 @@ def test_parsed_doc_attribute_content(test_doc, parsed_doc):
     assert parsed_doc.name == test_doc["name"]
     assert parsed_doc.url == test_doc["url"]
     assert parsed_doc.body == test_doc["body"]
-    assert parsed_doc.doc_type == test_doc["doc_type"] 
+    assert parsed_doc.doc_type == test_doc["doc_type"]
 
 
 def test_parser_text_processing(test_doc, rucio_doc_parser):
-    extra_spaces_doc = {k:v for k,v in test_doc.items()}
-    extra_spaces_doc["body"] += '     a     ' # 5 spaces + a + 5 spaces == 11 chars
-    extra_spaces_doc["doc_id"] += 111 # must be unique id
+    extra_spaces_doc = {k: v for k, v in test_doc.items()}
+    extra_spaces_doc["body"] += "     a     "  # 5 spaces + a + 5 spaces == 11 chars
+    extra_spaces_doc["doc_id"] += 111  # must be unique id
     parsed_extra_spaces_doc = rucio_doc_parser.parse(**extra_spaces_doc)
-    assert parsed_extra_spaces_doc.body == extra_spaces_doc["body"][:-11] + ' a'
+    assert parsed_extra_spaces_doc.body == extra_spaces_doc["body"][:-11] + " a"
