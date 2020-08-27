@@ -24,7 +24,7 @@ class FetcherFactory:
             # EmailFetcher doesn't exist because it's done through
             # separate scripts from CERN's side.
             if data_type == "Email":
-                return EmailFetcher()
+                raise AssertionError("Error: Fetcher not found.")
             raise AssertionError("Error: Fetcher not found.")
         except AssertionError as _e:
             print(_e)
