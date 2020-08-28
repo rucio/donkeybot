@@ -123,10 +123,10 @@ class IssueParser(IParser):
         :returns clean_body : cleaned issue body
         """
         clean_body = (
-            body.strip("/n/r")
-            .replace("Motivation\r", "")
-            .replace("Modification\r", "")
-            .replace("Expected behavior\r", "")
+            body.strip("\n\r")
+            .replace("Motivation", "")
+            .replace("Modification", "")
+            .replace("Expected behavior", "")
             .replace("\n", " ")
             .replace("\r", " ")
             .replace("-", " ")
