@@ -28,12 +28,6 @@ $  python .\scripts\ask_donkeybot.py
 ```
 
 You will see an output similar to the following example :  
-- Question : "How are Rucio Users authenticated?"   
-- BERT model : [distilbert-base-cased-distilled-squad](https://huggingface.co/distilbert-base-cased-distilled-squad)  
-- top_k : 1
-- Answers : 
-  - 1 answer from retrieved documents (2x Rucio Documentation + 2x Past Questions).
-  - 1 answer from similar [FAQs](./data/faq.json).
 
 ![demo](./docs/img/demo.gif)
 
