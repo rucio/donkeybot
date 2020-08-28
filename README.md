@@ -17,7 +17,7 @@ Donkeybot can be expanded and applied as a Question-Answering system for your ne
    
 2) **Question detection** : A module for question detection and extraction from any given text. This is being used to extract past questions from the support emails and GitHub issues by utilizing regular expressions. These questions are archived as documents and used by the other modules.
    
-3) **Document Retrieval** : A search engines module that uses [BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm for the retrieval of the top-n most similar documents - be it previously asked questions or Rucio documentation - to be used as context by the answer detection module.
+3) **Document Retrieval** : A search engine module that uses [BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm for the retrieval of the top-n most similar documents ( previously asked questions or Rucio documentation ) to be used as context by the answer detection module.
    
 4) **Answer Detection** : The Answer detection module which follows both a transfer-learning approach and a supervised approach. 
    - Using pre-trained transformer models, such as BERT from [Hugginface transformers](https://github.com/huggingface/transformers), to provide the user with the top-k best answers based on the retrieved documents. 
