@@ -27,7 +27,6 @@ Donkeybot can be expanded and applied as a Question-Answering system for your ne
 
 -  **Name hashing** : Using [Stanford's NER tagger](https://nlp.stanford.edu/software/CRF-NER.html) private user information is hashed to follow CERN's privacy guidelines.
 
-See [How It Works](docs/how_it_works.md) and [How To Use](docs/how_to_use.md) for more details.
 
 ## Full Documentation
 
