@@ -11,6 +11,24 @@ The aim of the project under GSoC 2020 is to use Native Language Processing (NLP
 
 Donkeybot can be expanded and applied as a Question-Answering system for your needs. Changes in the code are required to use Donkeybot for your specific use case and data. Current implementation applies to Rucio specific data sources.
 
+## What does it do?
+
+1) **Data storage** : Creates a Question-Answering (QA)  specific data storage for Rucio domain data. Current implementation is in SQLite for fast prototyping. Data sources include secure and anonymous [support emails](https://rucio.cern.ch/contact.html) from Rucio users, [Rucio GitHub issues](https://github.com/rucio/rucio/issues) and [Rucio documentation](https://rucio.readthedocs.io/en/latest/).
+   
+2) **Question detection** : Provides a module for question detection from in a given text. Currently used to extract past user questions from emails and GitHub issues by using regex patterns.
+   
+3) **Document Retrieval** : Utilizes [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm implementation for the retrieval of top-n most similar documents - be it previously asked questions or documentation - to be used as context by the answer detection module.
+   
+4) **Answer Detection** : Follows a transfer-learning approach, using pre-trained transformer models such as BERT from [Hugginface transformers](https://github.com/huggingface/transformers) to provide the user with top-k number of answers based on the top-n retrieved documents. Additionally, an FAQ-based supervised approach is provided to tackle more specific and common questions that the user might ask.
+
+5) **FAQ creation** : User can use a GUI as an interface to insert FAQ questions, re-index the search engine and expand Donkeybot's data storage.
+
+**Additional Features** include :
+
+-  **Name hashing** : Using [Stanford's NER tagger](https://nlp.stanford.edu/software/CRF-NER.html) private user information is hashed to follow CERN's privacy guidelines.
+
+See [How It Works](docs/how_it_works.md) and [How To Use](docs/how_to_use.md) for more details.
+
 ## Full Documentation
 
 See the full [documentation](https://github.com/rucio/donkeybot/tree/master/docs) for examples, operational details and other information.
@@ -32,25 +50,6 @@ You will see an output similar to the following example :
 ![demo](./docs/img/demo.gif)
 
 More examples and information can be found in the [How To Use](./docs/how_to_use.md) section.
-
-## What does it do?
-
-1) **Data storage** : Creates a Question-Answering (QA)  specific data storage for Rucio domain data. Current implementation is in SQLite for fast prototyping. Data sources include secure and anonymous [support emails](https://rucio.cern.ch/contact.html) from Rucio users, [Rucio GitHub issues](https://github.com/rucio/rucio/issues) and [Rucio documentation](https://rucio.readthedocs.io/en/latest/).
-   
-2) **Question detection** : Provides a module for question detection from in a given text. Currently used to extract past user questions from emails and GitHub issues by using regex patterns.
-   
-3) **Document Retrieval** : Utilizes [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm implementation for the retrieval of top-n most similar documents - be it previously asked questions or documentation - to be used as context by the answer detection module.
-   
-4) **Answer Detection** : Follows a transfer-learning approach, using pre-trained transformer models such as BERT from [Hugginface transformers](https://github.com/huggingface/transformers) to provide the user with top-k number of answers based on the top-n retrieved documents. Additionally, an FAQ-based supervised approach is provided to tackle more specific and common questions that the user might ask.
-
-5) **FAQ creation** : User can use a GUI as an interface to insert FAQ questions, re-index the search engine and expand Donkeybot's data storage.
-
-**Additional Features** include :
-
--  **Name hashing** : Using [Stanford's NER tagger](https://nlp.stanford.edu/software/CRF-NER.html) private user information is hashed to follow CERN's privacy guidelines.
-
-See [How It Works](docs/how_it_works.md) and [How To Use](docs/how_to_use.md) for more details.
-
 
 ## Build
 
