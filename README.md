@@ -13,17 +13,18 @@ Donkeybot can be expanded and applied as a Question-Answering system for your ne
 
 ## What does it do?
 
-1) **Data storage** : Creates a Question-Answering (QA)  specific data storage for Rucio domain data. Current implementation is in SQLite for fast prototyping. Data sources include secure and anonymous [support emails](https://rucio.cern.ch/contact.html) from Rucio users, [Rucio GitHub issues](https://github.com/rucio/rucio/issues) and [Rucio documentation](https://rucio.readthedocs.io/en/latest/).
+1) **Data storage** : Creates a Question-Answering (QA)  specific data storage for Rucio domain data.   
+   Current implementation is in SQLite for fast prototyping. Data sources include secure and anonymous [support emails](https://rucio.cern.ch/contact.html) from Rucio users, [Rucio GitHub issues](https://github.com/rucio/rucio/issues) and [Rucio documentation](https://rucio.readthedocs.io/en/latest/).
    
-2) **Question detection** : Provides a module for question detection from in a given text. Currently used to extract past user questions from emails and GitHub issues by using regex patterns.
+2) **Question detection** : Provides a module for question detection from in a given text.  Currently used to extract past questions from emails and GitHub issues with regular expressions.
    
-3) **Document Retrieval** : Utilizes [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm implementation for the retrieval of top-n most similar documents - be it previously asked questions or documentation - to be used as context by the answer detection module.
+3) **Document Retrieval** : Utilizes [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm for the retrieval of the top-n most similar documents - be it previously asked questions or documentation - to be used as context by the answer detection module.
    
-4) **Answer Detection** : Follows a transfer-learning approach, using pre-trained transformer models such as BERT from [Hugginface transformers](https://github.com/huggingface/transformers) to provide the user with top-k number of answers based on the top-n retrieved documents. Additionally, an FAQ-based supervised approach is provided to tackle more specific and common questions that the user might ask.
-
-5) **FAQ creation** : User can use a GUI as an interface to insert FAQ questions, re-index the search engine and expand Donkeybot's data storage.
+4) **Answer Detection** : Follows a transfer-learning approach, using pre-trained transformer models, such as BERT from [Hugginface transformers](https://github.com/huggingface/transformers), to provide the user with the top-k best answers based on the retrieved documents. Additionally, an FAQ-based supervised approach is provided to handle more specific and/or frequent questions with higher confidence.
 
 **Additional Features** include :
+
+-  **FAQ creation** : User can use a GUI as an interface to insert FAQ questions, re-index the search engine and expand Donkeybot's data storage.
 
 -  **Name hashing** : Using [Stanford's NER tagger](https://nlp.stanford.edu/software/CRF-NER.html) private user information is hashed to follow CERN's privacy guidelines.
 
