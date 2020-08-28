@@ -52,15 +52,15 @@ class CommentQuestion(Question):
             )[0]
             result = db.query(
                 f"""SELECT clean_body
-                                   FROM {table_name}
-                                   WHERE comment_id IN (
-                                       SELECT comment_id
-                                       FROM {table_name}
-                                       WHERE issue_id == "{self.issue_id}"
-                                             and created_at   > "{self.date_question_was_asked}"
-                                    )
-                                    ORDER BY created_at ASC
-                                """
+                    FROM {table_name}
+                    WHERE comment_id IN (
+                        SELECT comment_id
+                        FROM {table_name}
+                        WHERE issue_id == "{self.issue_id}"
+                              and created_at > "{self.date_question_was_asked}"
+                        )
+                        ORDER BY created_at ASC
+                """
             )
             self.context = " ".join([res[0] for res in result])
         else:
