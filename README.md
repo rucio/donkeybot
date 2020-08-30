@@ -7,9 +7,27 @@ Donkeybot is an end-to-end Question Answering system. It utilizes multiple data 
 
 ## Introduction
 
-The aim of the project under GSoC 2020 is to use Native Language Processing (NLP) to develop an intelligent bot prototype able to provide satisfying answers to Rucio users and handle support requests up to a certain level of complexity, forwarding only the remaining ones to the experts.
+The aim of the project under GSoC 2020 is to use Natural Language Processing (NLP) to develop an intelligent bot prototype able to provide satisfying answers to Rucio users and handle support requests up to a certain level of complexity, forwarding only the remaining ones to the experts.
 
 Donkeybot can be expanded and applied as a Question-Answering system for your needs. Changes in the code are required to use Donkeybot for your specific use case and data. Current implementation applies to Rucio specific data sources.
+
+## What does it do?
+
+1) **Data storage** : A data storage holding Rucio domain-specific data. The module's current implementation is in [SQLite](https://www.sqlite.org/index.html) for the fast prototyping it provides. Data sources include secure and anonymous [support emails](https://rucio.cern.ch/contact.html) from Rucio users, [Rucio GitHub issues](https://github.com/rucio/rucio/issues) and [Rucio documentation](https://rucio.readthedocs.io/en/latest/).
+   
+2) **Question detection** : A module for question detection and extraction from any given text. This is being used to extract past questions from the support emails and GitHub issues by utilizing regular expressions. These questions are archived as documents and used by the other modules.
+   
+3) **Document Retrieval** : A search engine module that uses [BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm for the retrieval of the top-n most similar documents ( previously asked questions or Rucio documentation ) to be used as context by the answer detection module.
+   
+4) **Answer Detection** : The Answer detection module which follows both a transfer-learning approach and a supervised approach. 
+   - Using pre-trained transformer models, such as BERT from [Hugginface transformers](https://github.com/huggingface/transformers), to provide the user with the top-k best answers based on the retrieved documents. 
+   - FAQ-based supervised approach which helps handle more specific and/or frequent questions with a higher confidence.
+
+**Additional Features** include :
+
+-  **FAQ creation GUI** : User can use a provided GUI as an interface to interact with the data storage, insert FAQ questions, re-index the search engine and expand Donkeybot's knowledge base.
+
+-  **Name hashing** : A script that uses [Stanford's NER tagger](https://nlp.stanford.edu/software/CRF-NER.html) to detect private user information from support emails and hash them. Thus, following CERN's privacy guidelines and keeping all data anonymized. 
 
 ## Full Documentation
 
@@ -28,35 +46,10 @@ $  python .\scripts\ask_donkeybot.py
 ```
 
 You will see an output similar to the following example :  
-- Question : "How are Rucio Users authenticated?"   
-- BERT model : [distilbert-base-cased-distilled-squad](https://huggingface.co/distilbert-base-cased-distilled-squad)  
-- top_k : 1
-- Answers : 
-  - 1 answer from retrieved documents (2x Rucio Documentation + 2x Past Questions).
-  - 1 answer from similar [FAQs](./data/faq.json).
 
 ![demo](./docs/img/demo.gif)
 
 More examples and information can be found in the [How To Use](./docs/how_to_use.md) section.
-
-## What does it do?
-
-1) **Data storage** : Creates a Question-Answering (QA)  specific data storage for Rucio domain data. Current implementation is in SQLite for fast prototyping. Data sources include secure and anonymous [support emails](https://rucio.cern.ch/contact.html) from Rucio users, [Rucio GitHub issues](https://github.com/rucio/rucio/issues) and [Rucio documentation](https://rucio.readthedocs.io/en/latest/).
-   
-2) **Question detection** : Provides a module for question detection from in a given text. Currently used to extract past user questions from emails and GitHub issues by using regex patterns.
-   
-3) **Document Retrieval** : Utilizes [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm implementation for the retrieval of top-n most similar documents - be it previously asked questions or documentation - to be used as context by the answer detection module.
-   
-4) **Answer Detection** : Follows a transfer-learning approach, using pre-trained transformer models such as BERT from [Hugginface transformers](https://github.com/huggingface/transformers) to provide the user with top-k number of answers based on the top-n retrieved documents. Additionally, an FAQ-based supervised approach is provided to tackle more specific and common questions that the user might ask.
-
-5) **FAQ creation** : User can use a GUI as an interface to insert FAQ questions, re-index the search engine and expand Donkeybot's data storage.
-
-**Additional Features** include :
-
--  **Name hashing** : Using [Stanford's NER tagger](https://nlp.stanford.edu/software/CRF-NER.html) private user information is hashed to follow CERN's privacy guidelines.
-
-See [How It Works](docs/how_it_works.md) and [How To Use](docs/how_to_use.md) for more details.
-
 
 ## Build
 

@@ -521,11 +521,6 @@ print(question)
 ```
 
     What is the aim of Donkeybot?
-    
-
-
-
-
     ['answer 1: assist the support team | confidence : 0.44691182870541724',
      'answer 2: to use Native Language Processing (NLP) | confidence : 0.24011110691572668']
 
@@ -598,21 +593,12 @@ Yes, but it probably will require some tweaking and if you aren't using Donkeybo
 
 Simply look under the hood and use Transformer pipelines for your needs.
 
-
-
-
-
-
 ## How can I add FAQs?
 The easiest way to do this is to use the *very* simple GUI Donkeybot provides.
 
 **All you need to remember is:**  
 Always re-index the FAQ table after adding new FAQs.    
 Otherwise, the FAQSearchEngine won't see them.  
-
-Donkeybot will remind you in case you forget what the docs 😊
-
-![gui_reminder](img/gui_reminder.png)
 
 
 **Main Window**  
@@ -630,6 +616,10 @@ Just make sure that the Database and FAQ table are the same in both cases.
 
 ![index_faq_gui](img/index_faq_gui.png)
 
+
+Donkeybot will remind you to re-index in case you forget what the docs suggest 😊
+
+![gui_reminder](img/gui_reminder.png)
 
 ## How does Donkeybot handle the text processing needed? 
 
