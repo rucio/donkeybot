@@ -151,7 +151,7 @@ class AnswerDetector:
         # drop extra metadata columns
         # errors ignored for when we have Question metadata and the 'body' column doesn't exist
         metadata = (
-            doc.drop(["context", "body", "query"], errors="ignore")
+            doc.drop(["body", "query"], errors="ignore") 
             .rename({"question": "most_similar_question"}, axis=1)
             .to_dict()
         )

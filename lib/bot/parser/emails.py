@@ -6,6 +6,7 @@ from bot.parser.interface import IParser
 
 # general python
 import pandas as pd
+import pickle
 import hashlib
 import re
 import sys
@@ -74,14 +75,15 @@ class EmailParser(IParser):
         self.type = "Email Parser"
         self._get_conversation_dict()
 
-    def _get_conversation_dict(self):
+    def _get_conversation_dict(self, dict_name="conversation_dict"):
         """Load the email conversations dictionary."""
         try:
-            with open(config.DATA_DIR + "conversation_dict.pickle", "rb") as f:
+            with open(config.DATA_DIR + f"{dict_name}.pickle", "rb") as f:
                 self.conversation_dict = pickle.load(f)
-        except:
+        except Exception as _e:
             self.conversation_dict = {}
-            print("Error : Could not load conversation_dict.")
+            print(f"Error : Could not load {dict_name}.")
+            print(_e)
 
     def parse(
         self,
@@ -106,7 +108,7 @@ class EmailParser(IParser):
         :returns email            : Email object 
         """
         # new id is num of emails in our database incremented by one. (works for the first inserted email as well)
-        email_id = int(db.query(f"""SELECT COUNT(email_id) FROM emails""")[0][0]) + 1
+        email_id = int(db.query(f"""SELECT COUNT(email_id) FROM {emails_table_name}""")[0][0]) + 1
         email_sender = list(re.findall("<(.*?)>", sender))
         email_receiver = ", ".join(list(re.findall("<(.*?)>", receiver)))
         email_subject = subject
@@ -192,7 +194,7 @@ class EmailParser(IParser):
         clean_email_subject = re.sub("^(re:)", "", clean_email_subject).lstrip()
         return clean_email_subject
 
-    def find_conversation(self, subject):
+    def find_conversation(self, subject, dict_name="conversation_dict"):
         """
         Finds the corresponding conversation_id based on the email's subject.
         Search the self.conversation_dict for existing conversation matching the
@@ -216,7 +218,7 @@ class EmailParser(IParser):
                 + hashlib.md5(str(clean_email_subject).encode("utf-8")).hexdigest()[:6]
             )
             self.conversation_dict[clean_email_subject] = conversation_id
-            utils.save_dict("conversation_dict", self.conversation_dict)
+            utils.save_dict(f"{dict_name}", self.conversation_dict)
         else:
             conversation_id = None
         return conversation_id
@@ -342,7 +344,7 @@ class EmailParser(IParser):
         return reply_email, fwd_email, first_email
 
     ##TODO improve code quality of create_conversations() method
-    def create_conversations(self, emails_df):
+    def create_conversations(self, emails_df, dict_name="conversation_dict"):
         """
         Creates and saves a conversation dictionary containing an id and
         the corresponding subject based on the input emails dataframe.
@@ -375,5 +377,5 @@ class EmailParser(IParser):
             )
             self.conversation_dict[subject] = conversation_id
 
-        utils.save_dict("conversation_dict", self.conversation_dict)
+        utils.save_dict(f"{dict_name}", self.conversation_dict)
         return self.conversation_dict
