@@ -53,12 +53,10 @@ class QAInterface:
         :return faq_answers : list of Answer objects
         """
         self.retrieved_faqs = self.faq_engine.search(self.query, num_faqs)
-        print("\nRETRIEVED FAQ:")
-        print(self.retrieved_faqs)
         faq_answers = []
         for index, faq in self.retrieved_faqs.iterrows():
             metadata = (
-                faq.drop(["context", "query", "answer"])
+                faq.drop(["query", "answer"])
                 .rename({"question": "most_similar_faq_question"}, axis=1)
                 .to_dict()
             )
@@ -75,12 +73,6 @@ class QAInterface:
                 metadata=metadata,
             )
             faq_answers.append(answer)
-        print("\nFAQ ANSWERS:")
-        results = {
-            "question": self.query,
-            "answers": [answer.__dict__ for answer in faq_answers],
-        }
-        print(results)
         return faq_answers
 
     def _get_question_answers(self, num_questions):
@@ -89,34 +81,18 @@ class QAInterface:
         self.retrieved_questions = self.question_engine.search(
             self.query, num_questions
         )
-        print("\nRETRIEVED QUESTIONS:")
-        print(self.retrieved_questions)
         question_answers = self.detector.predict(
             self.query, self.retrieved_questions, top_k=self.top_k
         )
-        print("\nQUESTION ANSWERS:")
-        results = {
-            "question": self.query,
-            "answers": [answer.__dict__ for answer in question_answers],
-        }
-        print(results)
         return question_answers
 
     def _get_docs_answers(self, num_docs):
         """Returns top_k answers based on the most similar documentation."""
         # most similar documentation docs
         self.retrieved_docs = self.docs_engine.search(self.query, num_docs)
-        print("\nRETRIEVED DOCUMENTATION:")
-        print(self.retrieved_docs)
         doc_answers = self.detector.predict(
             self.query, self.retrieved_docs, top_k=self.top_k
         )
-        print("\nDOCUMENTATION ANSWERS:")
-        results = {
-            "question": self.query,
-            "answers": [answer.__dict__ for answer in doc_answers],
-        }
-        print(results)
         return doc_answers
 
     def get_answers(self, query, top_k=3, num_faqs=3, num_questions=10, num_docs=10):
