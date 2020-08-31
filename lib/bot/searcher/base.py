@@ -47,6 +47,7 @@ class SearchEngine:
         :return results : pd.DataFrame object of the results 
         """
         try:
+            assert top_n > 0
             if hasattr(self, "index"):
                 search_terms = self.preprocess(query)
                 doc_scores = self.bm25.get_scores(search_terms)
