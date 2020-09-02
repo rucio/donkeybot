@@ -180,6 +180,7 @@ def test_cid_not_created_for_first_email(test_email, email_parser):
     # make sure hash not found
     assert find_conversation_hash == None
 
+
 @pytest.mark.skip(reason="cid not in test dict yet;not checking correctly")
 def test_cid_not_created_for_fwd_email(test_email, email_parser):
     other_test_email = {k: v for k, v in test_email.items()}
