@@ -17,9 +17,11 @@ def test_db():
 @pytest.fixture()
 def dummy_email_se(test_db):
     se = SearchEngine(index="body", ids="email_id")
+    # important to change the type becaus of the if statement in load_index for SearchEngine
+    se.type = "Dummy Emails Search Engine"
     corpus = test_db.get_dataframe("emails")
     # let's create a dummy index from the dummy issue data we have
-    se.create_index(corpus=corpus, db=test_db, table_name="emails_doc_term_matrix")
+    se.load_index(db=test_db, table_name="emails_doc_term_matrix", original_table="emails")
     return se
 
 
@@ -128,14 +130,12 @@ def test_get_documents_multiple_cols(test_db):
     # create an index with multiple columns
     email_df = test_db.get_dataframe("emails")
     se = SearchEngine(index=["subject", "body"], ids="email_id")
-    se.create_index(
-        corpus=email_df, db=test_db, table_name="multiple_cols_doc_term_matrix"
+    se.load_index(
+        db=test_db, table_name="multiple_cols_doc_term_matrix", original_table="emails"
     )
     docs = se._get_documents()
     for i, doc in enumerate(docs):
         assert doc == str(email_df.iloc[i].subject) + " " + str(email_df.iloc[i].body)
-    # drop what we just created
-    test_db.drop_table("multiple_cols_doc_term_matrix")
 
 
 def test_preprocess_tokenize(dummy_email_se):
