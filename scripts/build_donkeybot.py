@@ -87,7 +87,7 @@ def main():
     api_token = args.token
     download_all_models = args.all_models
 
-    # Fetch FAQ data from faq.json
+    Fetch FAQ data from faq.json
     fetch_faq_data()
     # Fetch and store issues and rucio documentation data
     subprocess.run(
@@ -113,9 +113,9 @@ def main():
         f"python -m scripts.create_se_indexes", shell=True,
     )
     # download and cache Question Answering models
-    download_and_save_DistilBERT_model("distilbert-base-uncased-distilled-squad")
+    download_and_save_DistilBERT_model("distilbert-base-cased-distilled-squad")
     if download_all_models:
-        download_and_save_DistilBERT_model("distilbert-base-cased-distilled-squad")
+        download_and_save_DistilBERT_model("distilbert-base-uncased-distilled-squad")
         download_and_save_BERT_model(
             "bert-large-cased-whole-word-masking-finetuned-squad"
         )
