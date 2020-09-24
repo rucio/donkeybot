@@ -72,7 +72,7 @@ You can even spot that in the [Progress Report](https://docs.google.com/document
 There are many things that can be done to Donkeybot.   
 I'm only going to list a couple: 
 - [Creation of UI](https://github.com/rucio/donkeybot/issues/30) is very important and it will allow us to deploy Donkeybot on a test server to a subset of Rucio Users. Their questions and the answers given can then be supervised and examined creating a dataset for fine-tuning the models used.
-- Creation of a custom [NER tagger](https://en.wikipedia.org/wiki/Named-entity_recognition) which will detect Rucio specific laguage like DIDs, RSEs, Operastions etc. This has the potential to boost the performance significantly and even provide a way to create dynamic answers.   
+- Creation of a custom [NER tagger](https://en.wikipedia.org/wiki/Named-entity_recognition) which will detect Rucio specific laguage like DIDs, RSEs, Operations etc. This has the potential to boost the performance significantly and even provide a way to create dynamic answers.   
 eg. A user asks about his quota on a given dataset and Donkeybot runs the cli Rucio commands necessary to provide an answer.
 
 If you have any suggestion make sure to provide them on our [issues page](https://github.com/rucio/donkeybot/issues).
