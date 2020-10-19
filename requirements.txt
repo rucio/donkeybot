@@ -26,6 +26,6 @@ tqdm==4.48.2
 transformers==3.0.2
 urllib3==1.25.10
 uuid==1.30
-# pytorch on windows is not available through pypi
-torch==1.6.0  --find-links https://download.pytorch.org/whl/torch_stable.html
-torchvision==0.7.0  --find-links https://download.pytorch.org/whl/torch_stable.html
+# pytorch on windows is not available through pypi you should install on your own
+torch===1.6.0 --find-links https://download.pytorch.org/whl/torch_stable.html
+torchvision===0.7.0 --find-links https://download.pytorch.org/whl/torch_stable.html
