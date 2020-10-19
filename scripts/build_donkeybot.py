@@ -87,7 +87,7 @@ def main():
     api_token = args.token
     download_all_models = args.all_models
 
-    Fetch FAQ data from faq.json
+    # Fetch FAQ data from faq.json
     fetch_faq_data()
     # Fetch and store issues and rucio documentation data
     subprocess.run(
