@@ -17,7 +17,7 @@ class FAQSearchEngine(SearchEngine):
         the most similar FAQ question.
 
         :param ids    : id of the document we are indexing (default is faq_id)
-        :param index  : Name of column(s) that will be indexed. (default is ["keywords", "question"]) 
+        :param index  : Name of column(s) that will be indexed. (default is ["keywords", "question"])
         :type index   : list
         """
         super().__init__(index=index, ids=ids)
@@ -26,7 +26,7 @@ class FAQSearchEngine(SearchEngine):
     def _attach_qa_data(self, results, query):
         """
         Attach the columns needed to transform the results
-        DataFrame into SQuAD like data. 
+        DataFrame into SQuAD like data.
 
         results include : {
                     'query'    : what the user queried in the SE
@@ -45,6 +45,9 @@ class FAQSearchEngine(SearchEngine):
         super().create_index(corpus=corpus, db=db, table_name=table_name)
 
     def load_index(
-        self, db=Database, table_name="faq_doc_term_matrix", original_table="faq",
+        self,
+        db=Database,
+        table_name="faq_doc_term_matrix",
+        original_table="faq",
     ):
         super().load_index(db=db, table_name=table_name, original_table=original_table)

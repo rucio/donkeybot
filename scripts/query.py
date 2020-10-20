@@ -18,7 +18,10 @@ def main():
     required = parser.add_argument_group("required arguments")
     optional = parser.add_argument_group("optional arguments")
     required.add_argument(
-        "-q", "--query", help="What you want to query.", required=True,
+        "-q",
+        "--query",
+        help="What you want to query.",
+        required=True,
     )
     required.add_argument(
         "-k",

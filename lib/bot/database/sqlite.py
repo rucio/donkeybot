@@ -39,7 +39,7 @@ class Database:
     def create_table(self, table_name, columns):
         """
         Create a new table.
-        
+
         :param table_name   : the name we want to give
         :param columns      : a dictionary in the form of
                               {'col_name' : 'datatype'}
@@ -90,7 +90,7 @@ class Database:
     def insert_email(self, email_obj, table_name):
         """
         Insert Email objects into the database.
-        
+
         :param email_obj  : Email object from bot.parser.emails
         :param table_name : name of the table to store the email
         """
@@ -144,7 +144,7 @@ class Database:
     def insert_issue(self, issue_obj, table_name):
         """
         Insert Issue objects into the database.
-        
+
         :param issue_obj  : Email object from bot.parser.issues
         :param table_name : name of the table to store the issue
         """
@@ -170,7 +170,7 @@ class Database:
     # issue comments
     def create_issue_comments_table(self, table_name="issue_comments"):
         """
-        Creates a table to store IssueComment objects objects from 
+        Creates a table to store IssueComment objects objects from
         IssueCommentParser.
 
         :param table_name : name given to the table holding IssueComment obj
@@ -192,7 +192,7 @@ class Database:
     def insert_issue_comment(self, issue_comment_obj, table_name):
         """
         Insert IssueComment objects into the database.
-        
+
         :param issue_comment_obj  : IssueComment object from bot.parser.comments
         :param table_name         : name of the table to store the comments
         """
@@ -216,7 +216,7 @@ class Database:
     # rucio docs
     def create_docs_table(self, table_name="docs"):
         """
-        Creates a table to store RucioDoc objects objects from 
+        Creates a table to store RucioDoc objects objects from
         RucioDocsParser.
 
         :param table_name : name given to the table holding <RucioDoc obj>
@@ -236,7 +236,7 @@ class Database:
     def insert_doc(self, docs_obj, table_name):
         """
         Insert RucioDoc objects into the database.
-        
+
         :param docs_obj   : RucioDoc object from bot.parser.docs
         :param table_name : name of the table to store the docs
         """
@@ -259,7 +259,7 @@ class Database:
     # questions
     def create_question_table(self, table_name="questions"):
         """
-        Creates a table to store Question objects objects from 
+        Creates a table to store Question objects objects from
         QuestionDetector.
 
         :param table_name : name given to the table holding <Question obj>
@@ -285,7 +285,7 @@ class Database:
     def insert_question(self, question_obj, table_name="questions"):
         """
         Insert Question objects into the database.
-        
+
         :param question_obj   : Question object from bot.question
         :param table_name     : name of the table to store the question
         """
@@ -312,7 +312,7 @@ class Database:
     # answers
     def create_answers_table(self, table_name="answers"):
         """
-        Creates a table to store Answer objects objects from 
+        Creates a table to store Answer objects objects from
         AnswerDetector.
 
         :param table_name : name given to the table holding the Answers
@@ -342,7 +342,7 @@ class Database:
     def insert_answer(self, answer_obj, table_name="answers"):
         """
         Insert Answer objects into the database.
-        
+
         :param answer_obj   : Answer object from bot.answer
         :param table_name   : name of the table to store the answer
         """
@@ -398,7 +398,7 @@ class Database:
     def insert_faq(self, faq_obj, table_name="faq"):
         """
         Insert FAQ objects into the database.
-        
+
         :param faq_obj    : FAQ object from bot.faq.base
         :param table_name : name of the table to store the FAQ
         """

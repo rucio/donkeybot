@@ -5,7 +5,11 @@ import datetime
 
 class FAQ:
     def __init__(
-        self, question, answer, author, keywords,
+        self,
+        question,
+        answer,
+        author,
+        keywords,
     ):
         # Set unique ID
         self.faq_id = "faq_" + str(uuid4().hex)

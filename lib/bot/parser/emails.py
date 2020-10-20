@@ -105,27 +105,27 @@ class EmailParser(IParser):
         :param [sender,...,date]  : all the raw email attributes
         :param db                 : bot Database object to where we store the parsed emails
         :param emails_table_name  : in case we need use a different table name (default 'emails')
-        :returns email            : Email object 
+        :returns email            : Email object
         """
         # new id is num of emails in our database incremented by one. (works for the first inserted email as well)
-        email_id = int(db.query(f"""SELECT COUNT(email_id) FROM {emails_table_name}""")[0][0]) + 1
+        email_id = (
+            int(db.query(f"""SELECT COUNT(email_id) FROM {emails_table_name}""")[0][0])
+            + 1
+        )
         email_sender = list(re.findall("<(.*?)>", sender))
         email_receiver = ", ".join(list(re.findall("<(.*?)>", receiver)))
-        email_subject = subject
-        email_body = body
         # '%a, %d %b %Y %H:%M:%S %z' is the date format we find in Rucio Emails
         email_date = utils.convert_to_utc(date, "%a, %d %b %Y %H:%M:%S %z")
         (email_is_reply, email_is_fwd, email_is_first) = self.find_category(subject)
         email_clean_body = self.clean_body(body)
-        email_clean_subject = self.clean_subject(subject)
         email_conversation_id = self.find_conversation(subject)
 
         email = Email(
             email_id=email_id,
             sender=email_sender,
             receiver=email_receiver,
-            subject=email_subject,
-            body=email_body,
+            subject=subject,
+            body=body,
             email_date=email_date,
             first_email=email_is_first,
             reply_email=email_is_reply,
@@ -146,14 +146,14 @@ class EmailParser(IParser):
     ):
         """
         Parses the entire fetched emails dataframe, creates Email objects and saves them to db.
-        
+
         <!> Note  : While parsing the dataframe we are also going to create the email
         conversation which will be held in a conversation dictionary stored as a pickle file.
 
         :param emails_df     : pandas DataFrame object containing all emails
         :param db            : bot Database object to save the Email objects
         :param return_emails : Boolean -> if we return a list of Email objects (default False)
-        :returns emails      : list of Email objects 
+        :returns emails      : list of Email objects
         """
         self.create_conversations(emails_df)
 
@@ -199,17 +199,17 @@ class EmailParser(IParser):
         Finds the corresponding conversation_id based on the email's subject.
         Search the self.conversation_dict for existing conversation matching the
         cleaned subject of the email. If needed create a new conversation.
-                       
+
         <!> Note: If a reply email doesn't exist then the conversation is not created
         any emails that don't have replies will end up with conversation_id == None
-        
-        :param subject           : email's subject 
+
+        :param subject           : email's subject
         :format conversation_id  : "cid_<md5hash>" or None
         :returns conversation_id : the conversation_id for the email's subject
         """
         clean_email_subject = self.clean_subject(subject)
-
-        (email_is_reply, email_is_fwd, email_is_first) = self.find_category(subject)
+        # email_is_fwd, email_is_first not used in find_conversation thus left _
+        (email_is_reply, _, _) = self.find_category(subject)
         if clean_email_subject in self.conversation_dict:
             conversation_id = self.conversation_dict[clean_email_subject]
         elif email_is_reply:
@@ -230,28 +230,28 @@ class EmailParser(IParser):
 
         Applies the following:
         1) Remove newline characters from inside urls
-        2) Replace newline characters with ' ' space 
+        2) Replace newline characters with ' ' space
         3) Remove extra whitespaces
         4) Decontract words
         5) Try to find matches based on the regex patterns.
            If said matches exist, only keep the text up to the
-           earliest match. These patterns are inside emails right 
+           earliest match. These patterns are inside emails right
            before text from previous emails is pasted/quoted.
            eg.
            Example of a reply email:
                 "Dear Nick
                         ...
                  Thanks, George.
-                 On <DATE> Nick wrote: 
+                 On <DATE> Nick wrote:
                     >> Previous email body
                     >> Previous email body "
-            
+
             from which we only keep:
                 "Dear Nick
                         ...
                  Thanks, George."
 
-        :param  body        : body of an email 
+        :param  body        : body of an email
         :returns clean_email_body : cleaned body of an email
         """
         # steps 1-4 done with utils.pre_process_text function
@@ -295,29 +295,11 @@ class EmailParser(IParser):
             print(_e)
 
     @staticmethod
-    def clean_subject(subject):
-        """
-        Applies the following to the email's subject:
-        1) lower
-        2) remove REGEX_METACHARACTRERS
-        3) remove starting fwd:
-        4) remove starting re:
-
-        :returns clean_email_subject : cleaned email subject
-        """
-        clean_email_subject = utils.remove_chars(
-            subject.lower(), config.REGEX_METACHARACTERS
-        ).lstrip()
-        clean_email_subject = re.sub("^(fwd:)", "", clean_email_subject).lstrip()
-        clean_email_subject = re.sub("^(re:)", "", clean_email_subject).lstrip()
-        return clean_email_subject
-
-    @staticmethod
     def find_category(subject):
         """
-        Finds if email is categorized as a reply, first, or forwarded 
+        Finds if email is categorized as a reply, first, or forwarded
         based on the subject
-        
+
         <!> Note: sqlite doesn't support Boolean so 0/1 integer was chosen
 
         : param subject     : the subject of the email that will help us find it's
@@ -355,7 +337,7 @@ class EmailParser(IParser):
         Step 3 : On the reply emails exist get the subject (without Re:)
                 hash it and create conversation_id
         Step 4 : return conversation_dict
-        
+
         <!> Note: If a reply email doesn't exist then the conversation is not created
         any emails that don't have replies will end up with conversation_id == None
 
@@ -370,7 +352,7 @@ class EmailParser(IParser):
             lambda x: utils.remove_chars(x.lower(), config.REGEX_METACHARACTERS)
         )
         reply_emails = emails_df[emails_df["reply_email"] == True]
-        for i, re_subject in enumerate(reply_emails.subject):
+        for _, re_subject in enumerate(reply_emails.subject):
             subject = re.sub("^(re:)", "", re_subject).lstrip()
             conversation_id = (
                 "cid_" + hashlib.md5(str(subject).encode("utf-8")).hexdigest()[:6]

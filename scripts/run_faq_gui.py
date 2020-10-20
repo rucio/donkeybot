@@ -1,5 +1,6 @@
 import subprocess
 
+
 def main():
     subprocess.run(
         f"python -m bot.faq.gui",

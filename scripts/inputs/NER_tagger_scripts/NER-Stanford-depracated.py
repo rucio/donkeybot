@@ -53,12 +53,12 @@ def get_continuous_chunks(tagged_sent):
 def _remove_names(text):
     """
     This function is more along the lines of what you already used
-    chunks together named entities. 
-    
+    chunks together named entities.
+
     NER will tag John Doe as ('John', 'Person') and ('Doe', 'Person')
     if we want to chunk the above together and have only one hash
     ('John Doe', 'Person') we need to chunk same type named entities together
-    
+
     This also chunkes together other named entities and might create problems
     in instances where the text is in the lines of "Joe, Mark and Robin ..."
     where our output will be ('Joe Mark Robin', 'PERSON')

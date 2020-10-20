@@ -12,9 +12,9 @@ class IssueQuestion(Question):
         super().__init__(question_text, start_idx, end_idx, question_id, "issue")
 
     def set_origin_id(self, origin_id):
-        """ 
+        """
         Sets the origin id of a given question.
-        
+
         Possible origins:
          - email_id
          - issue_id
@@ -22,7 +22,7 @@ class IssueQuestion(Question):
 
         <!> Note: Ids from different origin left None.
 
-        :param origin_id : id of a given question's origin        
+        :param origin_id : id of a given question's origin
         """
         self.email_id = None
         self.issue_id = origin_id
@@ -30,13 +30,13 @@ class IssueQuestion(Question):
 
     def find_context_from_table(self, db=Database, table_name="issues"):
         """
-        Depending on the question's origin, find the corresponding 
+        Depending on the question's origin, find the corresponding
         context based on the appropriate table.
-        
+
         - issues    : The context are the bodies of the comments under
                       the issue.
 
-        <!> Note: The origin_id of the issue needs to have been set by 
+        <!> Note: The origin_id of the issue needs to have been set by
         calling set_origin_id() before using this method.
 
         :param db         : <bot.database obj>

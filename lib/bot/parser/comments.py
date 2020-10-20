@@ -38,7 +38,7 @@ class IssueCommentParser(IParser):
     ):
         """
         Parses a single issue's comment.
-        
+
         :param [issue_id,...,body]   : all the raw issue comment's attributes
         :param db                    : <bot Database object> to where we store the parsed issue comments
         :param issue_comments_table  : in case we need use a different table name (default 'issue_comments')
@@ -72,7 +72,7 @@ class IssueCommentParser(IParser):
     ):
         """
         Parses the entire fetched issue comments dataframe, creates IssueComment objects and saves them to db.
-        
+
         For more information about the structure and content of comments_df look at the IssueFetcher.
 
         :param comments_df       : pandas DataFrame object containing all issue comments

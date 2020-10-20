@@ -12,9 +12,9 @@ class EmailQuestion(Question):
         super().__init__(question_text, start_idx, end_idx, question_id, "email")
 
     def set_origin_id(self, origin_id):
-        """ 
+        """
         Sets the origin id of a given question.
-        
+
         Possible origins:
          - email_id
          - issue_id
@@ -22,7 +22,7 @@ class EmailQuestion(Question):
 
         <!> Note: Ids from different origin left None.
 
-        :param origin_id : id of a given question's origin        
+        :param origin_id : id of a given question's origin
         """
         self.email_id = origin_id
         self.issue_id = None
@@ -30,14 +30,14 @@ class EmailQuestion(Question):
 
     def find_context_from_table(self, db=Database, table_name="emails"):
         """
-        Depending on the question's origin, find the corresponding 
+        Depending on the question's origin, find the corresponding
         context based on the appropriate table.
-        
-        - emails    : The context are the bodies of the reply emails 
-                      in the same conversation, after the email where 
+
+        - emails    : The context are the bodies of the reply emails
+                      in the same conversation, after the email where
                       the question was asked.
 
-        <!> Note: The origin_id of the email needs to have been set by 
+        <!> Note: The origin_id of the email needs to have been set by
         calling set_origin_id() before using this method.
 
         :param db         : <bot.database obj>

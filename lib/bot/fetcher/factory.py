@@ -9,12 +9,12 @@ class FetcherFactory:
     @staticmethod
     def get_fetcher(data_type):
         """
-        Fetchers: 
+        Fetchers:
         - Issue
         - Rucio Documentation
         - Email
 
-        :returns fetcher: a <Fetcher object> 
+        :returns fetcher: a <Fetcher object>
         """
         try:
             if data_type == "Issue":

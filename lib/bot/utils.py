@@ -7,6 +7,7 @@ import requests
 import json
 import pickle
 import string
+from argparse import ArgumentTypeError
 from datetime import datetime
 import pytz
 
@@ -26,7 +27,7 @@ def print_df_column(dataframe, column, max_rows=None):
     Print the Series data in the column of the dataframe
     we chose.
     If the column doesn't exist it prints the error message
-    
+
     :param dataframe  : dataframe containing the column
     :param column     : column whose data we want to print
     :param max_rows   : the maximum number of (top) rows we want to print
@@ -45,7 +46,7 @@ def print_df_column(dataframe, column, max_rows=None):
 
 
 def turn_Series_into_string(series_obj):
-    """ 
+    """
     Turn a pandas Series object (of strings)
     into one large string. Intended for text columns
     in pandas DataFrames
@@ -98,9 +99,9 @@ def convert_to_utc(date, date_format):
 
 def request(url, headers):
     """
-    Return the response from the url with the information saved in 
+    Return the response from the url with the information saved in
     a python dictionary.
-    
+
     :param url : the url upon which the request is made
     :out r_dict: json response in python dict format
     """
@@ -118,14 +119,13 @@ def str2bool(v):
     elif v.lower() in ("no", "false", "f", "n", "0"):
         return False
     else:
-        raise argparse.ArgumentTypeError("Boolean value expected.")
-
+        raise ArgumentTypeError("Boolean value expected.")
 
 def check_positive(value):
     """Used to check that the value of the argument is a positive integer"""
     ivalue = int(value)
     if ivalue <= 0:
-        raise argparse.ArgumentTypeError("%s is an invalid positive int value" % value)
+        raise ArgumentTypeError("%s is an invalid positive int value" % value)
     return ivalue
 
 
@@ -146,26 +146,26 @@ def pre_process_text(
     stem=False,
     lemmatize=False,
 ):
-    """ 
+    """
     Perform the pre processing steps on the text in the order shown :
     And depending on what was set to True :
-          (1) lowercase -> 
-          (2) fix urls -> 
+          (1) lowercase ->
+          (2) fix urls ->
           (3) remove urls ->
           (4) remove_newline ->
           (5) decontract phrases ->
-          (6) remove punctuation -> 
-          (7) remove numbers -> 
-          (8) remove stopwords -> 
-          (9) stem words-> 
+          (6) remove punctuation ->
+          (7) remove numbers ->
+          (8) remove stopwords ->
+          (9) stem words->
           (10) lemmatize words ->
           (11) remove extra whitespaces ->
-          (12) tokenize words 
-    
+          (12) tokenize words
+
     <!> Note  : (11) remove extra whitespaces is done by default.
-    
-    :param punctuation_replacement      : Used when remove_punctuation = True 
-                                        and we want to replace punctuation 
+
+    :param punctuation_replacement      : Used when remove_punctuation = True
+                                        and we want to replace punctuation
                                         not just remove it. Usefull because then
                                         there is no need for word segmentation.
     :param numbers_replacement          : Same as above for when remove_numbers = True
@@ -236,12 +236,12 @@ def remove_URL(text):
 def remove_chars(text, chars, replace_with=None):
     """
     Removes chars from text or replaces them with the input.
-    Also removes any extra whitespaces which might have been 
+    Also removes any extra whitespaces which might have been
     introduced.
 
     : param text         : text upon which the processing is done
     : param chars        : chars to search for in text and remove
-    : param replace_with : any chars found in text will be replaced 
+    : param replace_with : any chars found in text will be replaced
                            with replace_with input
     : type chars         : string of chars eg. ',.'{}#!'
     : return text        : processed text with removed or replaced chars
