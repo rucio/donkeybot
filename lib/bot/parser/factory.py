@@ -11,13 +11,13 @@ class ParserFactory:
     @staticmethod
     def get_parser(data_type):
         """
-        Parsers: 
+        Parsers:
         - Issue
         - Issue Comment
         - Rucio Documentation
         - Email
 
-        :returns parser: a <Parser object> 
+        :returns parser: a <Parser object>
         """
         try:
             if data_type == "Issue":

@@ -5,7 +5,7 @@ from abc import ABCMeta, abstractmethod
 class IFetcher(metaclass=ABCMeta):
     """
     The Fetcher Interface
-    
+
     <!> Note: Once we use the Fetcher to .fetch() the data
     the Fetcher returns corresponding DataFrame(s) and knows
     how to .save() and .load() accordingly.

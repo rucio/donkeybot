@@ -39,7 +39,7 @@ class QuestionDetector:
         1) First pattern matches questions without lowering the text
         2) Second pattern matches questions after having lowered the text
 
-        :param text         : String upon which the detection algorithm runs 
+        :param text         : String upon which the detection algorithm runs
         :return questions   : list of Question Objects
         """
         # part 1
@@ -113,7 +113,7 @@ class QuestionDetector:
     def _get_exception_matches(self, text):
         """
         Returns list of strings inside text that are definitely not questions based on our
-        EXCEPTION_REGEX patterns.We can add multitude of exceptions 
+        EXCEPTION_REGEX patterns.We can add multitude of exceptions
         eg. URLs, code blocks, File, RSEs ...
 
         <!> Note: URLs (only exceptions matched for now)
@@ -133,7 +133,7 @@ class QuestionDetector:
         Check that the question found is not part of any exceptions.
         eg. URLs (only exceptions matched for now)
 
-        :return : Boolean 
+        :return : Boolean
         """
         for exception in exceptions:
             if question.lower() in exception.lower():

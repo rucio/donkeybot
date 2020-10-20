@@ -34,11 +34,13 @@ class RucioDocsParser(IParser):
         :param [doc_id,...,doc_type]  : all the raw documentation attributes
         :param db                     : <bot Database object> to where we store the parsed docs
         :param docs_table_name        : in case we need use a different table name (default 'docs')
-        :returns doc                  : RucioDoc object 
+        :returns doc                  : RucioDoc object
         """
         # remove extra spaces
         clean_body = re.sub(" +", " ", body).strip(" ")
-        doc = RucioDoc(doc_id=doc_id, name=name, url=url, body=clean_body, doc_type=doc_type)
+        doc = RucioDoc(
+            doc_id=doc_id, name=name, url=url, body=clean_body, doc_type=doc_type
+        )
 
         # only insert relevant documentation to db
         if len(doc.body) < 50:
@@ -52,13 +54,13 @@ class RucioDocsParser(IParser):
     ):
         """
         Parses the entire fetched documentation dataframe,creates RucioDoc objects and saves them to db.
-        
+
         For more information about the structure and content of docs_df look at the RucioDocsFetcher.
 
         :param docs_df     : pandas DataFrame object containing all documentation data
         :param db          : bot Database object to save the RucioDoc objects
         :param return_docs : Boolean -> if we return a list of RucioDoc objects (default False)
-        :returns docs      : a list of RucioDoc objects created by the RucioDocsParser 
+        :returns docs      : a list of RucioDoc objects created by the RucioDocsParser
         """
         docs = []
         print("Parsing Rucio Documentation...")
