@@ -48,7 +48,7 @@ class RucioDocsFetcher(IFetcher):
         """
         Parses the body of the daemon documentation under 'doc/source/man/'.
 
-        1) finds patterns like                 
+        1) finds patterns like
                 .. argparse::
                 :filename: bin/rucio-bb8
                 :func: get_parser
@@ -60,7 +60,7 @@ class RucioDocsFetcher(IFetcher):
                 (more info under bot.config.py)
 
         If the first pattern doesn't match we simply return the initial body.
-            
+
         : param body        : initial, raw daemon documentation body under doc/source/man/
         : return final_body : final daemon documentation body including the docstrings
         """
@@ -68,8 +68,7 @@ class RucioDocsFetcher(IFetcher):
         if config.DAEMON_DOC_ARGS_REGEX.search(body) is not None:
             for match in config.DAEMON_DOC_ARGS_REGEX.finditer(body):
                 daemon_filename = match.group(1)
-                daemon_func = match.group(2)
-                daemon_prog = match.group(3)
+                # daemon_func = match.group(2) and daemon_prog = match.group(3) unused variables for now
                 start_idx = match.start()
                 end_idx = match.end()
             # construct the download url for the raw body of each daemon
@@ -94,9 +93,9 @@ class RucioDocsFetcher(IFetcher):
 
     def fetch(self, api_token):
         """
-        Returns a pandas DataFrames that holds information for 
+        Returns a pandas DataFrames that holds information for
         Rucio's documentation, utilizing GitHub's api.
-        
+
         attributes:
             doc_id   : doc's id
             name     : doc's name/title
@@ -234,7 +233,7 @@ class RucioDocsFetcher(IFetcher):
         """
         Save the data in a .db file utilizing our sqlite wrapper
 
-        : param db                 : bot.database.sqlite Database object 
+        : param db                 : bot.database.sqlite Database object
         : param  docs_table_name   : name of the table where we'll store the docs
         """
         if hasattr(self, "docs"):
@@ -251,7 +250,7 @@ class RucioDocsFetcher(IFetcher):
         """
         Load the data from the .db file.
 
-        : param  db                  : bot.database.sqlite Database object 
+        : param  db                  : bot.database.sqlite Database object
         : param  docs_table_name     : name of the table where we'll store the docs
         : return docs                : DataFrame holding the documentation data
         """

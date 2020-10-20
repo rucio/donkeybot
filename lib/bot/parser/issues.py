@@ -45,11 +45,11 @@ class IssueParser(IParser):
     ):
         """
         Parses a single issue.
-        
+
         <!> Note  : The parse() method is only expected to be used after an an issues table
-        has been created in the db. To create said table use the Database object's 
+        has been created in the db. To create said table use the Database object's
         .create_issues_table() method before attempting to parse.
-        
+
         :param [issue_id,...,body]  : all the raw issue attributes
         :param db                 : <bot Database object> to where we store the parsed issues
         :param issues_table_name  : in case we need use a different table name (default 'issues')
@@ -85,14 +85,14 @@ class IssueParser(IParser):
     ):
         """
         Parses the entire fetched issues dataframe, creates <Issue objects> and saves them to db.
-        
+
         Expects a <pandas DataFrame object> as input that holds the raw fetched issues.
         For more information about the structure and content of issues_df look at the IssueFetcher.
 
         :param issues_df     : <pandas DataFrame object> containing all issues
         :param db            : <bot Database object> to save the <Issue objects>
         :param return_issues : True/False on if we return a list of <Issue objects> (default False)
-        :returns issues      : a list of <Issue objects> created by the IssueParser 
+        :returns issues      : a list of <Issue objects> created by the IssueParser
         """
         issues = []
         print("Parsing issues...")
@@ -116,8 +116,8 @@ class IssueParser(IParser):
 
     @staticmethod
     def clean_issue_body(body):
-        """ 
-        Cleans up the body of an issue from 
+        """
+        Cleans up the body of an issue from
         ISSUE_TEMPLATE patterns in Rucio.
 
         :returns clean_body : cleaned issue body

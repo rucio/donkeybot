@@ -17,8 +17,8 @@ class SearchEngine:
         """
         The job of the SearchEngine is to retrieve the most similar
         document from the created document-term matrix (index).
-                
-        <!> Note: You have to create/load the index before using the 
+
+        <!> Note: You have to create/load the index before using the
                   .search() method.
 
         :param index : Name of column(s) that will be indexed. (default is ['doc_type', 'body'])
@@ -40,11 +40,11 @@ class SearchEngine:
         """
         Return at most the `top_n` results most similar to
         the input `query` based on BM25.
-        
+
         :param top_n    : the maximum number of results that are returned
         :type top_n     : int
-        :param query    : User's question/query 
-        :return results : pd.DataFrame object of the results 
+        :param query    : User's question/query
+        :return results : pd.DataFrame object of the results
         """
         try:
             assert top_n > 0
@@ -71,7 +71,7 @@ class SearchEngine:
     def _attach_qa_data(self, results, query):
         """
         Attach the columns needed to transform the results
-        DataFrame into SQuAD like data. 
+        DataFrame into SQuAD like data.
 
         results include : {
              'query'    : what the user queried in the SE
@@ -79,7 +79,7 @@ class SearchEngine:
         }
 
         For regular documents user's "query" is added and
-        and the "context" will be the document info 
+        and the "context" will be the document info
         we have previously indexed.
         """
         results["query"] = query
@@ -91,7 +91,7 @@ class SearchEngine:
         resulting document.
 
         :returns documents : rows of concatenated string columns that will be
-                             indexed. 
+                             indexed.
         :type documents    : pandas.core.series.Series object
         """
         try:
@@ -123,9 +123,9 @@ class SearchEngine:
         """
         Takes a pandas DataFrame as input and create the SearchEngine's document-term matrix(index).
 
-        : param corpus     : pandas DataFrame object 
+        : param corpus     : pandas DataFrame object
         : param db         : <bot.database.sqlite Database object> where the index will be stored
-        : param table_name : Name of the doc term matrix table to be saved on the db ( default = doc_term_matrix) 
+        : param table_name : Name of the doc term matrix table to be saved on the db ( default = doc_term_matrix)
         """
         self.corpus = corpus
         self.columns = self.corpus.columns
@@ -145,7 +145,7 @@ class SearchEngine:
         """
         Loads the document-term matrix and the original table we indexed to prepare
         the Search Engine for use.
-    
+
         :param table_name     : document term matrix table name
         :param original_table : original table we indexed
         :param db             : <bot.database.sqlite Database object> where the index will be stored

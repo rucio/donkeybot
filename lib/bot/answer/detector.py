@@ -53,7 +53,7 @@ class AnswerDetector:
         :param num_answers_to_predict : num of answers that are predicted per document (default is 3)
         :param doc_stride : length of the split in the sliding window documents longer than max_sq_len.
         :param device : if < 0 -> use cpu
-                        if >=0 -> use gpu 
+                        if >=0 -> use gpu
         """
 
         self.model_name = model
@@ -84,13 +84,13 @@ class AnswerDetector:
 
     def predict(self, question, documents, top_k=1):
         """
-        Use this method to return top_k answer(s) based on input 
+        Use this method to return top_k answer(s) based on input
         question and documents.
 
         :param question  : question string
         :type question   : str
         :param documents : pd.DataFrame that contains 'context' and other data
-        :type documents  : pandas DataFrame 
+        :type documents  : pandas DataFrame
         :param topk      : number of answers to return for each document (default is 1)
         :returns top_k_answers : list of top_k number of Answer objects
         """
@@ -102,7 +102,7 @@ class AnswerDetector:
         assert "context" in documents.columns
 
         print(f"Predicting answers from {documents.shape[0]} document(s)...")
-        for index, doc in tqdm(documents.iterrows(), total=documents.shape[0]):
+        for _, doc in tqdm(documents.iterrows(), total=documents.shape[0]):
             try:
                 predictions = self.model(
                     question=question,
@@ -151,7 +151,7 @@ class AnswerDetector:
         # drop extra metadata columns
         # errors ignored for when we have Question metadata and the 'body' column doesn't exist
         metadata = (
-            doc.drop(["body", "query"], errors="ignore") 
+            doc.drop(["body", "query"], errors="ignore")
             .rename({"question": "most_similar_question"}, axis=1)
             .to_dict()
         )

@@ -78,10 +78,10 @@ class IssueFetcher(IFetcher):
             comment_id   : comment's id
             creator      : comment's creator
             created_at   : date comment was created at
-            body         : body of the comment 
+            body         : body of the comment
 
         :param max_pages    : max_pages requested through the api. ( default is 201 )
-        :param repo         : GitHub repo (for us rucio/rucio) format `User/Repo` 
+        :param repo         : GitHub repo (for us rucio/rucio) format `User/Repo`
         :param api_token    : GitHub api token used for fetching the data
         :return issues_df   : DataFrame containing information for the issues
         :return comments_df : DataFrame containing information for the comments
@@ -186,7 +186,7 @@ class IssueFetcher(IFetcher):
         """
         Save the data in a .db file utilizing our sqlite wrapper.
 
-        : param db            : bot.database.sqlite Database object 
+        : param db            : bot.database.sqlite Database object
         : issues_table_name   : name of the table where we'll store the issues
         : comments_table_name : name of the table where we'll store the comments
         """
@@ -212,7 +212,7 @@ class IssueFetcher(IFetcher):
         """
         Load the data from the .db file.
 
-        : param  db                  : bot.database.sqlite Database object 
+        : param  db                  : bot.database.sqlite Database object
         : param  issues_table_name   : name of the table where we'll store the issues
         : param  comments_table_name : name of the table where we'll store the comments
         : return issues              : DataFrame holding the issues data
@@ -239,9 +239,9 @@ class IssueFetcher(IFetcher):
             )
 
     def load_with_pickle(self, repo):
-        """ 
+        """
         Load the DataFrame stored in pickle file format.
-        
+
         : param  repo       : name of the repository
         : return issues     : DataFrame holding the issues data
         : return comments   : DataFrame holding the comments data

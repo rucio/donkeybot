@@ -47,7 +47,7 @@ class QAInterface:
         Returns the most similar answers from FAQ table.
 
         <!> Note: AnswerDetector is not needed when matching
-        through the FAQ table. The only important thing is 
+        through the FAQ table. The only important thing is
         to find the most similar questions.
 
         :return faq_answers : list of Answer objects
@@ -118,7 +118,7 @@ class QAInterface:
         self.answers = self.question_answers + self.doc_answers
         self.answers = sorted(self.answers, key=lambda k: k.confidence, reverse=True)
         self.answers = self.answers[:top_k]
-        
+
         # concat the faq answers
         self.final_answers = self.answers + self.faq_answers
         return self.final_answers

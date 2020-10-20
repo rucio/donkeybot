@@ -33,7 +33,7 @@ class Question(ABC):
 
     @abstractmethod
     def set_origin_id(self, origin_id):
-        """ 
+        """
         Sets the origin id of a given question.
 
         Possible origins:
@@ -44,7 +44,7 @@ class Question(ABC):
         <!> Note: Depending on the origin the id is set
         and the rest are left equal to None.
 
-        :param origin_id : id of a given question's origin        
+        :param origin_id : id of a given question's origin
         """
         self.email_id = None
         self.issue_id = None
@@ -53,11 +53,11 @@ class Question(ABC):
     @abstractmethod
     def find_context_from_table(self, db=Database, table_name=None):
         """
-        Depending on the question's origin, find the corresponding 
+        Depending on the question's origin, find the corresponding
         context based on the appropriate table.
-        
-        - emails    : The context are the bodies of the reply emails 
-                      in the same conversation, after the email where 
+
+        - emails    : The context are the bodies of the reply emails
+                      in the same conversation, after the email where
                       the question was asked.
         - issues    : The context are the bodies of the comments under
                       the issue.
@@ -65,7 +65,7 @@ class Question(ABC):
                       the issue and after the comment where the question
                       was asked
 
-        <!> Note: The origin_id needs to have been set by 
+        <!> Note: The origin_id needs to have been set by
         calling set_origin_id() before using this method.
 
         :param db         : <bot.database obj>
