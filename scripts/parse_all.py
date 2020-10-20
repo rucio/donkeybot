@@ -51,7 +51,8 @@ def main():
         shell=True,
     )
     subprocess.run(
-        f"python -m scripts.parse_docs -i {docs_input_db} -o {output_db}", shell=True,
+        f"python -m scripts.parse_docs -i {docs_input_db} -o {output_db}",
+        shell=True,
     )
 
 

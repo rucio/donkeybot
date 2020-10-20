@@ -5,7 +5,7 @@ sqlitedb = "./db/emails.db"
 
 
 def create_connection(db_file):
-    """ create a database connection to the SQLite database
+    """create a database connection to the SQLite database
         specified by db_file
     :param db_file: database file
     :return: Connection object or None
@@ -24,7 +24,7 @@ def _add_row(conn, row):
     Create a new project into the projects table
     :param conn:     connection to db
     :param table:    TODO
-    :param row:      array of values, be careful about order. 
+    :param row:      array of values, be careful about order.
     :return: id
     """
     sql = """ INSERT INTO emails(sender, receiver, subject, date, thread, body)

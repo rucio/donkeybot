@@ -44,7 +44,7 @@ def print_answers(answers):
     for i, answer in enumerate(answers):
         print(f"Question: '{answer.user_question}'")
         # faq answers:
-        if answer.origin == 'faq':
+        if answer.origin == "faq":
             print("FAQ answers: ")
             most_similar_faq_question = answer.metadata["most_similar_faq_question"]
             author = answer.metadata["author"]
@@ -52,11 +52,11 @@ def print_answers(answers):
                 f"Answer: '{answer.extended_answer} \nMost similar FAQ question: {most_similar_faq_question}"
             )
             print(f"Author: {author}")
-        elif answer.origin == 'documentation':
+        elif answer.origin == "documentation":
             url = answer.metadata["url"]
             print(f"Answer: '{answer.extended_answer} \nFor more info check: {url}")
             print(f"Confidence: {answer.confidence}")
-        elif answer.origin == 'questions':
+        elif answer.origin == "questions":
             most_similar_question = answer.metadata["most_similar_question"]
             print(
                 f"Answer: '{answer.extended_answer} \nMost similar question: {most_similar_question}"

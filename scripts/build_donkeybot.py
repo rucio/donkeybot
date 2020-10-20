@@ -91,26 +91,32 @@ def main():
     fetch_faq_data()
     # Fetch and store issues and rucio documentation data
     subprocess.run(
-        f"python -m scripts.fetch_issues -r rucio/rucio -t {api_token}", shell=True,
+        f"python -m scripts.fetch_issues -r rucio/rucio -t {api_token}",
+        shell=True,
     )
     subprocess.run(
-        f"python -m scripts.fetch_rucio_docs -t {api_token}", shell=True,
+        f"python -m scripts.fetch_rucio_docs -t {api_token}",
+        shell=True,
     )
     # parse and store data
     subprocess.run(
-        f"python -m scripts.parse_all", shell=True,
+        f"python -m scripts.parse_all",
+        shell=True,
     )
     # detect questions in data_storage
     subprocess.run(
-        f"python -m scripts.detect_all_questions", shell=True,
+        f"python -m scripts.detect_all_questions",
+        shell=True,
     )
     # detect questions in data_storage
     subprocess.run(
-        f"python -m scripts.create_and_populate_faq", shell=True,
+        f"python -m scripts.create_and_populate_faq",
+        shell=True,
     )
     # create search engine for documents questions and faq
     subprocess.run(
-        f"python -m scripts.create_se_indexes", shell=True,
+        f"python -m scripts.create_se_indexes",
+        shell=True,
     )
     # download and cache Question Answering models
     download_and_save_DistilBERT_model("distilbert-base-cased-distilled-squad")
