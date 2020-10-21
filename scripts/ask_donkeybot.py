@@ -19,6 +19,7 @@ import torch
 import os.path
 import sys
 import argparse
+import pprint
 
 
 def check_model_availability(model):
@@ -40,28 +41,18 @@ def print_answers(answers):
     """
     Prints answers to query.
     """
-    print("\nFINAL ANSWERS: (descending order)")
+    pp = pprint.PrettyPrinter(indent=2) # for printing
+    print("\nQuestion : ", answers[0].user_question)
+    print("\nAnswers:")
     for i, answer in enumerate(answers):
-        print(f"Question: '{answer.user_question}'")
         # faq answers:
-        if answer.origin == "faq":
-            print("FAQ answers: ")
-            most_similar_faq_question = answer.metadata["most_similar_faq_question"]
-            author = answer.metadata["author"]
-            print(
-                f"Answer: '{answer.extended_answer} \nMost similar FAQ question: {most_similar_faq_question}"
-            )
-            print(f"Author: {author}")
-        elif answer.origin == "documentation":
-            url = answer.metadata["url"]
-            print(f"Answer: '{answer.extended_answer} \nFor more info check: {url}")
-            print(f"Confidence: {answer.confidence}")
-        elif answer.origin == "questions":
-            most_similar_question = answer.metadata["most_similar_question"]
-            print(
-                f"Answer: '{answer.extended_answer} \nMost similar question: {most_similar_question}"
-            )
-            print(f"Confidence: {answer.confidence}")
+        print()
+        if answer.origin != "faq":
+            print(f"number {i} asnwer (by confidence)")
+            pp.pprint([{k:v for k,v  in answer.__dict__.items() if k in ['answer','confidence','extended_answer','metadata']}])
+        else:
+            print(f"number {i} asnwer (from FAQs)")
+            pp.pprint([{k:v for k,v  in answer.__dict__.items() if k in ['answer','confidence','extended_answer','metadata']}])
 
 
 def setup_search_engines(db=Database):

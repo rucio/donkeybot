@@ -1,6 +1,3 @@
-# This script :
-# - expects '/data/emails_input_data.db' to exist
-
 # bot modules
 from bot.config import MODELS_DIR, DATA_DIR
 from bot.utils import str2bool
@@ -80,12 +77,20 @@ def main():
         nargs="?",  # 0 or 1 argument,
         const=True,
         default=False,
-        help="If True then download all Question Answering models the bot supports. (default it False)",
+        help="If True then download all Question Answering models the bot supports. (default is False)",
     )
-
+    optional.add_argument(
+        "--include_emails",
+        type=str2bool,
+        nargs="?",  # 0 or 1 argument,
+        const=True,
+        default=False,
+        help="If True then also parse emails_input_data from /data folder. (default is False)",
+    )
     args = parser.parse_args()
     api_token = args.token
     download_all_models = args.all_models
+    include_emails = args.include_emails
 
     # Fetch FAQ data from faq.json
     fetch_faq_data()
@@ -100,19 +105,36 @@ def main():
     )
     # parse and store data
     subprocess.run(
-        f"python -m scripts.parse_all",
+        f"python -m scripts.parse_issues -i issues_input_data -o data_storage",
         shell=True,
     )
+    subprocess.run(
+        f"python -m scripts.parse_issue_comments -i issues_input_data -o data_storage",
+        shell=True,
+    )
+    subprocess.run(
+        f"python -m scripts.parse_docs -i docs_input_data -o data_storage",
+        shell=True,
+    )
+    if include_emails:  # default is false       
+        subprocess.run(
+            f"python -m scripts.parse_emails -i emails_input_data -o data_storage",
+            shell=True,
+        )
     # detect questions in data_storage
     subprocess.run(
-        f"python -m scripts.detect_all_questions",
+        f"python -m scripts.detect_issue_questions -db data_storage --issues_table issues --questions_table questions",
         shell=True,
     )
-    # detect questions in data_storage
     subprocess.run(
-        f"python -m scripts.create_and_populate_faq",
+        f"python -m scripts.detect_comment_questions -db data_storage --comments_table issue_comments --questions_table questions",
         shell=True,
     )
+    if include_emails: # default is false       
+        subprocess.run(
+            f"python -m scripts.detect_email_questions -db data_storage --emails_table emails --questions_table questions",
+            shell=True,
+        )
     # create search engine for documents questions and faq
     subprocess.run(
         f"python -m scripts.create_se_indexes",
