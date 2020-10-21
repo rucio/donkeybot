@@ -54,7 +54,7 @@ class QAInterface:
         """
         self.retrieved_faqs = self.faq_engine.search(self.query, num_faqs)
         faq_answers = []
-        for index, faq in self.retrieved_faqs.iterrows():
+        for _, faq in self.retrieved_faqs.iterrows():
             metadata = (
                 faq.drop(["query", "answer"])
                 .rename({"question": "most_similar_faq_question"}, axis=1)
