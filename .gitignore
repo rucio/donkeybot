@@ -1,7 +1,9 @@
 # folders
 /.vscode
-/virt
 /models
+# virtual environments 
+/virt
+/ml
 
 # build info
 /dist 
