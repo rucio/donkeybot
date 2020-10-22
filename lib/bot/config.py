@@ -3,9 +3,9 @@ from pathlib import Path
 import re
 
 # PATHS
-TOP_LEVEL_DIR = str(Path(__file__).parents[2]) + "\\"
-DATA_DIR = os.path.join(TOP_LEVEL_DIR, "data\\")
-MODELS_DIR = os.path.join(TOP_LEVEL_DIR, "models\\")
+TOP_LEVEL_DIR = str(Path(__file__).parents[2]) 
+DATA_DIR = os.path.join(TOP_LEVEL_DIR, "data/")
+MODELS_DIR = os.path.join(TOP_LEVEL_DIR, "models/")
 
 # REGEX
 REGEX_METACHARACTERS = "^$.|?*+(){}[]"
