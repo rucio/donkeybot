@@ -1,0 +1,30 @@
+# should be ignored by docker when building
+/.vscode
+/models
+/docs
+/examples
+/tests
+AUTHORS.md
+ISSUE_TEMPLATE.md
+# virtual environments
+/virt
+/ml
+
+# build info
+/dist 
+.eggs/
+/donkeybot.egg-info
+/lib/donkeybot.egg-info
+
+# extra data 
+/data/old
+/data/conversation_dict.pickle
+/data/data_storage.db
+/data/docs_input_data.db
+/data/emails_input_data.db
+/data/issues_input_data.db
+
+# other
+__pycache__
+.pytest_cache
+.ipynb_checkpoints
