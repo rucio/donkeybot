@@ -48,10 +48,10 @@ def print_answers(answers):
         # faq answers:
         print()
         if answer.origin != "faq":
-            print(f"number {i} asnwer (by confidence)")
+            print(f"number {i+1} asnwer (by confidence)")
             pp.pprint([{k:v for k,v  in answer.__dict__.items() if k in ['answer','confidence','extended_answer','metadata']}])
         else:
-            print(f"number {i} asnwer (from FAQs)")
+            print(f"number {i+1} asnwer (from FAQs)")
             pp.pprint([{k:v for k,v  in answer.__dict__.items() if k in ['answer','confidence','extended_answer','metadata']}])
 
 
