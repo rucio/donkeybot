@@ -1,7 +1,12 @@
-# folders
+# should be ignored by docker when building
 /.vscode
 /models
-# virtual environments 
+/docs
+/examples
+/tests
+AUTHORS.md
+ISSUE_TEMPLATE.md
+# virtual environments
 /virt
 /ml
 
@@ -11,7 +16,7 @@
 /donkeybot.egg-info
 /lib/donkeybot.egg-info
 
-# data (created locally on your machine after running build_donkeybot.py)
+# extra data 
 /data/old
 /data/conversation_dict.pickle
 /data/data_storage.db
@@ -19,7 +24,7 @@
 /data/emails_input_data.db
 /data/issues_input_data.db
 
-# files
+# other
 __pycache__
 .pytest_cache
 .ipynb_checkpoints

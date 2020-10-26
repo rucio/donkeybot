@@ -19,16 +19,17 @@ import torch
 import os.path
 import sys
 import argparse
+import pprint
 
 
 def check_model_availability(model):
     """Assert that all the model files exist in the MODELS_DIR"""
     try:
-        assert os.path.isfile(MODELS_DIR + model + "\\config.json") == True
-        assert os.path.isfile(MODELS_DIR + model + "\\pytorch_model.bin") == True
-        assert os.path.isfile(MODELS_DIR + model + "\\special_tokens_map.json") == True
-        assert os.path.isfile(MODELS_DIR + model + "\\tokenizer_config.json") == True
-        assert os.path.isfile(MODELS_DIR + model + "\\vocab.txt") == True
+        assert os.path.isfile(MODELS_DIR + model + "/config.json") == True
+        assert os.path.isfile(MODELS_DIR + model + "/pytorch_model.bin") == True
+        assert os.path.isfile(MODELS_DIR + model + "/special_tokens_map.json") == True
+        assert os.path.isfile(MODELS_DIR + model + "/tokenizer_config.json") == True
+        assert os.path.isfile(MODELS_DIR + model + "/vocab.txt") == True
     except AssertionError as _e:
         print(
             f"Error: Make sure that the model is correct and exists in '{MODELS_DIR}'."
@@ -40,28 +41,18 @@ def print_answers(answers):
     """
     Prints answers to query.
     """
-    print("\nFINAL ANSWERS: (descending order)")
+    pp = pprint.PrettyPrinter(indent=2) # for printing
+    print("\nQuestion : ", answers[0].user_question)
+    print("\nAnswers:")
     for i, answer in enumerate(answers):
-        print(f"Question: '{answer.user_question}'")
         # faq answers:
-        if answer.origin == "faq":
-            print("FAQ answers: ")
-            most_similar_faq_question = answer.metadata["most_similar_faq_question"]
-            author = answer.metadata["author"]
-            print(
-                f"Answer: '{answer.extended_answer} \nMost similar FAQ question: {most_similar_faq_question}"
-            )
-            print(f"Author: {author}")
-        elif answer.origin == "documentation":
-            url = answer.metadata["url"]
-            print(f"Answer: '{answer.extended_answer} \nFor more info check: {url}")
-            print(f"Confidence: {answer.confidence}")
-        elif answer.origin == "questions":
-            most_similar_question = answer.metadata["most_similar_question"]
-            print(
-                f"Answer: '{answer.extended_answer} \nMost similar question: {most_similar_question}"
-            )
-            print(f"Confidence: {answer.confidence}")
+        print()
+        if answer.origin != "faq":
+            print(f"number {i+1} asnwer (by confidence)")
+            pp.pprint([{k:v for k,v  in answer.__dict__.items() if k in ['answer','confidence','extended_answer','metadata']}])
+        else:
+            print(f"number {i+1} asnwer (from FAQs)")
+            pp.pprint([{k:v for k,v  in answer.__dict__.items() if k in ['answer','confidence','extended_answer','metadata']}])
 
 
 def setup_search_engines(db=Database):

@@ -32,7 +32,7 @@ class AnswerDetector:
         max_seq_len=256,
         num_answers_to_predict=3,
         doc_stride=128,
-        device=0,
+        device=-1,
     ):
         """
         <!> Default values from source code for transformers.pipelines:
@@ -52,7 +52,7 @@ class AnswerDetector:
         :param max_seq_len : maximum length of one input sequence (default 256)
         :param num_answers_to_predict : num of answers that are predicted per document (default is 3)
         :param doc_stride : length of the split in the sliding window documents longer than max_sq_len.
-        :param device : if < 0 -> use cpu
+        :param device : if < 0 -> use cpu (default -1 to use cpu)
                         if >=0 -> use gpu
         """
 

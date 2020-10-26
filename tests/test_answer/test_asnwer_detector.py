@@ -18,7 +18,7 @@ def answer_detector():
         max_seq_len=256,
         num_answers_to_predict=3,
         doc_stride=128,
-        device=0,
+        device=-1,
     )
     return answer_detector
 
