@@ -20,6 +20,7 @@ import os.path
 import sys
 import argparse
 import pprint
+import warnings
 
 
 def check_model_availability(model):
@@ -115,6 +116,9 @@ def main():
 
     check_model_availability(model)
 
+    # deprecation warning
+    warnings.filterwarnings("ignore")
+
     # prepare data_storage
     data_storage = Database(f"{db_name}.db")
     # check for the answers table
@@ -148,13 +152,18 @@ def main():
             print("\nCTRL+C to exit donkeybot")
             query = str(input("ask question: "))
             top_k = int(input("how many answers: "))
+            search_faq = int(input("search faqs (1/0): "))
+            assert search_faq in (0,1)
             start_time = time.time()
             answers = qa_interface.get_answers(query, top_k=top_k)
+            faq_answers = qa_interface.get_faq_answers(query, num_faqs=top_k)
             print(f"Total inference time: {round(time.time() - start_time, 2)} seconds")
             print_answers(answers)
-
+            print_answers(faq_answers)
             if store_answers:
                 for answer in answers:
+                    data_storage.insert_answer(answer, table_name=f"{answers_table}")
+                for answer in faq_answers:
                     data_storage.insert_answer(answer, table_name=f"{answers_table}")
     except KeyboardInterrupt:
         data_storage.close_connection()
