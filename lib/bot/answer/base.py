@@ -28,9 +28,7 @@ class Answer:
         # disregard all trailing question marks and spaces from the hashing
         if clean_question[-1] == "?":
             clean_question = re.sub("[ ?]*$", "", clean_question)
-        self.user_question_id = hashlib.md5(clean_question.encode("utf-8")).hexdigest()[
-            :10
-        ]
+        self.user_question_id = hashlib.md5(clean_question.encode("utf-8")).hexdigest()[:10]
         self.answer = answer
         self.start = start
         self.end = end
