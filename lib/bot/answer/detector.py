@@ -133,7 +133,8 @@ class AnswerDetector:
                     answer = self._create_answer_object(question, pred, doc)
                     answers.append(answer)
                 else:
-                    print("No answer was predicted for this document!")
+                    # print("No answer was predicted for this document!")
+                    pass
 
                 if best_score > best_overall_score:
                     best_overall_score = best_score
