@@ -49,8 +49,8 @@ class QAInterface:
         <!> Note: AnswerDetector is not needed when matching
         through the FAQ table. The only important thing is
         to find the most similar questions.
-        
-        :param query         : User's question/query 
+
+        :param query         : User's question/query
         :param num_faqs      : Number of retrieved FAQ answers (default is 3)
         :return faq_answers : list of Answer objects
         """
@@ -80,9 +80,7 @@ class QAInterface:
     def _get_question_answers(self, query, num_questions):
         """Returns num_questions answers based on the most similar questions and their context."""
         # most similar questions
-        self.retrieved_questions = self.question_engine.search(
-            query, num_questions
-        )
+        self.retrieved_questions = self.question_engine.search(query, num_questions)
         question_answers = self.detector.predict(
             query, self.retrieved_questions, top_k=self.top_k
         )
