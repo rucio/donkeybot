@@ -63,34 +63,45 @@ class Donkeybot:
         if model:
             check_model_availability(model)
             self.model = model
-
+        self.db_name = db_name
         # better if just CPU for inference
         gpu = 0 if torch.cuda.is_available() else -1
         self.answer_detector = AnswerDetector(
             model=self.model, device=gpu, num_answers_to_predict=num_answers_to_predict
         )
-        self.data_storage = Database(f"{db_name}.db")
-        faq_se, docs_se, question_se = setup_search_engines(db=self.data_storage)
+        data_storage = Database(f"{self.db_name}.db")
+        faq_se, docs_se, question_se = setup_search_engines(db=data_storage)
         self.qa_interface = QAInterface(
             detector=self.answer_detector,
             question_engine=question_se,
             faq_engine=faq_se,
             docs_engine=docs_se,
         )
+        # thread that innits donkeybot instance wont used db again
+        data_storage.close_connection()
 
     def get_answers(self, question, top_k=1, store_answers=False):
         """Search past questions table for an answer"""
         answers = self.qa_interface.get_answers(question, top_k=top_k)
         # TODO add confidence cutoff
         if store_answers:
-            for answer in answers:
-                self.data_storage.insert_answer(answer, table_name=f"{answers_table}")
+            self._store_answers(answers)
+        print("Done")
         return answers
 
     def get_faq_answers(self, question, num_faqs=1, store_answers=False):
         """Search FAQs for an answer"""
         answers = self.qa_interface.get_faq_answers(question, num_faqs=num_faqs)
         if store_answers:
-            for answer in answers:
-                self.data_storage.insert_answer(answer, table_name=f"{answers_table}")
+            self._store_answers(answers)
+        print("Done")
         return answers
+
+    def _store_answers(self, answers):
+        # a different thread is running each time so new connection to db is needed
+        # could use 'sqlite3.connect('your.db', check_same_thread=False)' but need to do my own synchronization
+        data_storage = Database(f"{self.db_name}.db")
+        for answer in answers:
+            data_storage.insert_answer(answer)
+        data_storage.close_connection()
+        return
