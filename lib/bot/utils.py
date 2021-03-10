@@ -121,6 +121,7 @@ def str2bool(v):
     else:
         raise ArgumentTypeError("Boolean value expected.")
 
+
 def check_positive(value):
     """Used to check that the value of the argument is a positive integer"""
     ivalue = int(value)
