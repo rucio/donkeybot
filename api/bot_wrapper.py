@@ -94,7 +94,6 @@ class Donkeybot:
         answers = self.qa_interface.get_faq_answers(question, num_faqs=num_faqs)
         if store_answers:
             self._store_answers(answers)
-        print("Done")
         return answers
 
     def _store_answers(self, answers):
@@ -103,5 +102,12 @@ class Donkeybot:
         data_storage = Database(f"{self.db_name}.db")
         for answer in answers:
             data_storage.insert_answer(answer)
+        data_storage.close_connection()
+        return
+
+    def update_label(self, answer_id, label):
+        data_storage = Database(f"{self.db_name}.db")
+        assert label in (0, 1)
+        data_storage.update_label(answer_id, label)
         data_storage.close_connection()
         return
