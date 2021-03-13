@@ -31,7 +31,7 @@ Additionally, make sure to download [ngrok](https://ngrok.com/download), which i
     $ ./ngrok http <PORT>
     ```
     You will see something like:
-    ![ngrok example](./img/ngrok_example.png)
+    ![ngrok example](./img/ngrok_example.PNG)
 
 6. Link request URLs with app.
     - Copy the forwarding address from ngrok shown above.
