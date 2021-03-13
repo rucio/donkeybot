@@ -40,7 +40,7 @@ See [FAQ : GSoC](./docs/faq_gsoc.md) for a detailed timeline, student informatio
 ## Demo 
 
 You can try asking Donkeybot yourself!   
-Use :  
+You can either [set it up as a slackbot](./docs/slackbot.md), or use the cli:  
 ``` bash
 $  python .\scripts\ask_donkeybot.py
 ```
