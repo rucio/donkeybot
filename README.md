@@ -40,12 +40,15 @@ See [FAQ : GSoC](./docs/faq_gsoc.md) for a detailed timeline, student informatio
 ## Demo 
 
 You can try asking Donkeybot yourself!   
-Use :  
+Using the [slackbot](./docs/slackbot.md) : 
+
+![slackbot_demo](./docs/img/slackbot_demo.gif)
+
+Or you can use the CLI:
+
 ``` bash
 $  python .\scripts\ask_donkeybot.py
 ```
-
-You will see an output similar to the following example :  
 
 ![demo](./docs/img/demo.gif)
 

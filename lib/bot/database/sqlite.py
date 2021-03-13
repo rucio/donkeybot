@@ -375,6 +375,23 @@ class Database:
         )
         self.db.commit()
 
+    def update_label(self, answer_id, label, table_name="answers"):
+        """
+        Update the label of an answer in the correct table of the database.
+
+        :param answer_id    : id of the answer
+        :param label        : 0 indicating wrong answer or 1 indicating correct answer (None if we want to reset)
+        :param table_name   : name of the table that stores our answers (default = "answers")
+        """
+        self.db.execute(
+            f"""
+            UPDATE {table_name}
+            SET label = {label}
+            WHERE answer_id == "{answer_id}"
+            """
+        )
+        self.db.commit()
+
     # faq
     def create_faq_table(self, table_name="faq"):
         """

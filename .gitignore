@@ -1,6 +1,7 @@
 # folders
 /.vscode
 /models
+/qa_tests
 # virtual environments 
 /virt
 /ml
@@ -23,3 +24,6 @@
 __pycache__
 .pytest_cache
 .ipynb_checkpoints
+
+# API keys
+.env

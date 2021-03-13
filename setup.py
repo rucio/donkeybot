@@ -21,7 +21,9 @@ setup(
         "requests",
         "protobuf",
         "transformers",
-        "uuid"
+        "uuid",
+        "python-dotenv",
+        "slack_bolt" # slackbot
         # for torch you need to download based on https://pytorch.org/ quickstart guide
     ], 
     setup_requires=['pytest-runner'],
