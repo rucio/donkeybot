@@ -19,14 +19,13 @@ app = App(
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
 )
 
-
 @app.event("app_mention")
 def mention_handler(body, say):
     event = body["event"]
     slack_user_id = event["user"]
     text = event["text"]
     # find the mention pattern start, skip the `<@id>` and keep the rest as the question
-    question = text[text.find(f"<@") + 2 + len(slack_user_id) + 1 :].lstrip()
+    question = text[text.find(f"<@")+2+len(slack_user_id)+1:].lstrip()
     say(
         {
             "blocks": [
@@ -43,7 +42,7 @@ def mention_handler(body, say):
                         {
                             "type": "button",
                             "text": {"type": "plain_text", "text": "FAQs"},
-                            "value": f"{question}",
+                            "value": f"{question}",  
                             "action_id": "faq_button",
                         },
                         {
@@ -93,7 +92,7 @@ def search_faqs(body, ack, say):
                                 "type": "plain_text",
                                 "text": ":white_check_mark:",
                             },
-                            "value": f"{answer_id}",
+                            "value": f"{answer_id}",  
                             "action_id": "correct_answer",
                         },
                         {
@@ -146,7 +145,7 @@ def search_docs(body, ack, say):
                                     "type": "plain_text",
                                     "text": ":white_check_mark:",
                                 },
-                                "value": f"{answer_id}",
+                                "value": f"{answer_id}",  
                                 "action_id": "correct_answer",
                             },
                             {
@@ -160,9 +159,7 @@ def search_docs(body, ack, say):
                 ]
             }
         )
-
     return
-
 
 @app.action("correct_answer")
 def label_correct(body, client, ack, say):
@@ -182,7 +179,7 @@ def label_correct(body, client, ack, say):
 
     answer_id = body["actions"][0]["value"]
     # 1 is the positive label
-    donkeybot.update_label(answer_id, label=1)
+    donkeybot.update_label(answer_id, label=1) 
 
     client.reactions_add(
         channel=body["channel"]["id"],
@@ -190,7 +187,6 @@ def label_correct(body, client, ack, say):
         name="white_check_mark",
     )
     return
-
 
 @app.action("wrong_answer")
 def label_wrong(body, client, ack, say):
