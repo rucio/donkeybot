@@ -39,7 +39,7 @@ transformers==3.4.0
 typing-extensions==3.7.4.3
 urllib3==1.26.5
 uuid==1.30
-Werkzeug==1.0.1
+Werkzeug==2.2.3
 yarl==1.6.3
 # pytorch on windows is not available through pypi you should install on your own
 torch===1.6.0 --find-links https://download.pytorch.org/whl/torch_stable.html
