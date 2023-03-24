@@ -3,6 +3,10 @@
 ![license](https://img.shields.io/badge/License-Apache%202-blue.svg)
 ![language](https://img.shields.io/badge/python-3.x-green.svg)
 
+## :warning: **rucio/donkeybot is not maintained**
+
+This repository is not maintained and has been archived.
+
 Donkeybot is an end-to-end Question Answering system. It utilizes multiple data sources, an FAQ table and transfer-learning language models like BERT to answer Rucio support questions.
 
 ## Introduction
